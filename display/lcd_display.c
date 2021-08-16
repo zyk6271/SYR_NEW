@@ -1027,7 +1027,7 @@ static void UserMain3WinFun(void *param)
         Jump_Flag=0;
         GuiClearScreen(0);
         GuiRowText(35,15,57,0,"Backwash");
-        GuiRowText(30,27,75,0,"In progress");
+        GuiRowText(25,27,80,0,"In progress");
         GuiRowText(25,39,85,0,"-->-->-->-->");
         GuiRowText(106,56,30,0,"   ");
         GuiUpdateDisplayAll();
@@ -1127,7 +1127,7 @@ static void UserMain4WinFun(void *param)
         tButton[0].flag = 1;/* 按下状态 */
         GuiButton(&tButton[0]);
 
-        snprintf(ReminderWeekstring,"Weeks:%02d",Reminder_Week);
+        sprintf(ReminderWeekstring,"Weeks:%02d",Reminder_Week);
         tButton[1].x = 33;
         tButton[1].y = 12;
         tButton[1].wide = 60;
@@ -1136,10 +1136,9 @@ static void UserMain4WinFun(void *param)
         tButton[1].linesize = 0;
         tButton[1].flag = 1;/* 按下状态 */
         GuiButton(&tButton[1]);
-        rt_free(ReminderWeekstring);
 
 
-        snprintf(ReminderDaystring,"Days:%02d",Reminder_Day);
+        sprintf(ReminderDaystring,"Days:%02d",Reminder_Day);
         tButton[2].x = 35;
         tButton[2].y = 24;
         tButton[2].wide = 55;
@@ -1148,7 +1147,6 @@ static void UserMain4WinFun(void *param)
         tButton[2].linesize = 0;
         tButton[2].flag = 0;/* 按下状态 */
         GuiButton(&tButton[2]);
-        rt_free(ReminderDaystring);
 
         tButton[3].x = 33;
         tButton[3].y = 36;
@@ -1177,17 +1175,15 @@ static void UserMain4WinFun(void *param)
             {
                 case 0:
                     if(Reminder_Week_Temp--<=0)Reminder_Week_Temp=51;
-                    snprintf(ReminderWeekstring,"Weeks:%02d",Reminder_Week_Temp);
+                    sprintf(ReminderWeekstring,"Weeks:%02d",Reminder_Week_Temp);
                     tButton[1].name = ReminderWeekstring;
                     GuiButton(&tButton[1]);
-                    rt_free(ReminderWeekstring);
                     break;
                 case 1:
                     if(Reminder_Day_Temp--<=0)Reminder_Day_Temp=6;
-                    snprintf(ReminderDaystring,"Days:%02d",Reminder_Day_Temp);
+                    sprintf(ReminderDaystring,"Days:%02d",Reminder_Day_Temp);
                     tButton[2].name = ReminderDaystring;
                     GuiButton(&tButton[2]);
-                    rt_free(ReminderDaystring);
                     break;
                 case 2:
                     if(Reminder_Enable_Temp>0)Reminder_Enable_Temp--;else Reminder_Enable_Temp=2;
@@ -1204,17 +1200,15 @@ static void UserMain4WinFun(void *param)
             {
                 case 0:
                     if(Reminder_Week_Temp++>=51)Reminder_Week_Temp=0;
-                    snprintf(ReminderWeekstring,"Weeks:%02d",Reminder_Week_Temp);
+                    sprintf(ReminderWeekstring,"Weeks:%02d",Reminder_Week_Temp);
                     tButton[1].name = ReminderWeekstring;
                     GuiButton(&tButton[1]);
-                    rt_free(ReminderWeekstring);
                     break;
                 case 1:
                     if(Reminder_Day_Temp++>=6)Reminder_Day_Temp=0;
-                    snprintf(ReminderDaystring,"Days:%02d",Reminder_Day_Temp);
+                    sprintf(ReminderDaystring,"Days:%02d",Reminder_Day_Temp);
                     tButton[2].name = ReminderDaystring;
                     GuiButton(&tButton[2]);
-                    rt_free(ReminderDaystring);
                     break;
                 case 2:
                     if(Reminder_Enable_Temp<2)Reminder_Enable_Temp++;else Reminder_Enable_Temp=0;
@@ -1304,7 +1298,7 @@ static void UserMain5WinFun(void *param)
         tButton[0].flag = 1;/* 按下状态 */
         GuiButton(&tButton[0]);
 
-        snprintf(AutoWeekstring,"Weeks:%02d",Automatic_Week);
+        sprintf(AutoWeekstring,"Weeks:%02d",Automatic_Week);
         tButton[1].x = 33;
         tButton[1].y = 12;
         tButton[1].wide = 60;
@@ -1313,10 +1307,9 @@ static void UserMain5WinFun(void *param)
         tButton[1].linesize = 0;
         tButton[1].flag = 1;/* 按下状态 */
         GuiButton(&tButton[1]);
-        rt_free(AutoWeekstring);
 
 
-        snprintf(AutoDaystring,"Days:%02d",Automatic_Day);
+        sprintf(AutoDaystring,"Days:%02d",Automatic_Day);
         tButton[2].x = 35;
         tButton[2].y = 24;
         tButton[2].wide = 55;
@@ -1325,7 +1318,6 @@ static void UserMain5WinFun(void *param)
         tButton[2].linesize = 0;
         tButton[2].flag = 0;/* 按下状态 */
         GuiButton(&tButton[2]);
-        rt_free(AutoDaystring);
 
         tButton[3].x = 36;
         tButton[3].y = 36;
