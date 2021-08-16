@@ -40,11 +40,15 @@ void Moto_Back(void)
 MSH_CMD_EXPORT(Moto_Back,Moto_Back);
 void Moto_Stop(void)
 {
+    rt_pin_write(MOTO_IN1,0);
+    rt_pin_write(MOTO_IN2,0);
     rt_event_send(&Moto_Event, Event_Moto_Free);
 }
 MSH_CMD_EXPORT(Moto_Stop,Moto_Stop);
 void Moto_Overload(void)
 {
+    rt_pin_write(MOTO_IN1,0);
+    rt_pin_write(MOTO_IN2,0);
     rt_event_send(&Moto_Event, Event_Moto_Over);
 }
 void Moto_Cycle(void)

@@ -188,5 +188,7 @@ void LcdInit(void)
 	WriteLcdCommand(0xa0);
 	WriteLcdCommand(0x40);
 	WriteLcdCommand(0xaf);
+	delay_us(10);
+	clear_screen();
 }
 MSH_CMD_EXPORT(LcdInit,LcdInit);
