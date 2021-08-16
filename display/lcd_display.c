@@ -3333,7 +3333,7 @@ static void UserMain20WinFun(void *param)
         {
 
         }
-        if(K0_Status==RT_EOK)
+        if(K1_Status==RT_EOK)
         {
             tButton[NowButtonId].flag=0;
             GuiButton(&tButton[NowButtonId]);
@@ -3343,7 +3343,7 @@ static void UserMain20WinFun(void *param)
             GuiButton(&tButton[NowButtonId]);
             GuiUpdateDisplayAll();
         }
-        if(K1_Status==RT_EOK)
+        if(K0_Status==RT_EOK)
         {
             tButton[NowButtonId].flag=0;
             GuiButton(&tButton[NowButtonId]);

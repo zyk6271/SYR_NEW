@@ -13,7 +13,9 @@ uint8_t GetLCD(void)
 }
 void delay_us(int i)
 {
-    rt_hw_us_delay(i);
+    int j,k;
+    for(j=0;j<i;j++);
+    for(k=0;k<10;k++);
 }
 static void LcdGpioConfig(void)
 {
@@ -188,7 +190,8 @@ void LcdInit(void)
 	WriteLcdCommand(0xa0);
 	WriteLcdCommand(0x40);
 	WriteLcdCommand(0xaf);
-	delay_us(10);
+	delay_us(1000);
 	clear_screen();
+	delay_us(1000);
 }
 MSH_CMD_EXPORT(LcdInit,LcdInit);

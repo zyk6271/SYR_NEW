@@ -48,12 +48,12 @@ void LcdBacklightTimerCallback(void *parameter)
 }
 void SreenTimerInit(void)
 {
-    Screen_Backlight_Timer=rt_timer_create("Lcd_Backlight_Timer",LcdBacklightTimerCallback,RT_NULL,30*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Screen_Backlight_Timer=rt_timer_create("Lcd_Backlight_Timer",LcdBacklightTimerCallback,RT_NULL,15*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     if(Screen_Backlight_Timer!=RT_NULL)
     {
         rt_timer_start(Screen_Backlight_Timer);
     }
-    Screen_Vcc_Timer=rt_timer_create("Lcd_Vcc_Timer",LcdVccTimerCallback,RT_NULL,60*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Screen_Vcc_Timer=rt_timer_create("Lcd_Vcc_Timer",LcdVccTimerCallback,RT_NULL,30*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     if(Screen_Vcc_Timer!=RT_NULL)
     {
         rt_timer_start(Screen_Vcc_Timer);
@@ -185,6 +185,16 @@ void AfterWake(void)
     TDS_GpioInit();
     //Debug
     DebugInit();
+
+    rt_pin_detach_irq(K0);
+    rt_pin_detach_irq(K1);
+    rt_pin_detach_irq(K2);
+    rt_pin_irq_enable(K0, PIN_IRQ_DISABLE);
+    rt_pin_irq_enable(K1, PIN_IRQ_DISABLE);
+    rt_pin_irq_enable(K2, PIN_IRQ_DISABLE);
+    rt_pin_mode(K0, PIN_MODE_INPUT);
+    rt_pin_mode(K1, PIN_MODE_INPUT);
+    rt_pin_mode(K2, PIN_MODE_INPUT);
 }
 void EnterLowPower(void)
 {
