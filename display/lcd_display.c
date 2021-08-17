@@ -574,9 +574,8 @@ void lcd_task_entry(void *parameter)
         if(rt_sem_take(lcd_refresh_sem, 0)==RT_EOK)
         {
             LOG_I("Lcd Refresh From Lowpower\r\n");
-            rt_thread_mdelay(300);
-            GuiUpdateDisplayAll();
-            rt_thread_mdelay(300);
+            LcdInit();
+            rt_thread_mdelay(200);
             GuiUpdateDisplayAll();
         }
         rt_thread_mdelay(10);

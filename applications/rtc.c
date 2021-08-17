@@ -155,9 +155,9 @@ void RTC_AlarmConfig(void)
     salarmstructure.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY;
     salarmstructure.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
     salarmstructure.AlarmTime.TimeFormat = RTC_HOURFORMAT12_AM;
-    salarmstructure.AlarmTime.Hours = 1;
+    salarmstructure.AlarmTime.Hours = 0;
     salarmstructure.AlarmTime.Minutes = 0;
-    salarmstructure.AlarmTime.Seconds = 0;
+    salarmstructure.AlarmTime.Seconds = 20;
     salarmstructure.AlarmTime.SubSeconds = 0;
 
     if(HAL_RTC_SetAlarm_IT(&RtcHandle,&salarmstructure,RTC_FORMAT_BIN) == HAL_OK)

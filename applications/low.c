@@ -221,7 +221,7 @@ void EnterLowPower(void)
         SystemClock_Config();
         Button_Wakeup_Flag = 0;
         AfterWake();
-        LcdInit();
+//        LcdInit();
         LCD_BL_HIGH();
         LCD_Refresh();
         ScreenTimerRefresh();
@@ -234,7 +234,7 @@ void EnterLowPower(void)
         SystemClock_Config();
         Delta_Wakeup_Flag = 0;
         AfterWake();
-        LcdInit();
+//        LcdInit();
         LCD_Refresh();
         ScreenTimerRefresh();
         Low_Power_Flag = 0;
