@@ -91,6 +91,13 @@ void Delta_Reload(void)
 {
     if(Deltapress_Enable)
     {
+        rt_pin_attach_irq(WATER_FLOW, PIN_IRQ_MODE_FALLING, Delta_Press_Callback, RT_NULL);
         rt_pin_irq_enable(WATER_FLOW, Deltapress_Enable);
+    }
+    else
+    {
+        rt_pin_detach_irq(WATER_FLOW);
+        rt_pin_irq_enable(WATER_FLOW, PIN_IRQ_DISABLE);
+        rt_pin_mode(WATER_FLOW, PIN_MODE_INPUT);
     }
 }

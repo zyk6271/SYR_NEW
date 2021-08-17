@@ -577,6 +577,8 @@ void lcd_task_entry(void *parameter)
             LcdInit();
             rt_thread_mdelay(200);
             GuiUpdateDisplayAll();
+            rt_thread_mdelay(200);
+            GuiUpdateDisplayAll();
         }
         rt_thread_mdelay(10);
     }
@@ -2936,7 +2938,7 @@ static void UserMain16WinFun(void *param)
             switch(NowButtonId)
             {
                 case 0:
-                    Set_Hardness_Temp+=10;
+                    if(Set_Hardness_Temp<2500)Set_Hardness_Temp+=10;
                     sprintf(HardnessString,"Value:%04duS",Set_Hardness_Temp);
                     tButton[0].name = HardnessString;
                     GuiButton(&tButton[0]);
@@ -3227,16 +3229,16 @@ static void UserMain19WinFun(void *param)
             {
                 case 0:
                     NowButtonId = 1;
-                    tButton[1].flag=0;
+                    tButton[0].flag=0;
                     GuiButton(&tButton[0]);
-                    tButton[2].flag=1;
+                    tButton[1].flag=1;
                     GuiButton(&tButton[1]);
                     break;
                 case 1:
                     NowButtonId = 0;
-                    tButton[1].flag=1;
+                    tButton[0].flag=1;
                     GuiButton(&tButton[0]);
-                    tButton[2].flag=0;
+                    tButton[1].flag=0;
                     GuiButton(&tButton[1]);
                     break;
             }
