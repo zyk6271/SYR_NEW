@@ -1015,8 +1015,11 @@ void K2_Setjump_Sem_Release(void *parameter)
 }
 void SemJump (void)
 {
+    if(SemJump_Timer == RT_NULL)
+    {
         SemJump_Timer = rt_timer_create("SemJump_Timer",K2_Setjump_Sem_Release,RT_NULL,4000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
-        rt_timer_start(SemJump_Timer);
+    }
+    rt_timer_start(SemJump_Timer);
 }
 static void UserMain3WinFun(void *param)
 {

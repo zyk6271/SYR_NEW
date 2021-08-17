@@ -166,6 +166,14 @@ void CloseLcdBacklight(void)
     LCD_Flag = 2;
     LCD_BL_LOW();
 }
+void LcdRst(void)
+{
+    LcdGpioConfig();
+    LCD_RST_LOW();
+    delay_us(5);
+    LCD_RST_HIGH();
+    delay_us(5);
+}
 void LcdInit(void)
 {
 	LcdGpioConfig();

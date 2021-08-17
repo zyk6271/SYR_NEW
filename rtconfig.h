@@ -33,7 +33,9 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
+#define RT_USING_MEMHEAP
 #define RT_USING_SMALL_MEM
+#define RT_USING_MEMTRACE
 #define RT_USING_HEAP
 /* end of Memory Management */
 
@@ -94,6 +96,7 @@
 #define RT_USING_SFUD
 #define RT_SFUD_USING_FLASH_INFO_TABLE
 #define RT_SFUD_SPI_MAX_HZ 50000000
+#define RT_USING_WDT
 
 /* Using USB */
 
@@ -187,6 +190,19 @@
 #define FAL_USING_NOR_FLASH_DEV_NAME "norflash0"
 #define PKG_USING_FAL_V00500
 #define PKG_FAL_VER_NUM 0x00500
+#define PKG_USING_SYSWATCH
+#define SYSWATCH_USING_TEST
+#define SYSWATCH_EXCEPT_RESOLVE_MODE_0
+#define SYSWATCH_EXCEPT_RESOLVE_MODE 0
+#define SYSWATCH_EXCEPT_TIMEOUT 60
+#define SYSWATCH_EXCEPT_CONFIRM_TMO 30
+#define SYSWATCH_EXCEPT_RESUME_DLY 30
+#define SYSWATCH_THREAD_PRIO 0
+#define SYSWATCH_THREAD_STK_SIZE 512
+#define SYSWATCH_THREAD_NAME "syswatch"
+#define SYSWATCH_WDT_NAME "wdt"
+#define SYSWATCH_WDT_TIMEOUT 5
+#define PKG_USING_SYSWATCH_LATEST_VERSION
 
 /* Micrium: Micrium software products porting for RT-Thread */
 

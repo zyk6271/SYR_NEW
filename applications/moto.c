@@ -54,6 +54,7 @@ void Moto_Overload(void)
 void Moto_Cycle(void)
 {
     RTC_Clear();
+    TDS_GpioInit();
     if(Get_Bat_Level()==0)
     {
         if(MotoWorkFlag == 0)

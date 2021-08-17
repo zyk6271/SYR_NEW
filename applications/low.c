@@ -85,6 +85,7 @@ void FlashInit(void)
 }
 void FlashDeInit(void)
 {
+    rt_pin_mode(FLASH_EN, PIN_MODE_OUTPUT);
     rt_pin_write(FLASH_EN,0);
     __HAL_RCC_SPI2_CLK_DISABLE();
 }
@@ -140,6 +141,16 @@ void DebugInit(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    GPIO_InitTypeDef GPIO_InitStruct1 = {0};
+    GPIO_InitStruct1.Alternate = 7;
+    GPIO_InitStruct1.Pin = GPIO_PIN_2;
+    GPIO_InitStruct1.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct1.Pull = GPIO_PULLUP;
+    GPIO_InitStruct1.Speed = GPIO_SPEED_FREQ_HIGH;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct1);
+    GPIO_InitStruct1.Pin = GPIO_PIN_3;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct1);
 }
 void BeforSleep(void)
 {
@@ -182,7 +193,7 @@ void AfterWake(void)
     //ADC
     ADC_Pin_Init();
     //TDS
-    TDS_GpioInit();
+//    TDS_GpioInit();
     //Debug
     DebugInit();
 
@@ -204,6 +215,7 @@ void EnterLowPower(void)
     BeforSleep();
     Low_Power_Flag = 1;
     HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+    LcdRst();
     if(Button_Wakeup_Flag)
     {
         SystemClock_Config();

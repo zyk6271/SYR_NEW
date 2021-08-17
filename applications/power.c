@@ -104,7 +104,7 @@ void PowerCallback(void *parameter)
         {
             PowerSet(0);
         }
-        rt_thread_mdelay(3000);
+        rt_thread_mdelay(5000);
     }
 }
 void Power_Init(void)

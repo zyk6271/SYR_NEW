@@ -299,7 +299,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 //  if(huart->Instance==USART1)
 //  {
 //  /* USER CODE BEGIN USART1_MspInit 0 */
-//
+////
 //  /* USER CODE END USART1_MspInit 0 */
 //    /* Peripheral clock enable */
 //    __HAL_RCC_USART1_CLK_ENABLE();
@@ -311,19 +311,19 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 //    */
 //    GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10;
 //    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//    GPIO_InitStruct.Pull = GPIO_NOPULL;
+//    GPIO_InitStruct.Pull = GPIO_PULLUP;
 //    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 //    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
 //    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 //
 //  /* USER CODE BEGIN USART1_MspInit 1 */
-//
+////
 //  /* USER CODE END USART1_MspInit 1 */
 //  }
 //  else if(huart->Instance==USART2)
 //  {
 //  /* USER CODE BEGIN USART2_MspInit 0 */
-//
+////
 //  /* USER CODE END USART2_MspInit 0 */
 //    /* Peripheral clock enable */
 //    __HAL_RCC_USART2_CLK_ENABLE();
@@ -335,19 +335,19 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 //    */
 //    GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
 //    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//    GPIO_InitStruct.Pull = GPIO_NOPULL;
+//    GPIO_InitStruct.Pull = GPIO_PULLUP;
 //    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 //    GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
 //    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 //
 //  /* USER CODE BEGIN USART2_MspInit 1 */
-//
+////
 //  /* USER CODE END USART2_MspInit 1 */
 //  }
 //  else if(huart->Instance==USART3)
 //  {
 //  /* USER CODE BEGIN USART3_MspInit 0 */
-//
+////
 //  /* USER CODE END USART3_MspInit 0 */
 //    /* Peripheral clock enable */
 //    __HAL_RCC_USART3_CLK_ENABLE();
@@ -359,13 +359,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 //    */
 //    GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5;
 //    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//    GPIO_InitStruct.Pull = GPIO_NOPULL;
+//    GPIO_InitStruct.Pull = GPIO_PULLUP;
 //    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 //    GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
 //    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 //
 //  /* USER CODE BEGIN USART3_MspInit 1 */
-//
+////
 //  /* USER CODE END USART3_MspInit 1 */
 //  }
 
