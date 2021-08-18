@@ -154,9 +154,6 @@ void DebugInit(void)
 }
 void BeforSleep(void)
 {
-    __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_HSI);
-
     //RGB
     Led_GpioDeInit();
     //MOTO
@@ -214,6 +211,8 @@ void EnterLowPower(void)
     LOG_I("Goto Stop Mode With RTC Now\r\n");
     BeforSleep();
     Low_Power_Flag = 1;
+    __HAL_RCC_PWR_CLK_ENABLE();
+    __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
     HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
     LcdRst();
     if(Button_Wakeup_Flag)
