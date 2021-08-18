@@ -52,30 +52,32 @@ void Moto_Cycle(void)
 {
     RTC_Clear();
     TDS_GpioInit();
-    if(Get_Bat_Level()==0)
-    {
-        if(MotoWorkFlag == 0)
-        {
-            ScreenTimerStop();
-            uint32_t Setting_Backwashtime_MileSecond=0;
-            Setting_Backwashtime_MileSecond = Setting_Backwashtime*1000;
-            rt_timer_control(Moto_Cycle_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
-            LOG_D("Start Backwash with Timer %d\r\n",Setting_Backwashtime);
-            rt_timer_start(Moto_Cycle_Timer);
-            Moto_Forward();
-            led_select(2);
-        }
-        else
-        {
-            LOG_D("Moto is Working Now");
-        }
-    }
-    else
-    {
-        LOG_D("Moto Not Work(Low Voltage)");
-        Jump_EXIT();
-        JumpToBatteryEmpty();
-    }
+    rt_pin_write(MOTO_IN1,0);
+    rt_pin_write(MOTO_IN2,1);
+//    if(Get_Bat_Level()==0)
+//    {
+//        if(MotoWorkFlag == 0)
+//        {
+//            ScreenTimerStop();
+//            uint32_t Setting_Backwashtime_MileSecond=0;
+//            Setting_Backwashtime_MileSecond = Setting_Backwashtime*1000;
+//            rt_timer_control(Moto_Cycle_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
+//            LOG_D("Start Backwash with Timer %d\r\n",Setting_Backwashtime);
+//            rt_timer_start(Moto_Cycle_Timer);
+//            Moto_Forward();
+//            led_select(2);
+//        }
+//        else
+//        {
+//            LOG_D("Moto is Working Now");
+//        }
+//    }
+//    else
+//    {
+//        LOG_D("Moto Not Work(Low Voltage)");
+//        Jump_EXIT();
+//        JumpToBatteryEmpty();
+//    }
 }
 MSH_CMD_EXPORT(Moto_Cycle,Moto_Cycle);
 void Moto_Cycle_Timer_Callback(void *parameter)
@@ -119,43 +121,47 @@ void Moto_Cycle_Timer_Callback(void *parameter)
 }
 void MotoLeft_Callback(void *parameter)
 {
-    if(MotoWorkFlag==2)
-    {
-        MotoWorkFlag=0;
-        rt_timer_stop(Moto_Cycle_Timer);
-        rt_event_send(&Moto_Event, Event_Moto_Free);
-        if(TDS_WarnGet())
-        {
-            if(GetTDS() < Setting_Hardness*TDS_CND_Value*0.1)
-            {
-                TDS_WarnSet(0);
-            }
-            Jump_FINISH();
-        }
-        else
-        {
-            if(GetTDS() > Setting_Hardness*TDS_CND_Value*0.1)
-            {
-                TDS_WarnSet(1);
-                Jump_TDS();
-            }
-            else
-            {
-                Jump_FINISH();
-            }
-        }
-        ScreenTimerRefresh();
-        LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
-    }
-    else if(MotoWorkFlag==0)
-    {
-        rt_event_send(&Moto_Event, Event_Moto_Free);
-    }
+//    if(MotoWorkFlag==2)
+//    {
+//        MotoWorkFlag=0;
+//        rt_timer_stop(Moto_Cycle_Timer);
+//        rt_event_send(&Moto_Event, Event_Moto_Free);
+//        if(TDS_WarnGet())
+//        {
+//            if(GetTDS() < Setting_Hardness*TDS_CND_Value*0.1)
+//            {
+//                TDS_WarnSet(0);
+//            }
+//            Jump_FINISH();
+//        }
+//        else
+//        {
+//            if(GetTDS() > Setting_Hardness*TDS_CND_Value*0.1)
+//            {
+//                TDS_WarnSet(1);
+//                Jump_TDS();
+//            }
+//            else
+//            {
+//                Jump_FINISH();
+//            }
+//        }
+//        ScreenTimerRefresh();
+//        LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
+//    }
+//    else if(MotoWorkFlag==0)
+//    {
+//        rt_event_send(&Moto_Event, Event_Moto_Free);
+//    }
+    rt_pin_write(MOTO_IN1,0);
+    rt_pin_write(MOTO_IN2,1);
 }
 void MotoRight_Callback(void *parameter)
 {
-    Moto_Stop();
-    TDS_Work();
+//    Moto_Stop();
+//    TDS_Work();
+    rt_pin_write(MOTO_IN1,1);
+    rt_pin_write(MOTO_IN2,0);
 }
 void Moto_Pin_Init(void)
 {

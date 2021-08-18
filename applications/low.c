@@ -48,12 +48,12 @@ void LcdBacklightTimerCallback(void *parameter)
 }
 void SreenTimerInit(void)
 {
-    Screen_Backlight_Timer=rt_timer_create("Lcd_Backlight_Timer",LcdBacklightTimerCallback,RT_NULL,30*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Screen_Backlight_Timer=rt_timer_create("Lcd_Backlight_Timer",LcdBacklightTimerCallback,RT_NULL,3000*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     if(Screen_Backlight_Timer!=RT_NULL)
     {
         rt_timer_start(Screen_Backlight_Timer);
     }
-    Screen_Vcc_Timer=rt_timer_create("Lcd_Vcc_Timer",LcdVccTimerCallback,RT_NULL,60*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Screen_Vcc_Timer=rt_timer_create("Lcd_Vcc_Timer",LcdVccTimerCallback,RT_NULL,6000*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     if(Screen_Vcc_Timer!=RT_NULL)
     {
         rt_timer_start(Screen_Vcc_Timer);
