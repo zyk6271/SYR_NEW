@@ -2169,34 +2169,34 @@ static void UserMain13WinFun(void *param)
         tButton[0].flag = 0;/* 按下状态 */
         GuiButton(&tButton[0]);
 
-        tButton[1].x = 48;
+        tButton[1].x = 45;
         tButton[1].y = 25;
         tButton[1].wide = 40;
         tButton[1].high = 15;
         if(Get_DC_Level())
         {
-            tButton[1].x = 60;
-            tButton[1].wide = 15;
+            tButton[1].x = 55;
+            tButton[1].wide = 20;
             tButton[1].name = "DC";
         }
         else
         {
             if(LowVoltageFlag==1)
             {
-                tButton[1].x = 58;
-                tButton[1].wide = 20;
+                tButton[1].x = 50;
+                tButton[1].wide = 25;
                 tButton[1].name = "LOW";
             }
             else if(LowVoltageFlag==2)
             {
-                tButton[1].x = 48;
-                tButton[1].wide = 40;
+                tButton[1].x = 45;
+                tButton[1].wide = 45;
                 tButton[1].name = "Empty";
             }
             else if(LowVoltageFlag==0)
             {
-                tButton[1].x = 60;
-                tButton[1].wide = 15;
+                tButton[1].x = 55;
+                tButton[1].wide = 20;
                 tButton[1].name = "OK";
             }
         }
