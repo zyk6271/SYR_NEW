@@ -48,12 +48,12 @@ void LcdBacklightTimerCallback(void *parameter)
 }
 void SreenTimerInit(void)
 {
-    Screen_Backlight_Timer=rt_timer_create("Lcd_Backlight_Timer",LcdBacklightTimerCallback,RT_NULL,15*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Screen_Backlight_Timer=rt_timer_create("Lcd_Backlight_Timer",LcdBacklightTimerCallback,RT_NULL,30*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     if(Screen_Backlight_Timer!=RT_NULL)
     {
         rt_timer_start(Screen_Backlight_Timer);
     }
-    Screen_Vcc_Timer=rt_timer_create("Lcd_Vcc_Timer",LcdVccTimerCallback,RT_NULL,30*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Screen_Vcc_Timer=rt_timer_create("Lcd_Vcc_Timer",LcdVccTimerCallback,RT_NULL,60*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     if(Screen_Vcc_Timer!=RT_NULL)
     {
         rt_timer_start(Screen_Vcc_Timer);
@@ -79,6 +79,21 @@ void button_wakeup(void *parameter)
 }
 void FlashInit(void)
 {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    /**SPI2 GPIO Configuration
+    PB13     ------> SPI2_SCK
+    PB14     ------> SPI2_MISO
+    PB15     ------> SPI2_MOSI
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
     rt_pin_write(FLASH_EN,1);
     __HAL_RCC_SPI2_CLK_ENABLE();
     rt_pin_write(FLASH_CS,1);
@@ -87,6 +102,10 @@ void FlashDeInit(void)
 {
     rt_pin_mode(FLASH_EN, PIN_MODE_OUTPUT);
     rt_pin_write(FLASH_EN,0);
+    rt_pin_mode(FLASH_CS, PIN_MODE_OUTPUT);
+    rt_pin_write(FLASH_CS,0);
+
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15);
     __HAL_RCC_SPI2_CLK_DISABLE();
 }
 void WifiDeInit(void)

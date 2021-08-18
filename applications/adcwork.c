@@ -67,7 +67,7 @@ void MX_ADC1_Init(void)
     AnalogWDGConfig.WatchdogMode = ADC_ANALOGWATCHDOG_SINGLE_REG;
     AnalogWDGConfig.Channel = ADC_CHANNEL_16;
     AnalogWDGConfig.ITMode = DISABLE;
-    AnalogWDGConfig.HighThreshold = 250;
+    AnalogWDGConfig.HighThreshold = 40;
     AnalogWDGConfig.LowThreshold = 0;
     if (HAL_ADC_AnalogWDGConfig(&hadc1, &AnalogWDGConfig) != HAL_OK)
     {
@@ -144,6 +144,8 @@ void ADC_Work_Callback(void *parameter)
     {
         DC_Voltage = adc_value[0];
         BAT_Voltage = adc_value[1];
+        Moto_Current = adc_value[2];
+        //LOG_D("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
         rt_thread_mdelay(50);
     }
 }
@@ -171,8 +173,8 @@ uint8_t Get_DC_Level(void)
 {
     uint32_t value;
     value  = DC_Voltage;
-    //LOG_D("DC Value is %ld\r\n",value);
-    if(value>2000)return 1;
+    LOG_D("DC Value is %ld\r\n",value);
+    if(value>3000)return 1;
     else return 0;
 }
 uint32_t Get_Bat_Value(void)

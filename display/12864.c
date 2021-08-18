@@ -13,7 +13,9 @@ uint8_t GetLCD(void)
 }
 void delay_us(int i)
 {
-    rt_hw_us_delay(i);
+    int j,k;
+    for(j=0;j<i;j++);
+    for(k=0;k<10;k++);
 }
 static void LcdGpioConfig(void)
 {
@@ -23,8 +25,6 @@ static void LcdGpioConfig(void)
     rt_pin_mode(LCD_SDA, PIN_MODE_OUTPUT);
     rt_pin_mode(LCD_CLK, PIN_MODE_OUTPUT);
     rt_pin_mode(LCD_EN, PIN_MODE_OUTPUT);
-
-    LCD_EN_HIGH();
 }
 void WriteLcdCommand(uint8_t cmd)
 {
@@ -64,7 +64,6 @@ void WriteLcdData(uint8_t data)
         {
             LCD_SDA_LOW();
         }
-        delay_us(1);
         LCD_CLK_HIGH();
         delay_us(1);
         data<<=1;
@@ -182,22 +181,20 @@ void LcdInit(void)
 {
 	LcdGpioConfig();
 	LCD_RST_LOW();
-	delay_us(2);
+	delay_us(100);
+    LCD_EN_HIGH();
+    delay_us(100);
 	LCD_RST_HIGH();
-	delay_us(2);
-    LCD_RST_LOW();
-    delay_us(2);
-    LCD_RST_HIGH();
-    delay_us(2);
+	delay_us(100);
 
 	WriteLcdCommand(0xe2);
-	delay_us(2);
+	delay_us(5);
 	WriteLcdCommand(0x2c);
-	delay_us(2);
+	delay_us(5);
 	WriteLcdCommand(0x2e);
-	delay_us(2);
+	delay_us(5);
 	WriteLcdCommand(0x2f);
-	delay_us(2);
+	delay_us(5);
 	WriteLcdCommand(0x24);
 	WriteLcdCommand(0x81);
 	WriteLcdCommand(0x15);

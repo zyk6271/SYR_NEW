@@ -575,7 +575,6 @@ void lcd_task_entry(void *parameter)
         {
             LOG_I("Lcd Refresh From Lowpower\r\n");
             LcdInit();
-            rt_thread_mdelay(500);
             GuiUpdateDisplayAll();
         }
         rt_thread_mdelay(10);

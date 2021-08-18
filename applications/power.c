@@ -43,6 +43,7 @@ void PowerCallback(void *parameter)
 {
     LOG_D("Power Init OK\r\n");
     LowVoltageFlag = Flash_Get(19);
+    rt_thread_mdelay(2000);
     while(1)
     {
         if(Get_DC_Level() == 0 && Low_Power_Flag==0)
