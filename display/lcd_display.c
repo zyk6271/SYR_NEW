@@ -574,9 +574,8 @@ void lcd_task_entry(void *parameter)
         if(rt_sem_take(lcd_refresh_sem, 0)==RT_EOK)
         {
             LOG_I("Lcd Refresh From Lowpower\r\n");
-            rt_thread_mdelay(300);
-            GuiUpdateDisplayAll();
-            rt_thread_mdelay(300);
+            LcdInit();
+            rt_thread_mdelay(500);
             GuiUpdateDisplayAll();
         }
         rt_thread_mdelay(10);
@@ -1015,8 +1014,11 @@ void K2_Setjump_Sem_Release(void *parameter)
 }
 void SemJump (void)
 {
+    if(SemJump_Timer == RT_NULL)
+    {
         SemJump_Timer = rt_timer_create("SemJump_Timer",K2_Setjump_Sem_Release,RT_NULL,4000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
-        rt_timer_start(SemJump_Timer);
+    }
+    rt_timer_start(SemJump_Timer);
 }
 static void UserMain3WinFun(void *param)
 {
@@ -1767,9 +1769,9 @@ static void UserMain8WinFun(void *param)
         }
     }
 }
+uint8_t ManualString[20];
 static void UserMain9WinFun(void *param)
 {
-    uint8_t ManualString[20];
     if(FirstFlag[9] == 0)
     {
         FirstFlag[9] = 1;
@@ -1863,9 +1865,9 @@ static void UserMain9WinFun(void *param)
         }
     }
 }
+uint8_t AutomaticString[15];
 static void UserMain10WinFun(void *param)
 {
-    uint8_t AutomaticString[15];
     if(FirstFlag[10] == 0)
      {
          FirstFlag[10] = 1;
@@ -1959,9 +1961,10 @@ static void UserMain10WinFun(void *param)
          }
      }
 }
+uint8_t DeltaString[15];
 static void UserMain11WinFun(void *param)
 {
-    uint8_t DeltaString[15];
+
     if(FirstFlag[11] == 0)
      {
          FirstFlag[11] = 1;
@@ -2054,9 +2057,10 @@ static void UserMain11WinFun(void *param)
          }
      }
 }
+uint8_t ErrorString[15];
 static void UserMain12WinFun(void *param)
 {
-    uint8_t ErrorString[15];
+
     if(FirstFlag[12] == 0)
      {
          FirstFlag[12] = 1;
@@ -2169,17 +2173,32 @@ static void UserMain13WinFun(void *param)
         tButton[1].y = 25;
         tButton[1].wide = 40;
         tButton[1].high = 15;
-        if(LowVoltageFlag==1)
+        if(Get_DC_Level())
         {
-            tButton[1].name = "LOW";
+            tButton[1].x = 60;
+            tButton[1].wide = 15;
+            tButton[1].name = "DC";
         }
-        else if(LowVoltageFlag==2)
+        else
         {
-            tButton[1].name = "Empty";
-        }
-        else if(LowVoltageFlag==0)
-        {
-            tButton[1].name = "OK";
+            if(LowVoltageFlag==1)
+            {
+                tButton[1].x = 58;
+                tButton[1].wide = 20;
+                tButton[1].name = "LOW";
+            }
+            else if(LowVoltageFlag==2)
+            {
+                tButton[1].x = 48;
+                tButton[1].wide = 40;
+                tButton[1].name = "Empty";
+            }
+            else if(LowVoltageFlag==0)
+            {
+                tButton[1].x = 60;
+                tButton[1].wide = 15;
+                tButton[1].name = "OK";
+            }
         }
         tButton[1].linesize = 0;
         tButton[1].flag = 1;/* 按下状态 */
@@ -2934,7 +2953,7 @@ static void UserMain16WinFun(void *param)
             switch(NowButtonId)
             {
                 case 0:
-                    Set_Hardness_Temp+=10;
+                    if(Set_Hardness_Temp<2500)Set_Hardness_Temp+=10;
                     sprintf(HardnessString,"Value:%04duS",Set_Hardness_Temp);
                     tButton[0].name = HardnessString;
                     GuiButton(&tButton[0]);
@@ -3225,16 +3244,16 @@ static void UserMain19WinFun(void *param)
             {
                 case 0:
                     NowButtonId = 1;
-                    tButton[1].flag=0;
+                    tButton[0].flag=0;
                     GuiButton(&tButton[0]);
-                    tButton[2].flag=1;
+                    tButton[1].flag=1;
                     GuiButton(&tButton[1]);
                     break;
                 case 1:
                     NowButtonId = 0;
-                    tButton[1].flag=1;
+                    tButton[0].flag=1;
                     GuiButton(&tButton[0]);
-                    tButton[2].flag=0;
+                    tButton[1].flag=0;
                     GuiButton(&tButton[1]);
                     break;
             }
@@ -3381,9 +3400,9 @@ static void UserMain20WinFun(void *param)
 }
 uint8_t Tds_Password=3;
 uint8_t Tds_Password_Temp;
+uint8_t Tds_PasswordString[4];
 static void UserMain21WinFun(void *param)//password
 {
-    uint8_t Tds_PasswordString[4];
     if(FirstFlag[21] == 0)
     {
         FirstFlag[21] = 1;
@@ -3413,14 +3432,14 @@ static void UserMain21WinFun(void *param)//password
         {
 
         }
-        if(K0_Status==RT_EOK)
+        if(K1_Status==RT_EOK)
         {
             if(Tds_Password_Temp>0)Tds_Password_Temp--;
             sprintf(Tds_PasswordString,"%02d",Tds_Password_Temp);
             GuiRowText(57,32,85,0,Tds_PasswordString);
             GuiUpdateDisplayAll();
         }
-        if(K1_Status==RT_EOK)
+        if(K0_Status==RT_EOK)
         {
             Tds_Password_Temp++;
             sprintf(Tds_PasswordString,"%02d",Tds_Password_Temp);
@@ -3508,9 +3527,9 @@ static void UserMain22WinFun(void *param)//password
 double TdsValueOffset=0;
 uint16_t TdsValueZeroOffset=0;
 uint16_t TdsValueOffsetTemp;
+uint8_t CurrentTdsString[10]={0};
 static void UserMain23WinFun(void *param)//password
 {
-    uint8_t CurrentTdsString[10]={0};
     uint32_t TdsValue,result=0;
     if(FirstFlag[23] == 0)
     {
@@ -3531,9 +3550,11 @@ static void UserMain23WinFun(void *param)//password
     }
     else
     {
+        TDS_GpioInit();
         TdsValue = TDS_Work();
         sprintf(CurrentTdsString,"%05dus/cm",TdsValue);
         GuiRowText(30,25,110,0,CurrentTdsString);
+        GuiUpdateDisplayAll();
         rt_thread_mdelay(1000);
         K0_Status = rt_sem_take(K0_Sem, 0);
         K1_Status = rt_sem_take(K1_Sem, 0);
@@ -3560,10 +3581,8 @@ static void UserMain23WinFun(void *param)//password
         }
     }
 }
-
 static void UserMain24WinFun(void *param)//password
 {
-    uint8_t CurrentTdsString[10]={0};
     if(FirstFlag[24] == 0)
     {
         FirstFlag[24] = 1;

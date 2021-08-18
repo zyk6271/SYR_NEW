@@ -155,8 +155,8 @@ void RTC_AlarmConfig(void)
     salarmstructure.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY;
     salarmstructure.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
     salarmstructure.AlarmTime.TimeFormat = RTC_HOURFORMAT12_AM;
-    salarmstructure.AlarmTime.Hours = 0;
-    salarmstructure.AlarmTime.Minutes = 1;
+    salarmstructure.AlarmTime.Hours = 1;
+    salarmstructure.AlarmTime.Minutes = 0;
     salarmstructure.AlarmTime.Seconds = 0;
     salarmstructure.AlarmTime.SubSeconds = 0;
 

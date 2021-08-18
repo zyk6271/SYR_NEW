@@ -13,9 +13,7 @@ uint8_t GetLCD(void)
 }
 void delay_us(int i)
 {
-    int j,k;
-    for(j=0;j<i;j++);
-    for(k=0;k<10;k++);
+    rt_hw_us_delay(i);
 }
 static void LcdGpioConfig(void)
 {
@@ -31,9 +29,11 @@ static void LcdGpioConfig(void)
 void WriteLcdCommand(uint8_t cmd)
 {
     LCD_CS_LOW();
+    delay_us(1);
     for(uint8_t i=0;i<8;i++)
     {
         LCD_CLK_LOW();
+        delay_us(1);
         if(cmd&0x80)
         {
             LCD_SDA_HIGH();
@@ -42,6 +42,7 @@ void WriteLcdCommand(uint8_t cmd)
         {
             LCD_SDA_LOW();
         }
+        delay_us(1);
         LCD_CLK_HIGH();
         delay_us(1);
         cmd<<=1;
@@ -50,9 +51,11 @@ void WriteLcdCommand(uint8_t cmd)
 void WriteLcdData(uint8_t data)
 {
     LCD_CS_HIGH();
+    delay_us(1);
     for(uint8_t i=0;i<8;i++)
     {
         LCD_CLK_LOW();
+        delay_us(1);
         if(data&0x80)
         {
             LCD_SDA_HIGH();
@@ -61,6 +64,7 @@ void WriteLcdData(uint8_t data)
         {
             LCD_SDA_LOW();
         }
+        delay_us(1);
         LCD_CLK_HIGH();
         delay_us(1);
         data<<=1;
@@ -166,22 +170,34 @@ void CloseLcdBacklight(void)
     LCD_Flag = 2;
     LCD_BL_LOW();
 }
+void LcdRst(void)
+{
+    LcdGpioConfig();
+    LCD_RST_LOW();
+    delay_us(5);
+    LCD_RST_HIGH();
+    delay_us(5);
+}
 void LcdInit(void)
 {
 	LcdGpioConfig();
 	LCD_RST_LOW();
-	delay_us(5);
+	delay_us(2);
 	LCD_RST_HIGH();
-	delay_us(5);
+	delay_us(2);
+    LCD_RST_LOW();
+    delay_us(2);
+    LCD_RST_HIGH();
+    delay_us(2);
 
 	WriteLcdCommand(0xe2);
-	delay_us(10);
+	delay_us(2);
 	WriteLcdCommand(0x2c);
-	delay_us(10);
+	delay_us(2);
 	WriteLcdCommand(0x2e);
-	delay_us(10);
+	delay_us(2);
 	WriteLcdCommand(0x2f);
-	delay_us(10);
+	delay_us(2);
 	WriteLcdCommand(0x24);
 	WriteLcdCommand(0x81);
 	WriteLcdCommand(0x15);
@@ -190,8 +206,5 @@ void LcdInit(void)
 	WriteLcdCommand(0xa0);
 	WriteLcdCommand(0x40);
 	WriteLcdCommand(0xaf);
-	delay_us(1000);
-	clear_screen();
-	delay_us(1000);
 }
 MSH_CMD_EXPORT(LcdInit,LcdInit);

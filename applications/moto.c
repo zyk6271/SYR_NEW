@@ -32,19 +32,16 @@ void Moto_Forward(void)
 {
     rt_event_send(&Moto_Event, Event_Moto_Forward);
 }
-MSH_CMD_EXPORT(Moto_Forward,Moto_Forward);
 void Moto_Back(void)
 {
     rt_event_send(&Moto_Event, Event_Moto_Back);
 }
-MSH_CMD_EXPORT(Moto_Back,Moto_Back);
 void Moto_Stop(void)
 {
     rt_pin_write(MOTO_IN1,0);
     rt_pin_write(MOTO_IN2,0);
     rt_event_send(&Moto_Event, Event_Moto_Free);
 }
-MSH_CMD_EXPORT(Moto_Stop,Moto_Stop);
 void Moto_Overload(void)
 {
     rt_pin_write(MOTO_IN1,0);
@@ -54,6 +51,7 @@ void Moto_Overload(void)
 void Moto_Cycle(void)
 {
     RTC_Clear();
+    TDS_GpioInit();
     if(Get_Bat_Level()==0)
     {
         if(MotoWorkFlag == 0)
@@ -121,31 +119,38 @@ void Moto_Cycle_Timer_Callback(void *parameter)
 }
 void MotoLeft_Callback(void *parameter)
 {
-    MotoWorkFlag=0;
-    rt_timer_stop(Moto_Cycle_Timer);
-    rt_event_send(&Moto_Event, Event_Moto_Free);
-    if(TDS_WarnGet())
+    if(MotoWorkFlag==2)
     {
-        if(GetTDS() < Setting_Hardness*TDS_CND_Value*0.1)
+        MotoWorkFlag=0;
+        rt_timer_stop(Moto_Cycle_Timer);
+        rt_event_send(&Moto_Event, Event_Moto_Free);
+        if(TDS_WarnGet())
         {
-            TDS_WarnSet(0);
-        }
-        Jump_FINISH();
-    }
-    else
-    {
-        if(GetTDS() > Setting_Hardness*TDS_CND_Value*0.1)
-        {
-            TDS_WarnSet(1);
-            Jump_TDS();
+            if(GetTDS() < Setting_Hardness*TDS_CND_Value*0.1)
+            {
+                TDS_WarnSet(0);
+            }
+            Jump_FINISH();
         }
         else
         {
-            Jump_FINISH();
+            if(GetTDS() > Setting_Hardness*TDS_CND_Value*0.1)
+            {
+                TDS_WarnSet(1);
+                Jump_TDS();
+            }
+            else
+            {
+                Jump_FINISH();
+            }
         }
+        ScreenTimerRefresh();
+        LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
     }
-    ScreenTimerRefresh();
-    LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
+    else if(MotoWorkFlag==0)
+    {
+        rt_event_send(&Moto_Event, Event_Moto_Free);
+    }
 }
 void MotoRight_Callback(void *parameter)
 {
@@ -189,13 +194,12 @@ void Moto_Pin_DeInit(void)
     rt_pin_write(MOTO_LEFT,0);
     rt_pin_mode(MOTO_RIGHT, PIN_MODE_OUTPUT);
     rt_pin_write(MOTO_RIGHT,0);
-//    rt_pin_mode(MOTO_LEFT, PIN_MODE_INPUT);
-//    rt_pin_mode(MOTO_RIGHT, PIN_MODE_INPUT);
 }
 void Moto_Callback(void *parameter)
 {
     rt_uint32_t e;
     LOG_D("Moto Init Success\r\n");
+    Moto_Reset();
     while(1)
     {
         if (rt_event_recv(&Moto_Event, (Event_Moto_Free | Event_Moto_Forward| Event_Moto_Back| Event_Moto_Over),RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,0, &e) == RT_EOK)
@@ -249,6 +253,15 @@ void Moto_Callback(void *parameter)
             }
         }
         rt_thread_mdelay(10);
+    }
+}
+void Moto_Reset(void)
+{
+    if(rt_pin_read(MOTO_RIGHT)==0 || rt_pin_read(MOTO_LEFT)==1)
+    {
+        rt_pin_write(MOTO_IN1,1);
+        rt_pin_write(MOTO_IN2,0);
+        LOG_I("Moto is Back\r\n");
     }
 }
 void Moto_Init(void)

@@ -112,20 +112,11 @@ MSH_CMD_EXPORT(TDS_Init, TDS_Init);
 void TDS_GpioInit(void)
 {
     __HAL_RCC_USART2_CLK_ENABLE();
-    GPIO_InitTypeDef GPIO_InitStruct = {0};
-    GPIO_InitStruct.Alternate = 7;
-    GPIO_InitStruct.Pin = GPIO_PIN_2;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-    GPIO_InitStruct.Pin = GPIO_PIN_3;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
 void TDS_GpioDeInit(void)
 {
-    __HAL_RCC_USART1_CLK_DISABLE();
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9|GPIO_PIN_10);
+    //__HAL_RCC_USART1_CLK_DISABLE();
+    //HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9|GPIO_PIN_10);
     __HAL_RCC_USART2_CLK_DISABLE();
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2|GPIO_PIN_3);
     __HAL_RCC_USART3_CLK_DISABLE();
