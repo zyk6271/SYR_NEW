@@ -528,8 +528,8 @@ void SetEnglish(void)
 }
 void SetDetdush(void)
 {
-    userMain2Win.title = "Manuell";
-    userMain4Win.title = "Erinnerung";
+    userMain2Win.title = "Manuelle";
+    userMain4Win.title = "Erinnerung in";
     userMain5Win.title = "Automatik";
     userMain6Win.title = "Differenzdruck";
     userMain8Win.title = "Z|hler Sp{lungen";
@@ -550,8 +550,8 @@ void SetDetdush(void)
     userMain25Win.title = "Erinnerung";
     userMain26Win.title = "Batteriezustand";
     userMain27Win.title = "Batteriezustand";
-    userMain28Win.title = "Bereich-Intervall";
-    userMain29Win.title = "Leitwert-Abgleich";
+    userMain28Win.title = "BereichIntervall";
+    userMain29Win.title = "LeitwertAbgleich";
 
     Manual = "Manuell";
     Reminder = "Erinnerung";
@@ -569,7 +569,7 @@ void SetDetdush(void)
     Enabled="aktiviert";
     Reset = "Z|hler-Reset?";
     Save = "Speichern";
-    Factory_Reset = "Reset jetzt";
+    Factory_Reset = "Reset jetzt?";
     Weeks09 = "(0-9) Wochen";
     Weeks952 = "(9-52) Wochen";
 
@@ -587,8 +587,8 @@ void SetDetdush(void)
     Update_FW="FW-Update";
     Smart_Link="Smart Link";
     TDS_MODE="Leitwert";
-    AUTO_RANGE="Bereich-Intervall";
-    TDS_CND="Leitwert-Abgleich";
+    AUTO_RANGE="BereichIntervall";
+    TDS_CND="LeitwertAbgleich";
     Conductivity="Leitwert-Limit";
     Password="Passwort";
 }
@@ -726,7 +726,7 @@ void lcd_task_entry(void *parameter)
             LcdInit();
             GuiUpdateDisplayAll();
         }
-        rt_thread_mdelay(10);
+        rt_thread_mdelay(50);
     }
 }
 void LCD_Init(void)
@@ -1182,7 +1182,7 @@ static void UserMain3WinFun(void *param)
         GuiClearScreen(0);
         if(Setting_Language)
         {
-            GuiRowText(27,15,72,0,"R{cksp{lung");
+            GuiRowText(27,15,80,0,"R{cksp{lung");
             GuiRowText(5,27,128,0,"wird durchgef{hrt");
             GuiRowText(25,40,85,0,"-->-->-->-->");
             GuiRowText(106,56,30,0,"   ");
@@ -1246,7 +1246,7 @@ static void UserMain3WinFun(void *param)
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
-                    GuiRowText(25,15,72,0,"R{cksp{lung");
+                    GuiRowText(25,15,80,0,"R{cksp{lung");
                     GuiRowText(18,27,105,0,"abgeschlossen");
                     GuiRowText(106,56,30,0,"OK");
                 }
@@ -2088,18 +2088,34 @@ static void UserMain6WinFun(void *param)
         {
             GuiRowText(20,15,100,0,"Deltapress is");
         }
-        tButton[0].x = 33;
         tButton[0].y = 23;
-        tButton[0].wide = 60;
         tButton[0].high = 15;
+        if(Setting_Language)
+        {
+            tButton[0].x = 25;
+            tButton[0].wide = 82;
+        }
+        else
+        {
+            tButton[0].x = 35;
+            tButton[0].wide = 60;
+        }
         tButton[0].name = Disabled;
         tButton[0].linesize = 0;
         tButton[0].flag = !Deltapress_Enable_Temp;/* 按下状态 */
         GuiButton(&tButton[0]);
 
-        tButton[1].x = 33;
+        if(Setting_Language)
+        {
+            tButton[1].x = 30;
+            tButton[1].wide = 70;
+        }
+        else
+        {
+            tButton[1].x = 35;
+            tButton[1].wide = 60;
+        }
         tButton[1].y = 35;
-        tButton[1].wide = 60;
         tButton[1].high = 15;
         tButton[1].name = Enabled;
         tButton[1].linesize = 0;
@@ -3474,7 +3490,9 @@ static void UserMain14WinFun(void *param)
                 case 6:
                     switch(NowButtonId)
                     {
-                        case 2:GuiWinAdd(&userMain21Win);break;//Password
+                        case 0:GuiClearScreen(0);GuiWinDeleteTop();break;//up data
+                        case 1:GuiClearScreen(0);GuiWinDeleteTop();break;//smart_link
+                        case 2:GuiWinAdd(&userMain23Win);break;//TDS Value
                     }
                     break;
                 case 7:
@@ -3973,8 +3991,8 @@ static void UserMain19WinFun(void *param)
         tButton[0].high = 15;
         if(Setting_Language)
         {
-            tButton[0].x = 25;
-            tButton[0].wide = 85;
+            tButton[0].x = 20;
+            tButton[0].wide = 90;
             tButton[0].name = Factory_Reset;
         }
         else
