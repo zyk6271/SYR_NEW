@@ -39,14 +39,7 @@ void Delta_press_work(void *parameter)
             {
                 Counter_Deltapress++;
                 Flash_Set(10,Counter_Deltapress);
-                if(Setting_Deltapress)
-                {
-                    JumptoAutomatic();
-                }
-                else
-                {
-                    JumptoReminder();
-                }
+                JumptoAutomatic();
             }
         }
         rt_thread_mdelay(500);

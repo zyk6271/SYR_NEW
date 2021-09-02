@@ -557,9 +557,9 @@ void SetDetdush(void)
     Reminder = "Erinnerung";
     Automatic = "Automatik";
     Delta_Pressure = "Differenzdruck";
-    Delta1 = "Differenz";
-    Delta2 = "Differenz(M)";
-    Delta3 = "Differenz(A)";
+    Delta1 = "Differenzdruck";
+    Delta2 = "Differenzdr(M)";
+    Delta3 = "Differenzdruck";
     Info = "Info";
     Backwash_Now ="R{cksp{lung?";
     Exit="Zur{ck";
@@ -587,8 +587,8 @@ void SetDetdush(void)
     Update_FW="FW-Update";
     Smart_Link="Smart Link";
     TDS_MODE="Leitwert";
-    AUTO_RANGE="BereichIntervall";
-    TDS_CND="LeitwertAbgleich";
+    AUTO_RANGE="Intervall";
+    TDS_CND="Leitwert-Abgl.";
     Conductivity="Leitwert-Limit";
     Password="Passwort";
 }
@@ -726,7 +726,7 @@ void lcd_task_entry(void *parameter)
             LcdInit();
             GuiUpdateDisplayAll();
         }
-        rt_thread_mdelay(50);
+        rt_thread_mdelay(80);
     }
 }
 void LCD_Init(void)
@@ -794,16 +794,16 @@ static void UserMain1WinFun(void *param)
                 tButton[3].linesize = 70-!Deltapress_Enable*70;
                 if(Deltapress_Enable)
                 {
-                    if(Setting_Deltapress)
-                    {
+//                    if(Setting_Deltapress)
+//                    {
                         tButton[3].linesize = 100-!Deltapress_Enable*100;
                         tButton[3].name = Delta3;
-                    }
-                    else
-                    {
-                        tButton[3].linesize = 100-!Deltapress_Enable*100;
-                        tButton[3].name = Delta2;
-                    }
+//                    }
+//                    else
+//                    {
+//                        tButton[3].linesize = 100-!Deltapress_Enable*100;
+//                        tButton[3].name = Delta2;
+//                    }
                 }
                 else
                 {
@@ -911,16 +911,16 @@ static void UserMain1WinFun(void *param)
                 tButton[3].linesize = 70-!Deltapress_Enable*70;
                 if(Deltapress_Enable)
                 {
-                    if(Setting_Deltapress)
-                    {
+//                    if(Setting_Deltapress)
+//                    {
                         tButton[3].linesize = 100-!Deltapress_Enable*100;
                         tButton[3].name = Delta3;
-                    }
-                    else
-                    {
-                        tButton[3].linesize = 100-!Deltapress_Enable*100;
-                        tButton[3].name = Delta2;
-                    }
+//                    }
+//                    else
+//                    {
+//                        tButton[3].linesize = 100-!Deltapress_Enable*100;
+//                        tButton[3].name = Delta2;
+//                    }
                 }
                 else
                 {
@@ -2422,14 +2422,14 @@ static void UserMain9WinFun(void *param)
 
         if(Setting_Language)
         {
-            sprintf(ManualString,"Manuell:%06d",Counter_Manual);
-            tButton[0].x = 15;
+            sprintf(ManualString,"Manuell:%04d",Counter_Manual);
+            tButton[0].x = 20;
             tButton[0].wide = 105;
         }
         else
         {
-            sprintf(ManualString,"Manual:%06d",Counter_Manual);
-            tButton[0].x = 20;
+            sprintf(ManualString,"Manual:%04d",Counter_Manual);
+            tButton[0].x = 26;
             tButton[0].wide = 100;
         }
         tButton[0].y = 10;
@@ -2540,10 +2540,20 @@ static void UserMain10WinFun(void *param)
          FirstFlag[10] = 1;
          NowButtonId=1;
 
-         sprintf(AutomaticString,"Auto:%06d",Counter_Automatic);
-         tButton[0].x = 22;
+         if(Counter_Automatic>9999)Counter_Automatic=9999;
+         if(Setting_Language)
+         {
+             sprintf(AutomaticString,"Automatik:%04d",Counter_Automatic);
+             tButton[0].x = 12;
+             tButton[0].wide = 115;
+         }
+         else
+         {
+             sprintf(AutomaticString,"Automatic:%04d",Counter_Automatic);
+             tButton[0].x = 12;
+             tButton[0].wide = 115;
+         }
          tButton[0].y = 10;
-         tButton[0].wide = 105;
          tButton[0].high = 15;
          tButton[0].linesize = 0;
          tButton[0].name = AutomaticString;
@@ -2651,15 +2661,16 @@ static void UserMain11WinFun(void *param)
          FirstFlag[11] = 1;
          NowButtonId=1;
 
+         if(Counter_Deltapress>9999)Counter_Deltapress=9999;
          if(Setting_Language)
          {
-             sprintf(DeltaString,"Differenz:%05d",Counter_Deltapress);
-             tButton[0].x = 12;
+             sprintf(DeltaString,"Differenzdr:%04d",Counter_Deltapress);
+             tButton[0].x = 5;
          }
          else
          {
-             sprintf(DeltaString,"Delta:%06d",Counter_Deltapress);
-             tButton[0].x = 22;
+             sprintf(DeltaString,"Delta:%04d",Counter_Deltapress);
+             tButton[0].x = 28;
          }
          tButton[0].y = 10;
          tButton[0].wide = 128;
@@ -2769,10 +2780,20 @@ static void UserMain12WinFun(void *param)
          FirstFlag[12] = 1;
          NowButtonId=1;
 
-         sprintf(ErrorString,"Error:%06d",Counter_Error);
-         tButton[0].x = 22;
+         if(Counter_Error>9999)Counter_Error=9999;
+         if(Setting_Language)
+         {
+             sprintf(ErrorString,"St}rungen:%04d",Counter_Error);
+             tButton[0].x = 15;
+             tButton[0].wide = 128;
+         }
+         else
+         {
+             sprintf(ErrorString,"Error:%04d",Counter_Error);
+             tButton[0].x = 28;
+             tButton[0].wide = 128;
+         }
          tButton[0].y = 10;
-         tButton[0].wide = 128;
          tButton[0].high = 15;
          tButton[0].linesize = 0;
          tButton[0].name = ErrorString;
@@ -2904,7 +2925,7 @@ static void UserMain13WinFun(void *param)
         {
             tButton[1].x = 55;
             tButton[1].wide = 20;
-            tButton[1].name = "DC";
+            tButton[1].name = "OK";
         }
         else
         {
@@ -3474,7 +3495,7 @@ static void UserMain14WinFun(void *param)
                 case 4:
                     switch(NowButtonId)
                     {
-                        case 0:GuiWinAdd(&userMain15Win);break;//password
+                        case 0:GuiWinAdd(&userMain21Win);break;//password
                         case 1:GuiWinAdd(&userMain16Win);break;//Conductivity
                         case 2:GuiWinAdd(&userMain17Win);break;//Backwash Time
                     }
@@ -4211,7 +4232,7 @@ static void UserMain20WinFun(void *param)
         }
     }
 }
-uint8_t Tds_Password=3;
+uint8_t Tds_Password=6;
 uint8_t Tds_Password_Temp;
 uint8_t Tds_PasswordString[4];
 static void UserMain21WinFun(void *param)//password
