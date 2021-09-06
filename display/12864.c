@@ -223,6 +223,5 @@ void LcdInit(void)
 	WriteLcdCommand(0xa0);
 	WriteLcdCommand(0x40);
 	WriteLcdCommand(0xaf);
-	clear_screen();
 }
 MSH_CMD_EXPORT(LcdInit,LcdInit);
