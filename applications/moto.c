@@ -60,8 +60,10 @@ void Moto_Cycle(void)
             uint32_t Setting_Backwashtime_MileSecond=0;
             Setting_Backwashtime_MileSecond = Setting_Backwashtime*1000;
             rt_timer_control(Moto_Cycle_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
+            Setting_Backwashtime_MileSecond += 30*1000;
+            rt_timer_control(Moto_Detect_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
             LOG_D("Start Backwash with Timer %d\r\n",Setting_Backwashtime);
-            rt_timer_start(Moto_Cycle_Timer);
+            rt_timer_start(Moto_Detect_Timer);
             Moto_Forward();
             led_select(2);
         }
@@ -86,14 +88,20 @@ void Moto_Cycle_Timer_Callback(void *parameter)
         {
             LOG_D("Moto Start Back\r\n");
             rt_event_send(&Moto_Event, Event_Moto_Back);
-            rt_timer_start(Moto_Cycle_Timer);
+            rt_timer_start(Moto_Detect_Timer);
         }
-        else
+    }
+}
+void Moto_Detect_Timer_Callback(void *parameter)
+{
+    if(MotoWorkFlag==1)
+    {
+        if(rt_pin_read(MOTO_RIGHT)==1)
         {
             LOG_D("No Moto,Start to Free\r\n");
             rt_event_send(&Moto_Event, Event_Moto_Free);
-            ScreenTimerRefresh();
             MotoWorkFlag=0;
+            ScreenTimerRefresh();
             Jump_NOMOTO();
         }
     }
@@ -103,8 +111,8 @@ void Moto_Cycle_Timer_Callback(void *parameter)
         {
             LOG_D("Moto Cycle Done\r\n");
             rt_event_send(&Moto_Event, Event_Moto_Free);
-            ScreenTimerRefresh();
             MotoWorkFlag=0;
+            ScreenTimerRefresh();
             Jump_FINISH();
         }
         else
@@ -122,7 +130,7 @@ void MotoLeft_Callback(void *parameter)
     if(MotoWorkFlag==2)
     {
         MotoWorkFlag=0;
-        rt_timer_stop(Moto_Cycle_Timer);
+        rt_timer_stop(Moto_Detect_Timer);
         rt_event_send(&Moto_Event, Event_Moto_Free);
         if(TDS_WarnGet())
         {
@@ -156,6 +164,7 @@ void MotoRight_Callback(void *parameter)
 {
     Moto_Stop();
     TDS_Work();
+    rt_timer_start(Moto_Cycle_Timer);
 }
 void Moto_Pin_Init(void)
 {
@@ -269,6 +278,7 @@ void Moto_Init(void)
     Moto_Pin_Init();
     rt_event_init(&Moto_Event, "Moto_Event", RT_IPC_FLAG_FIFO);
     Moto_Cycle_Timer = rt_timer_create("Moto_Cycle_Timer",Moto_Cycle_Timer_Callback,RT_NULL,15*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Moto_Detect_Timer = rt_timer_create("Moto_Detect_Timer",Moto_Detect_Timer_Callback,RT_NULL,30*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     Moto_t = rt_thread_create("Moto",Moto_Callback,RT_NULL,2048,10,10);
     if(Moto_t != RT_NULL)
     {

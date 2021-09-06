@@ -174,7 +174,7 @@ uint8_t Get_DC_Level(void)
     uint32_t value;
     value  = DC_Voltage;
     LOG_D("DC Value is %ld\r\n",value);
-    if(value>3000)return 1;
+    if(value>2800)return 1;
     else return 0;
 }
 uint32_t Get_Bat_Value(void)

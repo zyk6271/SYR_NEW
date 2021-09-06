@@ -79,5 +79,3 @@ void Led_GpioDeInit(void)
     rt_pin_mode(LED_B_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(LED_B_PIN, 1);
 }
-
-

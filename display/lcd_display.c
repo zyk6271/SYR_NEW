@@ -117,15 +117,15 @@ void GotValue(void)
     Counter_Error = Flash_Get(11);
     Setting_Deltapress = Flash_Get(12);
     Setting_Hardness = Flash_Get(13);
-    if(Setting_Hardness==0||Setting_Backwashtime>10000)
+    if(Setting_Hardness==0)
     {
-        Setting_Hardness = 100;
+        Setting_Hardness = 30;
         Flash_Set(13,Setting_Hardness);
     }
     Setting_Backwashtime = Flash_Get(14);
     if(Setting_Backwashtime==0||Setting_Backwashtime>120)
     {
-        Setting_Backwashtime = 30;
+        Setting_Backwashtime = 1;
         Flash_Set(14,Setting_Backwashtime);
     }
     Setting_Language = Flash_Get(15);
@@ -158,7 +158,7 @@ static rt_err_t K1_Status;
 static rt_err_t K2_Status;
 static rt_err_t K2_Long_Status;
 
-static uint8_t Jump_Flag=1;
+static uint8_t Jump_Flag=0;
 
 lkdButton tButton[20];
 lkdScroll tScroll[2];
@@ -644,36 +644,35 @@ void Jump_EXIT(void)
     rt_event_send(&lcd_jump_event, EXIT);
 }
 MSH_CMD_EXPORT(Jump_EXIT,Jump_EXIT);
-
 void JumptoReminder(void)
 {
-    LcdtoReminder();
     OpenLcdDisplay();
+    LcdtoReminder();
     ScreenTimerRefresh();
 }
 MSH_CMD_EXPORT(JumptoReminder,JumptoReminder);
 void JumptoAutomatic(void)
 {
+    OpenLcdDisplayNoBL();
     Counter_Automatic++;
     Flash_Set(9,Counter_Automatic);
     LcdtoBackwash();
-    OpenLcdDisplayNoBL();
 }
 MSH_CMD_EXPORT(JumptoAutomatic,JumptoAutomatic);
 void JumpToBatteryEmpty(void)
 {
+    //OpenLcdDisplay();
     GuiClearScreen(0);
     GuiWinAdd(&userMain26Win);
     memset(FirstFlag,0,30);
-    OpenLcdDisplay();
 }
 MSH_CMD_EXPORT(JumpToBatteryEmpty,JumpToBatteryEmpty);
 void JumpToBatteryNew(void)
 {
+    //OpenLcdDisplay();
     GuiClearScreen(0);
     GuiWinAdd(&userMain27Win);
     memset(FirstFlag,0,30);
-    OpenLcdDisplay();
 }
 MSH_CMD_EXPORT(JumpToBatteryNew,JumpToBatteryNew);
 void JumptoMainWin(void)
@@ -719,13 +718,23 @@ void lcd_task_entry(void *parameter)
     LOG_D("LCD Init Success\r\n");
     while(1)
     {
-        GuiWinDisplay();
         if(rt_sem_take(lcd_refresh_sem, 0)==RT_EOK)
         {
             LOG_I("Lcd Refresh From Lowpower\r\n");
             LcdInit();
+            if(Jump_Flag==0)
+            {
+                GuiClearScreen(0);
+                GuiWinInit();
+                memset(FirstFlag,0,30);
+                GuiWinAdd(&userMain1Win);
+                GuiWinDisplay();
+            }
+            rt_thread_mdelay(50);
             GuiUpdateDisplayAll();
         }
+        rt_thread_mdelay(80);
+        GuiWinDisplay();
         rt_thread_mdelay(80);
     }
 }
@@ -1289,6 +1298,7 @@ static void UserMain3WinFun(void *param)
         if(K2_Status==RT_EOK&&Jump_Flag==1)
         {
             FirstFlag[3]=0;
+            Jump_Flag=0;
             led_select(0);
             GuiClearScreen(0);
             GuiWinInit();
@@ -3699,7 +3709,14 @@ static void UserMain16WinFun(void *param)
             switch(NowButtonId)
             {
                 case 0:
-                    if(Set_Hardness_Temp>100)Set_Hardness_Temp-=10;
+                    if(Set_Hardness_Temp>30)
+                    {
+                        Set_Hardness_Temp-=10;
+                    }
+                    else if(Set_Hardness_Temp == 30)
+                    {
+                        Set_Hardness_Temp = 0;
+                    }
                     sprintf(HardnessString,"%04d uS/cm",Set_Hardness_Temp);
                     tButton[0].name = HardnessString;
                     GuiButton(&tButton[0]);
@@ -3726,7 +3743,14 @@ static void UserMain16WinFun(void *param)
             switch(NowButtonId)
             {
                 case 0:
-                    if(Set_Hardness_Temp<2500)Set_Hardness_Temp+=10;
+                    if(Set_Hardness_Temp<2500 && Set_Hardness_Temp!=0)
+                    {
+                        Set_Hardness_Temp+=10;
+                    }
+                    else if(Set_Hardness_Temp == 0)
+                    {
+                        Set_Hardness_Temp = 30;
+                    }
                     sprintf(HardnessString,"%04d uS/cm",Set_Hardness_Temp);
                     tButton[0].name = HardnessString;
                     GuiButton(&tButton[0]);
@@ -3863,7 +3887,7 @@ static void UserMain17WinFun(void *param)
             switch(NowButtonId)
             {
                 case 0:
-                    if(Set_Backwash_Temp>30)Set_Backwash_Temp-=1;
+                    if(Set_Backwash_Temp>1)Set_Backwash_Temp-=1;
                     if(Setting_Language)
                     {
                         sprintf(BackwashString,"Zeit: %03d Sek.",Set_Backwash_Temp);
@@ -4566,7 +4590,6 @@ static void UserMain26WinFun(void *param)
         tButton[0].flag = 1;/* 按下状态 */
         GuiButton(&tButton[0]);
         GuiUpdateDisplayAll();
-        rt_thread_mdelay(500);
     }
     else
     {
@@ -4609,7 +4632,6 @@ static void UserMain27WinFun(void *param)
         tButton[0].flag = 1;/* 按下状态 */
         GuiButton(&tButton[0]);
         GuiUpdateDisplayAll();
-        rt_thread_mdelay(500);
     }
     else
     {

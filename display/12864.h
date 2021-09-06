@@ -6,8 +6,11 @@
 #define LCD_EN_HIGH()       rt_pin_write(LCD_EN,1);
 #define LCD_EN_LOW()        rt_pin_write(LCD_EN,0);
 
-#define LCD_CS_HIGH() 	    rt_pin_write(LCD_CS,1);
-#define LCD_CS_LOW() 		rt_pin_write(LCD_CS,0);
+#define LCD_CS_HIGH()       rt_pin_write(LCD_NSS,1);
+#define LCD_CS_LOW()        rt_pin_write(LCD_NSS,0);
+
+#define LCD_RS_HIGH() 	    rt_pin_write(LCD_RS,1);
+#define LCD_RS_LOW() 		rt_pin_write(LCD_RS,0);
 
 #define LCD_RST_HIGH() 	    rt_pin_write(LCD_RST,1);
 #define LCD_RST_LOW()	 	rt_pin_write(LCD_RST,0);

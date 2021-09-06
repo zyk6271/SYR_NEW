@@ -29,15 +29,16 @@ int main(void)
 {
     Flash_Init();
     ADC_Init();
-    Button_Init();
+    //Button_Init();
     Led_Init();
     Moto_Init();
     TDS_Init();
+    Power_Init();
     LCD_Init();
     Low_Init();
     RTC_Init();
-    Power_Init();
     Delta_Init();
+    Button_Init();
     while (1)
     {
         rt_thread_mdelay(1000);

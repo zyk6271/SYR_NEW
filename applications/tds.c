@@ -125,13 +125,21 @@ void TDS_GpioDeInit(void)
 uint32_t TDS_Work(void)
 {
     uint32_t Data=0;
-    LOG_D("Read TDS Now\r\n");
-    char TdsRead[]={0x55,0x07,0x05,0x01,0x00,0x00,0x00,0x62};
-    Data = TDS_Value;
-    TDS_Value = 0;
-    data_parsing_id = 0;
-    rt_device_write(serial, 0, TdsRead, 8);
-    return Data;
+    extern uint32_t Setting_Hardness;
+    if(Setting_Hardness!=0)
+    {
+        LOG_D("Read TDS Now\r\n");
+        char TdsRead[]={0x55,0x07,0x05,0x01,0x00,0x00,0x00,0x62};
+        Data = TDS_Value;
+        TDS_Value = 0;
+        data_parsing_id = 0;
+        rt_device_write(serial, 0, TdsRead, 8);
+        return Data;
+    }
+    else {
+        LOG_D("TDS is OFF\r\n");
+        return 0;
+    }
 }
 uint32_t GetTDS(void)
 {

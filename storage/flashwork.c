@@ -51,6 +51,16 @@ const char *Key_list[] =
     "TDS_CND",                            //21
     "Auto_Range"                          //22
 };
+void Set_Default(void)
+{
+    Flash_Set(4,8);
+    Flash_Set(5,5);
+    Flash_Set(6,1);
+    Flash_Set(14,1);
+    Flash_Set(15,1);
+    Flash_Set(21,11);
+    Flash_Set(22,0);
+}
 int Flash_Init(void)
 {
     rt_err_t status;
@@ -106,10 +116,12 @@ void Flash_Set(uint8_t id,uint32_t value)
     ef_set_env(Temp_KeyBuf,Temp_ValueBuf);
     LOG_D("Writing %s to key %s \r\n", Temp_ValueBuf,Temp_KeyBuf);
 }
+
 void Flash_Clear(void)
 {
     ef_env_set_default();
     LOG_D("Flash Set Clear");
+    Set_Default();
     rt_thread_mdelay(2000);
     rt_hw_cpu_reset();
 }
