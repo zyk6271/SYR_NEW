@@ -8,7 +8,6 @@ uint8_t x_to_page[GUIXMAX][8]={0};
 
 void GuiUpdateDisplayAll(void)
 {
-    WriteLcdCommand(0xE0);
     uint32_t x,y;
     for(y = 0; y <8; y++)
     {
@@ -18,7 +17,6 @@ void GuiUpdateDisplayAll(void)
             WriteLcdData(x_to_page[x][y]);
         }
     }
-    WriteLcdCommand(0xEE);
 }
 MSH_CMD_EXPORT(GuiUpdateDisplayAll,GuiUpdateDisplayAll);
 void GuiRangeUpdateDisplay(lkdCoord beginx, lkdCoord beginy,lkdCoord endx, lkdCoord endy)

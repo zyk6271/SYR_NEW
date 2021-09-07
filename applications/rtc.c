@@ -54,6 +54,13 @@ void RTC_Clear(void)
     RTC_Reminder_Time = 0;
     RTC_Automatic_Time = 0;
 }
+void RTC_Reset(void)
+{
+    RTC_Reminder_Time = 0;
+    RTC_Automatic_Time = 0;
+    Flash_Set(16,0);
+    Flash_Set(17,0);
+}
 uint8_t RTC_Event_Flag = 0;
 void RTC_Check_Callback(void *parameter)
 {

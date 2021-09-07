@@ -29,7 +29,6 @@ void Delta_press_work(void *parameter)
 {
     while(1)
     {
-        //Delta_Status = rt_sem_take(Delta_Sem, 0);
         if(Delta_Status)
         {
             rt_thread_mdelay(500);
@@ -39,7 +38,7 @@ void Delta_press_work(void *parameter)
             {
                 Counter_Deltapress++;
                 Flash_Set(10,Counter_Deltapress);
-                JumptoAutomatic();
+                JumptoDelta();
             }
         }
         rt_thread_mdelay(500);

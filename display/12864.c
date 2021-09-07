@@ -15,13 +15,13 @@ void delay(int i)
 {
     int j,k;
     for(j=0;j<i;j++);
-    for(k=0;k<300;k++);
+    for(k=0;k<110;k++);
 }
 void delay_us(int i)
 {
     int j,k;
     for(j=0;j<i;j++);
-    for(k=0;k<30;k++);
+    for(k=0;k<1;k++);
 }
 static void LcdGpioConfig(void)
 {
@@ -37,14 +37,11 @@ static void LcdGpioConfig(void)
 }
 void WriteLcdCommand(uint8_t cmd)
 {
-    LCD_RS_LOW();
-    delay_us(10);
     LCD_CS_LOW();
-    delay_us(10);
+    LCD_RS_LOW();
     for(uint8_t i=0;i<8;i++)
     {
         LCD_CLK_LOW();
-        delay_us(1);
         if(cmd&0x80)
         {
             LCD_SDA_HIGH();
@@ -53,24 +50,19 @@ void WriteLcdCommand(uint8_t cmd)
         {
             LCD_SDA_LOW();
         }
-        delay_us(1);
         LCD_CLK_HIGH();
-        delay_us(1);
+        delay_us(2);
         cmd<<=1;
     }
-    delay_us(10);
     LCD_CS_HIGH();
 }
 void WriteLcdData(uint8_t data)
 {
-    LCD_RS_HIGH();
-    delay_us(10);
     LCD_CS_LOW();
-    delay_us(10);
+    LCD_RS_HIGH();
     for(uint8_t i=0;i<8;i++)
     {
         LCD_CLK_LOW();
-        delay_us(1);
         if(data&0x80)
         {
             LCD_SDA_HIGH();
@@ -79,12 +71,10 @@ void WriteLcdData(uint8_t data)
         {
             LCD_SDA_LOW();
         }
-        delay_us(1);
         LCD_CLK_HIGH();
-        delay_us(1);
+        delay_us(2);
         data<<=1;
     }
-    delay_us(10);
     LCD_CS_HIGH();
 }
 void SetLcdRow(uint8_t row)
@@ -114,7 +104,6 @@ void lcd_y_address(char page)
 void clear_screen(void)
 {
     uint8_t i,j;
-    WriteLcdCommand(0xE0);
     for(i=0;i<8;i++)
     {
         lcd_address(i,0);
@@ -123,7 +112,6 @@ void clear_screen(void)
             WriteLcdData(0);
         }
     }
-    WriteLcdCommand(0xEE);
 }
 MSH_CMD_EXPORT(clear_screen,clear_screen);
 void full_screen(void)
@@ -201,20 +189,20 @@ void LcdRst(void)
 void LcdInit(void)
 {
 	LcdGpioConfig();
-	LCD_EN_HIGH();
-    rt_thread_mdelay(1);
 	LCD_RST_LOW();
-    delay(10);
+    delay(100);
+    LCD_EN_HIGH();
+    rt_thread_mdelay(10);
 	LCD_RST_HIGH();
-	delay(10);
+	delay(100);
 	WriteLcdCommand(0xe2);
-	delay_us(10);
+	delay(5);
 	WriteLcdCommand(0x2c);
-	delay_us(10);
+	delay(5);
 	WriteLcdCommand(0x2e);
-	delay_us(10);
+	delay(5);
 	WriteLcdCommand(0x2f);
-	delay_us(10);
+	delay(5);
 	WriteLcdCommand(0x24);
 	WriteLcdCommand(0x81);
 	WriteLcdCommand(0x15);
@@ -224,4 +212,16 @@ void LcdInit(void)
 	WriteLcdCommand(0x40);
 	WriteLcdCommand(0xaf);
 }
-MSH_CMD_EXPORT(LcdInit,LcdInit);
+void LcdRefresh(void)
+{
+    WriteLcdCommand(0x2f);
+    rt_thread_mdelay(5);
+    WriteLcdCommand(0x24);
+    WriteLcdCommand(0x81);
+    WriteLcdCommand(0x13);
+    WriteLcdCommand(0xa2);
+    WriteLcdCommand(0xc8);
+    WriteLcdCommand(0xa0);
+    WriteLcdCommand(0x40);
+    WriteLcdCommand(0xaf);
+}

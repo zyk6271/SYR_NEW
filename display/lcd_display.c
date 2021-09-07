@@ -325,7 +325,7 @@ lkdWin userMain16Win = {
     .y = 0,
     .wide = 128,
     .hight = 64,
-    .title = "Conductivity Set",
+    .title = "TDS limit",
     .param = NULL,
     .WindowFunction = UserMain16WinFun,
         .firstflag = 0,
@@ -355,7 +355,7 @@ lkdWin userMain19Win = {
     .y = 0,
     .wide = 128,
     .hight = 64,
-    .title = "Factory",
+    .title = "Factory Reset",
     .param = NULL,
     .WindowFunction = UserMain19WinFun,
         .firstflag = 0,
@@ -445,7 +445,7 @@ lkdWin userMain28Win = {
     .y = 0,
     .wide = 128,
     .hight = 64,
-    .title = "Auto Range",
+    .title = "Time Range",
     .param = NULL,
     .WindowFunction = UserMain28WinFun,
     .firstflag = 0,
@@ -474,17 +474,17 @@ void SetEnglish(void)
     userMain13Win.title = "Battery";
     userMain14Win.title = "Settings";
     userMain15Win.title = "Delta Set";
-    userMain16Win.title = "Conductivity Set";
+    userMain16Win.title = "TDS limit";
     userMain17Win.title = "Backwash Time";
     userMain18Win.title = "Version";
-    userMain19Win.title = "Factory";
+    userMain19Win.title = "Factory Reset";
     userMain20Win.title = "Language";
     userMain21Win.title = "Password";
     userMain23Win.title = "Cuttent Value";
     userMain25Win.title = "Reminder";
     userMain26Win.title = "Battery Empty";
     userMain27Win.title = "Not New Battery";
-    userMain28Win.title = "Auto Range";
+    userMain28Win.title = "Time Range";
     userMain29Win.title = "TDS_CND Value";
 
     Manual="Manual";
@@ -516,14 +516,14 @@ void SetEnglish(void)
 
     Backwash_Time="Backwash Time";
     Version="Version";
-    Factory="Factory";
+    Factory="Factory Reset";
     Language="Language";
     Update_FW="Update FW";
     Smart_Link="Smart Link";
     TDS_MODE="TDS Value";
-    AUTO_RANGE="Automatic Range";
+    AUTO_RANGE="Time Range";
     TDS_CND="TDS CND";
-    Conductivity="Conductivity";
+    Conductivity="TDS limit";
     Password="Password";
 }
 void SetDetdush(void)
@@ -658,23 +658,27 @@ void JumptoAutomatic(void)
     Flash_Set(9,Counter_Automatic);
     LcdtoBackwash();
 }
-MSH_CMD_EXPORT(JumptoAutomatic,JumptoAutomatic);
+void JumptoDelta(void)
+{
+    OpenLcdDisplayNoBL();
+    LcdtoBackwash();
+}
+uint8_t JumpToBatteryEmpty_Flag=0;
 void JumpToBatteryEmpty(void)
 {
-    //OpenLcdDisplay();
-    GuiClearScreen(0);
-    GuiWinAdd(&userMain26Win);
-    memset(FirstFlag,0,30);
+    if(FirstFlag[1])
+    {
+        JumpToBatteryEmpty_Flag = 1;
+    }
 }
-MSH_CMD_EXPORT(JumpToBatteryEmpty,JumpToBatteryEmpty);
+uint8_t JumpToBatteryNew_Flag=0;
 void JumpToBatteryNew(void)
 {
-    //OpenLcdDisplay();
-    GuiClearScreen(0);
-    GuiWinAdd(&userMain27Win);
-    memset(FirstFlag,0,30);
+    if(FirstFlag[1])
+    {
+        JumpToBatteryNew_Flag = 0;
+    }
 }
-MSH_CMD_EXPORT(JumpToBatteryNew,JumpToBatteryNew);
 void JumptoMainWin(void)
 {
     GuiClearScreen(0);
@@ -686,7 +690,7 @@ void LcdtoReminder(void)
 {
     if(FirstFlag[25]==0)
     {
-        memset(FirstFlag,0,27);
+        memset(FirstFlag,0,30);
         GuiClearScreen(0);
         GuiWinAdd(&userMain25Win);
     }
@@ -699,7 +703,7 @@ void LcdtoBackwash(void)
 {
     if(FirstFlag[3]==0)
     {
-        memset(FirstFlag,0,27);
+        memset(FirstFlag,0,30);
         GuiClearScreen(0);
         GuiWinAdd(&userMain3Win);
     }
@@ -721,21 +725,39 @@ void lcd_task_entry(void *parameter)
         if(rt_sem_take(lcd_refresh_sem, 0)==RT_EOK)
         {
             LOG_I("Lcd Refresh From Lowpower\r\n");
-            LcdInit();
+            OpenLcdDisplayNoBL();
+            rt_thread_mdelay(10);
             if(Jump_Flag==0)
             {
+                LcdRefresh();
                 GuiClearScreen(0);
                 GuiWinInit();
                 memset(FirstFlag,0,30);
                 GuiWinAdd(&userMain1Win);
-                GuiWinDisplay();
             }
-            rt_thread_mdelay(50);
-            GuiUpdateDisplayAll();
+            else
+            {
+                LcdRefresh();
+                GuiUpdateDisplayAll();
+            }
         }
-        rt_thread_mdelay(80);
+        if(JumpToBatteryEmpty_Flag)
+        {
+            JumpToBatteryEmpty_Flag = 0;
+            GuiClearScreen(0);
+            memset(FirstFlag,0,30);
+            GuiWinAdd(&userMain26Win);
+        }
+        if(JumpToBatteryNew_Flag)
+        {
+            JumpToBatteryNew_Flag = 0;
+            GuiClearScreen(0);
+            memset(FirstFlag,0,30);
+            GuiWinAdd(&userMain27Win);
+        }
+        LcdRefresh();
         GuiWinDisplay();
-        rt_thread_mdelay(80);
+        rt_thread_mdelay(50);
     }
 }
 void LCD_Init(void)
@@ -1109,20 +1131,20 @@ static void UserMain2WinFun(void *param)
                 {
                     switch(NowButtonId)
                     {
-                          case 0:
-                              NowButtonId=1;
-                              tButton[0].flag=0;
-                              tButton[1].flag=1;
-                              GuiButton(&tButton[0]);
-                              GuiButton(&tButton[1]);
-                              break;
-                          case 1:
-                              NowButtonId=0;
-                              tButton[0].flag=1;
-                              tButton[1].flag=0;
-                              GuiButton(&tButton[0]);
-                              GuiButton(&tButton[1]);
-                              break;
+                      case 0:
+                          NowButtonId=1;
+                          tButton[0].flag=0;
+                          tButton[1].flag=1;
+                          GuiButton(&tButton[0]);
+                          GuiButton(&tButton[1]);
+                          break;
+                      case 1:
+                          NowButtonId=0;
+                          tButton[0].flag=1;
+                          tButton[1].flag=0;
+                          GuiButton(&tButton[0]);
+                          GuiButton(&tButton[1]);
+                          break;
                     }
                     GuiUpdateDisplayAll();
                 }
@@ -1154,6 +1176,7 @@ static void UserMain2WinFun(void *param)
                         FirstFlag[2]=0;
                         Counter_Manual++;
                         Flash_Set(8,Counter_Manual);
+                        RTC_Reset();
                         Moto_Cycle();
                         GuiClearScreen(0);
                         GuiWinAdd(&userMain3Win);
@@ -1419,6 +1442,20 @@ static void UserMain4WinFun(void *param)
             {
                 case 0:
                     if(Reminder_Week_Temp--<=0)Reminder_Week_Temp=51;
+                    if(Reminder_Week_Temp==0&&Reminder_Day_Temp==0)
+                    {
+                        Reminder_Day_Temp=1;
+                        if(Setting_Language)
+                         {
+                             sprintf(ReminderDaystring,"Tage:%02d",Reminder_Day_Temp);
+                         }
+                         else
+                         {
+                             sprintf(ReminderDaystring,"Days:%02d",Reminder_Day_Temp);
+                         }
+                        tButton[2].name = ReminderDaystring;
+                        GuiButton(&tButton[2]);
+                    }
                     if(Setting_Language)
                     {
                         sprintf(ReminderWeekstring,"Wochen:%02d",Reminder_Week_Temp);
@@ -1436,6 +1473,10 @@ static void UserMain4WinFun(void *param)
                     break;
                 case 1:
                     if(Reminder_Day_Temp--<=0)Reminder_Day_Temp=6;
+                    if(Reminder_Week_Temp==0&&Reminder_Day_Temp==0)
+                    {
+                        Reminder_Day_Temp=1;
+                    }
                     if(Setting_Language)
                     {
                         sprintf(ReminderDaystring,"Tage:%02d",Reminder_Day_Temp);
@@ -1509,6 +1550,20 @@ static void UserMain4WinFun(void *param)
             {
                 case 0:
                     if(Reminder_Week_Temp++>=51)Reminder_Week_Temp=0;
+                    if(Reminder_Week_Temp==0&&Reminder_Day_Temp==0)
+                    {
+                        Reminder_Day_Temp=1;
+                        if(Setting_Language)
+                         {
+                             sprintf(ReminderDaystring,"Tage:%02d",Reminder_Day_Temp);
+                         }
+                         else
+                         {
+                             sprintf(ReminderDaystring,"Days:%02d",Reminder_Day_Temp);
+                         }
+                        tButton[2].name = ReminderDaystring;
+                        GuiButton(&tButton[2]);
+                    }
                     if(Setting_Language)
                     {
                         sprintf(ReminderWeekstring,"Wochen:%02d",Reminder_Week_Temp);
@@ -1526,6 +1581,10 @@ static void UserMain4WinFun(void *param)
                     break;
                 case 1:
                     if(Reminder_Day_Temp++>=6)Reminder_Day_Temp=0;
+                    if(Reminder_Week_Temp==0&&Reminder_Day_Temp==0)
+                    {
+                        Reminder_Day_Temp=1;
+                    }
                     if(Setting_Language)
                      {
                          sprintf(ReminderDaystring,"Tage:%02d",Reminder_Day_Temp);
@@ -1665,10 +1724,6 @@ static void UserMain4WinFun(void *param)
                     NowSetting=0;
                     RTC_Reminder_Time=0;
                     LOG_D("RTC_Reminder_Time Change to 0\r\n");
-                    if(Reminder_Week_Temp==0&&Reminder_Day_Temp==0)
-                    {
-                        Reminder_Day_Temp=1;
-                    }
                     Reminder_Week=Reminder_Week_Temp;
                     Flash_Set(1,Reminder_Week_Temp);
                     Reminder_Day=Reminder_Day_Temp;
@@ -1725,7 +1780,6 @@ static void UserMain5WinFun(void *param)
         tButton[1].linesize = 0;
         tButton[1].flag = 1;/* 按下状态 */
         GuiButton(&tButton[1]);
-
 
         if(Setting_Language)
         {
@@ -1809,6 +1863,20 @@ static void UserMain5WinFun(void *param)
                             Automatic_Week_Temp=9;
                         }
                     }
+                    if(Automatic_Week_Temp==0&&Automatic_Day_Temp==0)
+                    {
+                        Automatic_Day_Temp=1;
+                        if(Setting_Language)
+                        {
+                            sprintf(AutomaticDaystring,"Tage:%02d",Automatic_Day_Temp);
+                        }
+                        else
+                        {
+                            sprintf(AutomaticDaystring,"Days:%02d",Automatic_Day_Temp);
+                        }
+                        tButton[2].name = AutomaticDaystring;
+                        GuiButton(&tButton[2]);
+                    }
                     if(Setting_Language)
                     {
                         sprintf(AutomaticWeekstring,"Wochen:%02d",Automatic_Week_Temp);
@@ -1826,6 +1894,7 @@ static void UserMain5WinFun(void *param)
                     break;
                 case 1:
                     if(Automatic_Day_Temp--<=0)Automatic_Day_Temp=6;
+                    if(Automatic_Week_Temp==0&&Automatic_Day_Temp==0)Automatic_Day_Temp=1;
                     if(Setting_Language)
                     {
                         sprintf(AutomaticDaystring,"Tage:%02d",Automatic_Day_Temp);
@@ -1912,6 +1981,20 @@ static void UserMain5WinFun(void *param)
                             Automatic_Week_Temp=0;
                         }
                     }
+                    if(Automatic_Week_Temp==0&&Automatic_Day_Temp==0)
+                    {
+                        Automatic_Day_Temp=1;
+                        if(Setting_Language)
+                        {
+                            sprintf(AutomaticDaystring,"Tage:%02d",Automatic_Day_Temp);
+                        }
+                        else
+                        {
+                            sprintf(AutomaticDaystring,"Days:%02d",Automatic_Day_Temp);
+                        }
+                        tButton[2].name = AutomaticDaystring;
+                        GuiButton(&tButton[2]);
+                    }
                     if(Setting_Language)
                     {
                         sprintf(AutomaticWeekstring,"Wochen:%02d",Automatic_Week_Temp);
@@ -1929,6 +2012,7 @@ static void UserMain5WinFun(void *param)
                     break;
                 case 1:
                     if(Automatic_Day_Temp++>=6)Automatic_Day_Temp=0;
+                    if(Automatic_Week_Temp==0&&Automatic_Day_Temp==0)Automatic_Day_Temp=1;
                     if(Setting_Language)
                      {
                          sprintf(AutomaticDaystring,"Tage:%02d",Automatic_Day_Temp);
@@ -2066,7 +2150,6 @@ static void UserMain5WinFun(void *param)
                 case 2:
                     FirstFlag[5]=0;
                     NowSetting=0;
-                    if(Automatic_Week_Temp==0&&Automatic_Day_Temp==0)Automatic_Day_Temp=1;
                     Automatic_Week=Automatic_Week_Temp;
                     Flash_Set(4,Automatic_Week_Temp);
                     Automatic_Day=Automatic_Day_Temp;
@@ -2425,10 +2508,12 @@ static void UserMain8WinFun(void *param)
 uint8_t ManualString[20];
 static void UserMain9WinFun(void *param)
 {
+    static uint8_t confirmed;
     if(FirstFlag[9] == 0)
     {
         FirstFlag[9] = 1;
         NowButtonId=1;
+        confirmed=0;
 
         if(Setting_Language)
         {
@@ -2526,29 +2611,63 @@ static void UserMain9WinFun(void *param)
         }
         if(K2_Status==RT_EOK)
         {
-            GuiClearScreen(0);
             switch(NowButtonId)
             {
                 case 1:
-                    Counter_Manual=0;
-                    Flash_Set(8,0);
-                    GuiWinDeleteTop();
+                    if(confirmed==0)
+                    {
+                        GuiClearScreen(0);
+                        GuiWinDraw(&userMain9Win);
+
+                        confirmed = 1;
+                        tButton[1].x = 30;
+                        tButton[1].y = 22;
+                        tButton[1].wide = 68;
+                        tButton[1].high = 15;
+                        tButton[1].name = "Confirmed";
+                        tButton[1].linesize = 0;
+                        tButton[1].flag = 1;/* 按下状态 */
+                        GuiButton(&tButton[1]);
+
+                        tButton[2].x = 38;
+                        tButton[2].y = 34;
+                        tButton[2].wide = 45;
+                        tButton[2].high = 15;
+                        tButton[2].name = "Return";
+                        tButton[2].linesize = 0;
+                        tButton[2].flag = 0;/* 按下状态 */
+                        GuiButton(&tButton[2]);
+
+                        GuiButton(&tButton[3]);
+                        GuiUpdateDisplayAll();
+                    }
+                    else
+                    {
+                        GuiClearScreen(0);
+                        Counter_Manual=0;
+                        Flash_Set(8,0);
+                        GuiWinDeleteTop();
+                        FirstFlag[9]=0;
+                    }
                     break;
                 case 2:
+                    GuiClearScreen(0);
                     GuiWinDeleteTop();
+                    FirstFlag[9]=0;
                     break;
             }
-            FirstFlag[9]=0;
         }
     }
 }
 uint8_t AutomaticString[15];
 static void UserMain10WinFun(void *param)
 {
+    static uint8_t confirmed;
     if(FirstFlag[10] == 0)
      {
          FirstFlag[10] = 1;
          NowButtonId=1;
+         confirmed = 0;
 
          if(Counter_Automatic>9999)Counter_Automatic=9999;
          if(Setting_Language)
@@ -2646,30 +2765,63 @@ static void UserMain10WinFun(void *param)
          }
          if(K2_Status==RT_EOK)
          {
-             GuiClearScreen(0);
              switch(NowButtonId)
              {
                  case 1:
-                     Counter_Automatic=0;
-                     Flash_Set(9,0);
-                     GuiWinDeleteTop();
+                     if(confirmed==0)
+                     {
+                         GuiClearScreen(0);
+                         GuiWinDraw(&userMain10Win);
+
+                         confirmed = 1;
+                         tButton[1].x = 30;
+                         tButton[1].y = 22;
+                         tButton[1].wide = 68;
+                         tButton[1].high = 15;
+                         tButton[1].name = "Confirmed";
+                         tButton[1].linesize = 0;
+                         tButton[1].flag = 1;/* 按下状态 */
+                         GuiButton(&tButton[1]);
+
+                         tButton[2].x = 38;
+                         tButton[2].y = 34;
+                         tButton[2].wide = 45;
+                         tButton[2].high = 15;
+                         tButton[2].name = "Return";
+                         tButton[2].linesize = 0;
+                         tButton[2].flag = 0;/* 按下状态 */
+                         GuiButton(&tButton[2]);
+
+                         GuiButton(&tButton[3]);
+                         GuiUpdateDisplayAll();
+                     }
+                     else
+                     {
+                         GuiClearScreen(0);
+                         Counter_Automatic=0;
+                         Flash_Set(9,0);
+                         GuiWinDeleteTop();
+                         FirstFlag[10]=0;
+                     }
                      break;
                  case 2:
+                     GuiClearScreen(0);
                      GuiWinDeleteTop();
+                     FirstFlag[10]=0;
                      break;
              }
-             FirstFlag[10]=0;
          }
      }
 }
 uint8_t DeltaString[15];
 static void UserMain11WinFun(void *param)
 {
-
+    static uint8_t confirmed;
     if(FirstFlag[11] == 0)
      {
          FirstFlag[11] = 1;
          NowButtonId=1;
+         confirmed = 0;
 
          if(Counter_Deltapress>9999)Counter_Deltapress=9999;
          if(Setting_Language)
@@ -2763,95 +2915,127 @@ static void UserMain11WinFun(void *param)
              GuiButton(&tButton[NowButtonId]);
              GuiUpdateDisplayAll();
          }
-         if(K2_Status==RT_EOK)
-         {
-             GuiClearScreen(0);
-             switch(NowButtonId)
-             {
-                 case 1:
-                     Counter_Deltapress=0;
-                     Flash_Set(10,0);
-                     GuiWinDeleteTop();
-                     break;
-                 case 2:
-                     GuiWinDeleteTop();
-                     break;
-             }
-             FirstFlag[11]=0;
-         }
+        if(K2_Status==RT_EOK)
+        {
+          switch(NowButtonId)
+          {
+              case 1:
+                  if(confirmed==0)
+                  {
+                      GuiClearScreen(0);
+                      GuiWinDraw(&userMain11Win);
+                      confirmed = 1;
+                      tButton[1].x = 30;
+                      tButton[1].y = 22;
+                      tButton[1].wide = 68;
+                      tButton[1].high = 15;
+                      tButton[1].name = "Confirmed";
+                      tButton[1].linesize = 0;
+                      tButton[1].flag = 1;/* 按下状态 */
+                      GuiButton(&tButton[1]);
+
+                      tButton[2].x = 38;
+                      tButton[2].y = 34;
+                      tButton[2].wide = 45;
+                      tButton[2].high = 15;
+                      tButton[2].name = "Return";
+                      tButton[2].linesize = 0;
+                      tButton[2].flag = 0;/* 按下状态 */
+                      GuiButton(&tButton[2]);
+
+                      GuiButton(&tButton[3]);
+                      GuiUpdateDisplayAll();
+                  }
+                  else
+                  {
+                      GuiClearScreen(0);
+                      Counter_Deltapress=0;
+                      Flash_Set(10,0);
+                      GuiWinDeleteTop();
+                      FirstFlag[11]=0;
+                  }
+                  break;
+              case 2:
+                  GuiClearScreen(0);
+                  GuiWinDeleteTop();
+                  FirstFlag[11]=0;
+                  break;
+          }
+        }
      }
 }
 uint8_t ErrorString[15];
 static void UserMain12WinFun(void *param)
 {
-
+    static uint8_t confirmed;
     if(FirstFlag[12] == 0)
-     {
-         FirstFlag[12] = 1;
-         NowButtonId=1;
+    {
+        FirstFlag[12] = 1;
+        NowButtonId=1;
+        confirmed = 0;
 
-         if(Counter_Error>9999)Counter_Error=9999;
-         if(Setting_Language)
-         {
-             sprintf(ErrorString,"St}rungen:%04d",Counter_Error);
-             tButton[0].x = 15;
-             tButton[0].wide = 128;
-         }
-         else
-         {
-             sprintf(ErrorString,"Error:%04d",Counter_Error);
-             tButton[0].x = 28;
-             tButton[0].wide = 128;
-         }
-         tButton[0].y = 10;
-         tButton[0].high = 15;
-         tButton[0].linesize = 0;
-         tButton[0].name = ErrorString;
-         tButton[0].flag = 0;/* 按下状态 */
-         GuiButton(&tButton[0]);
+        if(Counter_Error>9999)Counter_Error=9999;
+        if(Setting_Language)
+        {
+         sprintf(ErrorString,"St}rungen:%04d",Counter_Error);
+         tButton[0].x = 15;
+         tButton[0].wide = 128;
+        }
+        else
+        {
+         sprintf(ErrorString,"Error:%04d",Counter_Error);
+         tButton[0].x = 28;
+         tButton[0].wide = 128;
+        }
+        tButton[0].y = 10;
+        tButton[0].high = 15;
+        tButton[0].linesize = 0;
+        tButton[0].name = ErrorString;
+        tButton[0].flag = 0;/* 按下状态 */
+        GuiButton(&tButton[0]);
 
-         if(Setting_Language)
-         {
-             tButton[1].x = 15;
-             tButton[1].wide = 95;
-         }
-         else
-         {
-             tButton[1].x = 40;
-             tButton[1].wide = 50;
-         }
-         tButton[1].y = 22;
-         tButton[1].high = 15;
-         tButton[1].name = Reset;
-         tButton[1].linesize = 0;
-         tButton[1].flag = 1;/* 按下状态 */
-         GuiButton(&tButton[1]);
+        if(Setting_Language)
+        {
+         tButton[1].x = 15;
+         tButton[1].wide = 95;
+        }
+        else
+        {
+         tButton[1].x = 40;
+         tButton[1].wide = 50;
+        }
+        tButton[1].y = 22;
+        tButton[1].high = 15;
+        tButton[1].name = Reset;
+        tButton[1].linesize = 0;
+        tButton[1].flag = 1;/* 按下状态 */
+        GuiButton(&tButton[1]);
 
-         if(Setting_Language)
-         {
-             tButton[2].x = 40;
-         }
-         else
-         {
-             tButton[2].x = 45;
-         }
-         tButton[2].y = 34;
-         tButton[2].wide = 45;
-         tButton[2].high = 15;
-         tButton[2].name = Exit;
-         tButton[2].linesize = 0;
-         tButton[2].flag = 0;/* 按下状态 */
-         GuiButton(&tButton[2]);
+        if(Setting_Language)
+        {
+         tButton[2].x = 40;
+        }
+        else
+        {
+         tButton[2].x = 45;
+        }
+        tButton[2].y = 34;
+        tButton[2].wide = 45;
+        tButton[2].high = 15;
+        tButton[2].name = Exit;
+        tButton[2].linesize = 0;
+        tButton[2].flag = 0;/* 按下状态 */
+        GuiButton(&tButton[2]);
 
-         tButton[3].x = 0;
-         tButton[3].y = 50;
-         tButton[3].wide = 128;
-         tButton[3].high = 15;
-         tButton[3].name = SingleSelect;
-         tButton[3].linesize = 0;
-         tButton[3].flag = 1;/* 按下状态 */
-         GuiButton(&tButton[3]);
-         GuiUpdateDisplayAll();
+        tButton[3].x = 0;
+        tButton[3].y = 50;
+        tButton[3].wide = 128;
+        tButton[3].high = 15;
+        tButton[3].name = SingleSelect;
+        tButton[3].linesize = 0;
+        tButton[3].flag = 1;/* 按下状态 */
+        GuiButton(&tButton[3]);
+        GuiUpdateDisplayAll();
      }
      else
      {
@@ -2885,19 +3069,50 @@ static void UserMain12WinFun(void *param)
          }
          if(K2_Status==RT_EOK)
          {
-             GuiClearScreen(0);
-             switch(NowButtonId)
-             {
-                 case 1:
-                     Counter_Error=0;
-                     Flash_Set(11,0);
-                     GuiWinDeleteTop();
-                     break;
-                 case 2:
-                     GuiWinDeleteTop();
-                     break;
-             }
-             FirstFlag[12]=0;
+           switch(NowButtonId)
+           {
+               case 1:
+                   if(confirmed==0)
+                   {
+                       GuiClearScreen(0);
+                       GuiWinDraw(&userMain12Win);
+                       confirmed = 1;
+                       tButton[1].x = 30;
+                       tButton[1].y = 22;
+                       tButton[1].wide = 68;
+                       tButton[1].high = 15;
+                       tButton[1].name = "Confirmed";
+                       tButton[1].linesize = 0;
+                       tButton[1].flag = 1;/* 按下状态 */
+                       GuiButton(&tButton[1]);
+
+                       tButton[2].x = 38;
+                       tButton[2].y = 34;
+                       tButton[2].wide = 45;
+                       tButton[2].high = 15;
+                       tButton[2].name = "Return";
+                       tButton[2].linesize = 0;
+                       tButton[2].flag = 0;/* 按下状态 */
+                       GuiButton(&tButton[2]);
+
+                       GuiButton(&tButton[3]);
+                       GuiUpdateDisplayAll();
+                   }
+                   else
+                   {
+                       GuiClearScreen(0);
+                       Counter_Error=0;
+                       Flash_Set(11,0);
+                       GuiWinDeleteTop();
+                       FirstFlag[12]=0;
+                   }
+                   break;
+               case 2:
+                   GuiClearScreen(0);
+                   GuiWinDeleteTop();
+                   FirstFlag[12]=0;
+                   break;
+               }
          }
      }
 }
@@ -3453,14 +3668,14 @@ static void UserMain14WinFun(void *param)
                     break;
                 default:
                     tButton[NowButtonId].flag=0;
-                     GuiButton(&tButton[NowButtonId]);
-                     NowButtonId++;
-                     tButton[NowButtonId].flag=1;
-                     GuiButton(&tButton[NowButtonId]);
-                     if(Win14PageID>3){tScroll[0].lump = 3*(Win14PageID-4)+NowButtonId;}/* 进度快控制 */
-                     else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
-                     GuiVScroll(&tScroll[0]);/* 垂直进度条 */
-                     break;
+                    GuiButton(&tButton[NowButtonId]);
+                    NowButtonId++;
+                    tButton[NowButtonId].flag=1;
+                    GuiButton(&tButton[NowButtonId]);
+                    if(Win14PageID>3){tScroll[0].lump = 3*(Win14PageID-4)+NowButtonId;}/* 进度快控制 */
+                    else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
+                    GuiVScroll(&tScroll[0]);/* 垂直进度条 */
+                    break;
             }
             GuiUpdateDisplayAll();
         }
@@ -4027,10 +4242,12 @@ static void UserMain18WinFun(void *param)
 }
 static void UserMain19WinFun(void *param)
 {
+    static uint8_t confirmed;
     if(FirstFlag[19] == 0)
     {
         FirstFlag[19] = 1;
         NowButtonId = 0;
+        confirmed = 0;
 
         tButton[0].y = 18;
         tButton[0].high = 15;
@@ -4130,18 +4347,52 @@ static void UserMain19WinFun(void *param)
         }
         if(K2_Status==RT_EOK)
         {
-            switch(NowButtonId)
-            {
-                case 0:
-                    Flash_Clear();
-                    break;
-                case 1:
-                    GuiClearScreen(0);
-                    GuiWinDeleteTop();
-                    FirstFlag[19]=0;
-                    break;
-            }
-        }
+           switch(NowButtonId)
+           {
+               case 0:
+                   if(confirmed==0)
+                   {
+                       GuiClearScreen(0);
+                       GuiWinDraw(&userMain19Win);
+
+                       confirmed = 1;
+                       tButton[0].x = 30;
+                       tButton[0].y = 22;
+                       tButton[0].wide = 68;
+                       tButton[0].high = 15;
+                       tButton[0].name = "Confirmed";
+                       tButton[0].linesize = 0;
+                       tButton[0].flag = 1;/* 按下状态 */
+                       GuiButton(&tButton[0]);
+
+                       tButton[1].x = 38;
+                       tButton[1].y = 34;
+                       tButton[1].wide = 45;
+                       tButton[1].high = 15;
+                       tButton[1].name = "Return";
+                       tButton[1].linesize = 0;
+                       tButton[1].flag = 0;/* 按下状态 */
+                       GuiButton(&tButton[1]);
+
+                       GuiButton(&tButton[2]);
+
+                       GuiUpdateDisplayAll();
+                   }
+                   else
+                   {
+                       Flash_Clear();
+                       GuiClearScreen(0);
+                       GuiWinDeleteTop();
+                       FirstFlag[19]=0;
+                   }
+                   break;
+               case 1:
+                   GuiClearScreen(0);
+                   GuiWinDeleteTop();
+                   FirstFlag[19]=0;
+                   break;
+           }
+       }
     }
 }
 uint8_t Set_Language_Temp;

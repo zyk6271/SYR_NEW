@@ -12,6 +12,7 @@ struct rt_event lcd_jump_event;
 void LCD_Init(void);
 void JumptoReminder(void);
 void JumptoAutomatic(void);
+void JumptoDelta(void);
 void JumpToBatteryEmpty(void);
 void JumpToBatteryNew(void);
 void Jump_TDS(void);

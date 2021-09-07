@@ -53,9 +53,11 @@ const char *Key_list[] =
 };
 void Set_Default(void)
 {
+    Flash_Set(2,1);
     Flash_Set(4,8);
     Flash_Set(5,5);
     Flash_Set(6,1);
+    Flash_Set(13,280);
     Flash_Set(14,1);
     Flash_Set(15,1);
     Flash_Set(21,11);

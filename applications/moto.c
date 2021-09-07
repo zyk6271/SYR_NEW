@@ -76,7 +76,6 @@ void Moto_Cycle(void)
     {
         LOG_D("Moto Not Work(Low Voltage)");
         Jump_EXIT();
-        JumpToBatteryEmpty();
     }
 }
 MSH_CMD_EXPORT(Moto_Cycle,Moto_Cycle);
@@ -103,6 +102,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             MotoWorkFlag=0;
             ScreenTimerRefresh();
             Jump_NOMOTO();
+            Moto_Reset();
         }
     }
     else if(MotoWorkFlag == 2)
@@ -122,6 +122,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             rt_event_send(&Moto_Event, Event_Moto_Free);
             ScreenTimerRefresh();
             Jump_NOMOTO();
+            Moto_Reset();
         }
     }
 }
@@ -259,6 +260,7 @@ void Moto_Callback(void *parameter)
                 ScreenTimerRefresh();
                 LOG_I("Moto is Overload\r\n");
                 Jump_STALLING();
+                Moto_Reset();
             }
         }
         rt_thread_mdelay(10);
@@ -270,6 +272,8 @@ void Moto_Reset(void)
     {
         rt_pin_write(MOTO_IN1,1);
         rt_pin_write(MOTO_IN2,0);
+        rt_thread_mdelay(500);
+        Enable_MotoINT();
         LOG_I("Moto is Back\r\n");
     }
 }
@@ -278,7 +282,7 @@ void Moto_Init(void)
     Moto_Pin_Init();
     rt_event_init(&Moto_Event, "Moto_Event", RT_IPC_FLAG_FIFO);
     Moto_Cycle_Timer = rt_timer_create("Moto_Cycle_Timer",Moto_Cycle_Timer_Callback,RT_NULL,15*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
-    Moto_Detect_Timer = rt_timer_create("Moto_Detect_Timer",Moto_Detect_Timer_Callback,RT_NULL,30*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Moto_Detect_Timer = rt_timer_create("Moto_Detect_Timer",Moto_Detect_Timer_Callback,RT_NULL,60*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     Moto_t = rt_thread_create("Moto",Moto_Callback,RT_NULL,2048,10,10);
     if(Moto_t != RT_NULL)
     {
