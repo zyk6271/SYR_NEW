@@ -29,7 +29,6 @@ int main(void)
 {
     Flash_Init();
     ADC_Init();
-    //Button_Init();
     Led_Init();
     Moto_Init();
     TDS_Init();

@@ -49,7 +49,7 @@ const char *Key_list[] =
     "BAT_State",                          //19
     "TDS_State",                          //20
     "TDS_CND",                            //21
-    "Auto_Range"                          //22
+    "Time_Range"                          //22
 };
 void Set_Default(void)
 {

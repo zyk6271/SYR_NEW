@@ -22,6 +22,7 @@ rt_thread_t Moto_t = RT_NULL;
 struct rt_event Moto_Event;
 rt_timer_t Moto_Cycle_Timer = RT_NULL;
 rt_timer_t Moto_Detect_Timer = RT_NULL;
+rt_timer_t Moto_TDS_Timer = RT_NULL;
 
 uint8_t MotoWorkFlag;
 extern uint16_t Setting_Backwashtime;
@@ -91,6 +92,10 @@ void Moto_Cycle_Timer_Callback(void *parameter)
         }
     }
 }
+void Moto_TDS_Timer_Callback(void *parameter)
+{
+    Jump_TDS();
+}
 void Moto_Detect_Timer_Callback(void *parameter)
 {
     if(MotoWorkFlag==1)
@@ -128,6 +133,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
 }
 void MotoLeft_Callback(void *parameter)
 {
+    Moto_Stop();
     if(MotoWorkFlag==2)
     {
         MotoWorkFlag=0;
@@ -146,7 +152,7 @@ void MotoLeft_Callback(void *parameter)
             if(GetTDS() > Setting_Hardness*TDS_CND_Value*0.1)
             {
                 TDS_WarnSet(1);
-                Jump_TDS();
+                rt_timer_start(Moto_TDS_Timer);
             }
             else
             {
@@ -261,6 +267,7 @@ void Moto_Callback(void *parameter)
                 LOG_I("Moto is Overload\r\n");
                 Jump_STALLING();
                 Moto_Reset();
+                break;
             }
         }
         rt_thread_mdelay(10);
@@ -283,6 +290,7 @@ void Moto_Init(void)
     rt_event_init(&Moto_Event, "Moto_Event", RT_IPC_FLAG_FIFO);
     Moto_Cycle_Timer = rt_timer_create("Moto_Cycle_Timer",Moto_Cycle_Timer_Callback,RT_NULL,15*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     Moto_Detect_Timer = rt_timer_create("Moto_Detect_Timer",Moto_Detect_Timer_Callback,RT_NULL,60*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Moto_TDS_Timer = rt_timer_create("Moto_TDS_Timer",Moto_TDS_Timer_Callback,RT_NULL,100,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     Moto_t = rt_thread_create("Moto",Moto_Callback,RT_NULL,2048,10,10);
     if(Moto_t != RT_NULL)
     {

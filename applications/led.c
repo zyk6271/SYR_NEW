@@ -44,7 +44,7 @@ void led_select(uint8_t type)//red:1,green:2,blue:3
     case 1:
         agile_led_stop(LED_G);
         agile_led_stop(LED_B);
-        agile_led_set_light_mode(LED_R, "100,0", -1);
+        agile_led_set_light_mode(LED_R, "500,500", -1);
         agile_led_start(LED_R);
         break;
     case 2:

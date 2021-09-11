@@ -6,6 +6,7 @@
 #define Event_Moto_Forward          (1 << 1)
 #define Event_Moto_Back             (1 << 2)
 #define Event_Moto_Over             (1 << 3)
+#define Event_Moto_TDS              (1 << 4)
 
 void Moto_Init(void);
 void Moto_Cycle(void);
