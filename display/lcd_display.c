@@ -104,50 +104,6 @@ uint16_t Setting_Backwashtime=0;
 uint8_t Setting_Language=0;
 uint8_t TDS_CND_Value = 10;
 
-void GotValue(void)
-{
-    Reminder_Week = Flash_Get(1);
-    Reminder_Day = Flash_Get(2);
-    Reminder_Enable = Flash_Get(3);
-    Automatic_Week = Flash_Get(4);
-    Automatic_Day = Flash_Get(5);
-    Automatic_Enable = Flash_Get(6);
-    Deltapress_Enable = Flash_Get(7);
-    Counter_Manual = Flash_Get(8);
-    Counter_Automatic = Flash_Get(9);
-    Counter_Deltapress = Flash_Get(10);
-    Counter_Error = Flash_Get(11);
-    Setting_Deltapress = Flash_Get(12);
-    Setting_Hardness = Flash_Get(13);
-    if(Setting_Hardness==0)
-    {
-        Setting_Hardness = 30;
-        Flash_Set(13,Setting_Hardness);
-    }
-    Setting_Backwashtime = Flash_Get(14);
-    if(Setting_Backwashtime==0||Setting_Backwashtime>120)
-    {
-        Setting_Backwashtime = 1;
-        Flash_Set(14,Setting_Backwashtime);
-    }
-    Setting_Language = Flash_Get(15);
-    TDS_CND_Value = Flash_Get(21);
-    if(TDS_CND_Value==0)
-    {
-        TDS_CND_Value = 10;
-        Flash_Set(21,TDS_CND_Value);
-    }
-    Time_Range = Flash_Get(22);
-    if(Setting_Language)
-    {
-        SetDetdush();
-    }
-    else
-    {
-        SetEnglish();
-    }
-}
-
 extern rt_sem_t K0_Sem;
 extern rt_sem_t K1_Sem;
 extern rt_sem_t K2_Sem;
@@ -608,7 +564,49 @@ void SetDetdush(void)
     Conductivity="Leitwert-Limit";
     Password="Passwort";
 }
-
+void GotValue(void)
+{
+    Reminder_Week = Flash_Get(1);
+    Reminder_Day = Flash_Get(2);
+    Reminder_Enable = Flash_Get(3);
+    Automatic_Week = Flash_Get(4);
+    Automatic_Day = Flash_Get(5);
+    Automatic_Enable = Flash_Get(6);
+    Deltapress_Enable = Flash_Get(7);
+    Counter_Manual = Flash_Get(8);
+    Counter_Automatic = Flash_Get(9);
+    Counter_Deltapress = Flash_Get(10);
+    Counter_Error = Flash_Get(11);
+    Setting_Deltapress = Flash_Get(12);
+    Setting_Hardness = Flash_Get(13);
+    if(Setting_Hardness==0)
+    {
+        Setting_Hardness = 30;
+        Flash_Set(13,Setting_Hardness);
+    }
+    Setting_Backwashtime = Flash_Get(14);
+    if(Setting_Backwashtime==0||Setting_Backwashtime>120)
+    {
+        Setting_Backwashtime = 1;
+        Flash_Set(14,Setting_Backwashtime);
+    }
+    Setting_Language = Flash_Get(15);
+    TDS_CND_Value = Flash_Get(21);
+    if(TDS_CND_Value==0)
+    {
+        TDS_CND_Value = 10;
+        Flash_Set(21,TDS_CND_Value);
+    }
+    Time_Range = Flash_Get(22);
+    if(Setting_Language)
+    {
+        SetDetdush();
+    }
+    else
+    {
+        SetEnglish();
+    }
+}
 void Lcd_Event_Init(void)
 {
     rt_event_init(&lcd_jump_event, "lcd_jump_event", RT_IPC_FLAG_FIFO);
@@ -630,7 +628,33 @@ void userAppPortRun(void)
     /* 窗口调度管理 */
     GuiWinDisplay();
 }
-
+void LcdtoReminder(void)
+{
+    if(FirstFlag[25]==0)
+    {
+        memset(FirstFlag,0,40);
+        GuiClearScreen(0);
+        GuiWinAdd(&userMain25Win);
+    }
+    else
+    {
+        FirstFlag[25]=0;
+    }
+}
+void LcdtoBackwash(void)
+{
+    if(FirstFlag[3]==0)
+    {
+        memset(FirstFlag,0,40);
+        GuiClearScreen(0);
+        GuiWinAdd(&userMain3Win);
+    }
+    else
+    {
+        FirstFlag[3]=0;
+    }
+    Moto_Cycle();
+}
 void Jump_TDS(void)
 {
     Counter_Error++;
@@ -703,33 +727,7 @@ void JumptoMainWin(void)
     GuiWinAdd(&userMain1Win);
     memset(FirstFlag,0,40);
 }
-void LcdtoReminder(void)
-{
-    if(FirstFlag[25]==0)
-    {
-        memset(FirstFlag,0,40);
-        GuiClearScreen(0);
-        GuiWinAdd(&userMain25Win);
-    }
-    else
-    {
-        FirstFlag[25]=0;
-    }
-}
-void LcdtoBackwash(void)
-{
-    if(FirstFlag[3]==0)
-    {
-        memset(FirstFlag,0,40);
-        GuiClearScreen(0);
-        GuiWinAdd(&userMain3Win);
-    }
-    else
-    {
-        FirstFlag[3]=0;
-    }
-    Moto_Cycle();
-}
+
 void lcd_task_entry(void *parameter)
 {
     GotValue();
