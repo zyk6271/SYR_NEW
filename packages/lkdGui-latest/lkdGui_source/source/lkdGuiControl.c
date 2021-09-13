@@ -3,14 +3,14 @@
   * @author  guoweilkd
   * @version V1.1.0
   * @date    2018/06/03
-  * @brief  lkdGui¿Ø¼þ¿â
+  * @brief  lkdGuiï¿½Ø¼ï¿½ï¿½ï¿½
   */
 
 #include "lkdGui.h"
 
 /**
-  *@brief ´¹Ö±¹ö¶¯Ìõ
-  *@param  pScroll ¹ö¶¯Ìõ
+  *@brief ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  *@param  pScroll ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   *@retval None
   */
 void GuiVScroll(lkdScroll *pScroll)
@@ -27,8 +27,8 @@ void GuiVScroll(lkdScroll *pScroll)
 		return;
 	}
 	GuiFillRect(pScroll->x,pScroll->y,pScroll->x + 9,pScroll->y + pScroll->hight - 1,forecolor);
-	if(pScroll->max > 5){//½ø¶ÈÌõ»¬¶¯¿éÑ¡Ôñ
-		lumpsize = pScroll->hight/7;
+	if(pScroll->max > 5){//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
+		lumpsize = pScroll->hight/8;
 	}
 	else if(pScroll->max < 1){
 		return;
@@ -47,7 +47,7 @@ void GuiVScroll(lkdScroll *pScroll)
 	{
 		GuiRPointLine(pScroll->x+i,1+pScroll->y + i%2,pScroll->y + pScroll->hight - 2,2,backcolor);
 	}
-	/* »­½ø¶È¿é */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½È¿ï¿½ */
 	eachSize = ((float)(pScroll->hight))/pScroll->max;
 	lumpAdd = pScroll->y + (uint8_t)(pScroll->lump * eachSize);
 	if(pScroll->lump < pScroll->max - 1){
@@ -61,8 +61,8 @@ void GuiVScroll(lkdScroll *pScroll)
 }
 
 /**
-  *@brief Ë®Æ½¹ö¶¯Ìõ
-  *@param  pScroll ¹ö¶¯Ìõ
+  *@brief Ë®Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  *@param  pScroll ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   *@retval None
   */
 void GuiHScroll(lkdScroll *pScroll)
@@ -79,7 +79,7 @@ void GuiHScroll(lkdScroll *pScroll)
 		return;
 	}
 	GuiFillRect(pScroll->x,pScroll->y,pScroll->x + pScroll->hight - 1,pScroll->y + 3,forecolor);
-	if(pScroll->max >= 5){//½ø¶ÈÌõ»¬¶¯¿éÑ¡Ôñ
+	if(pScroll->max >= 5){//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
 		lumpsize = pScroll->hight/7;
 	}
 	else if(pScroll->max < 1){
@@ -98,7 +98,7 @@ void GuiHScroll(lkdScroll *pScroll)
 
 	GuiHPointLine(pScroll->x+1,pScroll->y + 1,pScroll->x + pScroll->hight - 2,2,backcolor);
 	GuiHPointLine(pScroll->x + 2,pScroll->y + 2,pScroll->x + pScroll->hight-2,2,backcolor);
-	/* »­½ø¶È¿é */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½È¿ï¿½ */
 	eachSize = ((float)(pScroll->hight))/pScroll->max;
 	lumpAdd = pScroll->x + (uint8_t)(pScroll->lump * eachSize);
 	if(pScroll->lump < pScroll->max - 1){
@@ -111,8 +111,8 @@ void GuiHScroll(lkdScroll *pScroll)
 }
 
 /**
-  *@brief °´¼ü
-  *@param  pButton °´¼üÐÅÏ¢
+  *@brief ï¿½ï¿½ï¿½ï¿½
+  *@param  pButton ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
   *@retval None
   */
 void GuiButton(lkdButton *pButton)
@@ -129,7 +129,7 @@ void GuiButton(lkdButton *pButton)
 	if(pButton->wide < 6 || pButton->high < 6 || pButton->high - pFont->dhigh - 3 < 0){
 		return;
 	}
-//	if(pButton->flag == BUTTON_UP){//·ÇÑ¡ÖÐ
+//	if(pButton->flag == BUTTON_UP){//ï¿½ï¿½Ñ¡ï¿½ï¿½
 //		GuiFillRect(pButton->x,pButton->y,endx,endy, backcolor);
 //		GuiRect(pButton->x,pButton->y,endx - 1,endy - 1, forecolor);
 //		lkdCoord ty;
@@ -138,7 +138,7 @@ void GuiButton(lkdButton *pButton)
 //		GuiRLine(endx,pButton->y + 1,endy,forecolor);
 //		GuiHLine(pButton->x + 1,endy,endx,forecolor);
 //	}
-		if(pButton->flag == BUTTON_UP){//·ÇÑ¡ÖÐ
+		if(pButton->flag == BUTTON_UP){//ï¿½ï¿½Ñ¡ï¿½ï¿½
 			GuiFillRect(pButton->x,pButton->y+2,endx,endy-2, backcolor);
 			GuiRangeUpdateDisplay(pButton->x,pButton->y,endx,endy);
 			if(pButton->linesize>0)GuiRowTextWithLine(pButton->x + 4,pButton->y+4,pButton->wide - 3,pButton->linesize,FONT_LEFT,pButton->name);
@@ -162,8 +162,8 @@ void GuiButton(lkdButton *pButton)
 }
 
 /**
-  *@brief ½ø¶ÈÌõ
-  *@param  pProg ½ø¶ÈÌõÐÅÏ¢
+  *@brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  *@param  pProg ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
   *@retval None
   */
 void GuiProGress(lkdProgress *pProg)

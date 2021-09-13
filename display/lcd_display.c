@@ -44,6 +44,7 @@ char *Conductivity = RT_NULL;
 char *Password = RT_NULL;
 char *Backwash_Now = RT_NULL;
 char *Exit = RT_NULL;
+char *Remain = RT_NULL;
 char *Weeks = RT_NULL;
 char *Days = RT_NULL;
 char *Disabled = RT_NULL;
@@ -83,6 +84,7 @@ static void UserMain26WinFun(void *param);
 static void UserMain27WinFun(void *param);
 static void UserMain28WinFun(void *param);
 static void UserMain29WinFun(void *param);
+static void UserMain30WinFun(void *param);
 
 uint8_t Reminder_Week=0;
 uint8_t Reminder_Day=0;
@@ -165,7 +167,7 @@ lkdScroll tScroll[2];
 
 char NowButtonId=0;
 char NowSetting=0;
-char FirstFlag[30]={0};
+char FirstFlag[40]={0};
 extern uint8_t LCD_Flag;
 extern void defaultFontInit(void);
 
@@ -460,6 +462,16 @@ lkdWin userMain29Win = {
     .WindowFunction = UserMain29WinFun,
         .firstflag = 0,
 };
+lkdWin userMain30Win = {
+    .x = 0,
+    .y = 0,
+    .wide = 128,
+    .hight = 64,
+    .title = "Remain",
+    .param = NULL,
+    .WindowFunction = UserMain30WinFun,
+        .firstflag = 0,
+};
 void SetEnglish(void)
 {
     userMain2Win.title = "Manual";
@@ -486,6 +498,7 @@ void SetEnglish(void)
     userMain27Win.title = "Not New Battery";
     userMain28Win.title = "Time Range";
     userMain29Win.title = "TDS_CND Value";
+    userMain30Win.title = "Remain";
 
     Manual="Manual";
     Reminder="Reminder";
@@ -506,6 +519,7 @@ void SetEnglish(void)
     Factory_Reset = "Reset";
     Weeks09 = "(0-9) Weeks";
     Weeks052 = "(0-52) Weeks";
+    Remain = "Remain";
 
     Back="Back             ";
     SingleYes="              Yes";
@@ -548,10 +562,11 @@ void SetDetdush(void)
     userMain21Win.title = "Passwort";
     userMain23Win.title = "Leitwert";
     userMain25Win.title = "Erinnerung";
-    userMain26Win.title = "Batteriezustand";
-    userMain27Win.title = "Batteriezustand";
+    userMain26Win.title = "Batterien leer";
+    userMain27Win.title = "Batterien leer";
     userMain28Win.title = "BereichIntervall";
     userMain29Win.title = "LeitwertAbgleich";
+    userMain30Win.title = "Restzeit";
 
     Manual = "Manuell";
     Reminder = "Erinnerung";
@@ -572,12 +587,13 @@ void SetDetdush(void)
     Factory_Reset = "Reset jetzt?";
     Weeks09 = "(0-9) Wochen";
     Weeks052 = "(0-52) Wochen";
+    Remain = "Restzeit";
 
     Back="Back             ";
     SingleYes="              Yes";
     SingleSelect="                 ";
     SingleRightBack="             Back";
-    LowSelect="<BAT LOW>        ";
+    LowSelect="<Batterien leer> ";
     YesOrNo="No            Yes";
 
     Backwash_Time="R{cksp{ldauer";
@@ -685,13 +701,13 @@ void JumptoMainWin(void)
     GuiClearScreen(0);
     GuiWinInit();
     GuiWinAdd(&userMain1Win);
-    memset(FirstFlag,0,30);
+    memset(FirstFlag,0,40);
 }
 void LcdtoReminder(void)
 {
     if(FirstFlag[25]==0)
     {
-        memset(FirstFlag,0,30);
+        memset(FirstFlag,0,40);
         GuiClearScreen(0);
         GuiWinAdd(&userMain25Win);
     }
@@ -704,7 +720,7 @@ void LcdtoBackwash(void)
 {
     if(FirstFlag[3]==0)
     {
-        memset(FirstFlag,0,30);
+        memset(FirstFlag,0,40);
         GuiClearScreen(0);
         GuiWinAdd(&userMain3Win);
     }
@@ -733,7 +749,7 @@ void lcd_task_entry(void *parameter)
                 LcdRefresh();
                 GuiClearScreen(0);
                 GuiWinInit();
-                memset(FirstFlag,0,30);
+                memset(FirstFlag,0,40);
                 GuiWinAdd(&userMain1Win);
             }
             else
@@ -746,14 +762,14 @@ void lcd_task_entry(void *parameter)
         {
             JumpToBatteryEmpty_Flag = 0;
             GuiClearScreen(0);
-            memset(FirstFlag,0,30);
+            memset(FirstFlag,0,40);
             GuiWinAdd(&userMain26Win);
         }
         if(JumpToBatteryNew_Flag)
         {
             JumpToBatteryNew_Flag = 0;
             GuiClearScreen(0);
-            memset(FirstFlag,0,30);
+            memset(FirstFlag,0,40);
             GuiWinAdd(&userMain27Win);
         }
         LcdRefresh();
@@ -2669,7 +2685,7 @@ static void UserMain9WinFun(void *param)
                         tButton[2].high = 15;
                         if(Setting_Language)
                         {
-                            tButton[2].name = " Nein";
+                            tButton[2].name = "Zur{ck";
                         }
                         else
                         {
@@ -2837,7 +2853,7 @@ static void UserMain10WinFun(void *param)
                          tButton[2].high = 15;
                          if(Setting_Language)
                          {
-                             tButton[2].name = " Nein";
+                             tButton[2].name = "Zur{ck";
                          }
                          else
                          {
@@ -3002,7 +3018,7 @@ static void UserMain11WinFun(void *param)
                       tButton[2].high = 15;
                       if(Setting_Language)
                       {
-                          tButton[2].name = " Nein";
+                          tButton[2].name = "Zur{ck";
                       }
                       else
                       {
@@ -3168,7 +3184,7 @@ static void UserMain12WinFun(void *param)
                        tButton[2].high = 15;
                        if(Setting_Language)
                        {
-                           tButton[2].name = " Nein";
+                           tButton[2].name = "Zur{ck";
                        }
                        else
                        {
@@ -3301,7 +3317,7 @@ static void UserMain14WinFun(void *param)
      case 0:
          NowButtonId=0;
 
-         tScroll[0].max = 13;
+         tScroll[0].max = 16;
          tScroll[0].x = 119;
          tScroll[0].y = 13;
          tScroll[0].hight = 38;
@@ -3349,7 +3365,7 @@ static void UserMain14WinFun(void *param)
      case 1:
          NowButtonId=0;
 
-         tScroll[0].max = 13;
+         tScroll[0].max = 16;
          tScroll[0].x = 119;
          tScroll[0].y = 13;
          tScroll[0].hight = 38;
@@ -3398,7 +3414,7 @@ static void UserMain14WinFun(void *param)
      case 2:
          NowButtonId=0;
 
-         tScroll[0].max = 13;
+         tScroll[0].max = 16;
          tScroll[0].x = 119;
          tScroll[0].y = 13;
          tScroll[0].hight = 38;
@@ -3446,7 +3462,7 @@ static void UserMain14WinFun(void *param)
      case 3:
         NowButtonId=0;
 
-        tScroll[0].max = 13;
+        tScroll[0].max = 16;
         tScroll[0].x = 119;
         tScroll[0].y = 13;
         tScroll[0].hight = 38;
@@ -3475,7 +3491,7 @@ static void UserMain14WinFun(void *param)
         tButton[2].y = 37;
         tButton[2].wide =117;
         tButton[2].high = 15;
-        tButton[2].name = Exit;
+        tButton[2].name = Remain;
         tButton[2].linesize = 0;
         tButton[2].flag = 0;/* 抬起状态 */
         GuiButton(&tButton[2]);
@@ -3492,9 +3508,57 @@ static void UserMain14WinFun(void *param)
         FirstFlag[14] = 1;
         break;
      case 4:
+         NowButtonId=0;
+
+         tScroll[0].max = 16;
+         tScroll[0].x = 119;
+         tScroll[0].y = 13;
+         tScroll[0].hight = 38;
+         tScroll[0].lump = 12;/* 进度快控制 */
+         GuiVScroll(&tScroll[0]);/* 垂直进度条 */
+
+         tButton[0].x = 0;
+         tButton[0].y = 11;
+         tButton[0].wide = 117;
+         tButton[0].high = 15;
+         tButton[0].name = Exit;
+         tButton[0].linesize = 0;
+         tButton[0].flag = 1;/* 抬起状态 */
+         GuiButton(&tButton[0]);
+
+         tButton[1].x = 0;
+         tButton[1].y = 24;
+         tButton[1].wide = 117;
+         tButton[1].high = 15;
+         tButton[1].name ="";
+         tButton[1].linesize = 0;
+         tButton[1].flag = 0;/* 抬起状态 */
+         GuiButton(&tButton[1]);
+
+         tButton[2].x = 0;
+         tButton[2].y = 37;
+         tButton[2].wide =117;
+         tButton[2].high = 15;
+         tButton[2].name = "";
+         tButton[2].linesize = 0;
+         tButton[2].flag = 0;/* 抬起状态 */
+         GuiButton(&tButton[2]);
+
+         tButton[3].x = 0;
+         tButton[3].y = 50;
+         tButton[3].wide = 128;
+         tButton[3].high = 15;
+         tButton[3].name = SingleSelect;
+         tButton[3].linesize = 0;
+         tButton[3].flag = 1;/* 按下状态 */
+         GuiButton(&tButton[3]);
+
+         FirstFlag[14] = 1;
+         break;
+     case 5:
          NowButtonId=2;
 
-         tScroll[0].max =11;
+         tScroll[0].max = 16;
          tScroll[0].x = 119;
          tScroll[0].y = 13;
          tScroll[0].hight = 38;
@@ -3539,10 +3603,10 @@ static void UserMain14WinFun(void *param)
 
          FirstFlag[14] = 1;
          break;
-     case 5:
+     case 6:
          NowButtonId=2;
 
-         tScroll[0].max = 13;
+         tScroll[0].max = 16;
          tScroll[0].x = 119;
          tScroll[0].y = 13;
          tScroll[0].hight = 38;
@@ -3588,10 +3652,10 @@ static void UserMain14WinFun(void *param)
 
          FirstFlag[14] = 1;
          break;
-     case 6:
+     case 7:
          NowButtonId=2;
 
-         tScroll[0].max = 13;
+         tScroll[0].max = 16;
          tScroll[0].x = 119;
          tScroll[0].y = 13;
          tScroll[0].hight = 38;
@@ -3636,10 +3700,10 @@ static void UserMain14WinFun(void *param)
          FirstFlag[14] = 1;
          break;
 
-     case 7:
+     case 8:
         NowButtonId=2;
 
-        tScroll[0].max = 13;
+        tScroll[0].max = 16;
         tScroll[0].x = 119;
         tScroll[0].y = 13;
         tScroll[0].hight = 38;
@@ -3668,7 +3732,7 @@ static void UserMain14WinFun(void *param)
         tButton[2].y = 37;
         tButton[2].wide = 117;
         tButton[2].high = 15;
-        tButton[2].name = Exit;
+        tButton[2].name = Remain;
         tButton[2].linesize = 0;
         tButton[2].flag = 1;/* 抬起状态 */
         GuiButton(&tButton[2]);
@@ -3684,6 +3748,54 @@ static void UserMain14WinFun(void *param)
 
         FirstFlag[14] = 1;
         break;
+     case 9:
+         NowButtonId=0;
+
+         tScroll[0].max = 16;
+         tScroll[0].x = 119;
+         tScroll[0].y = 13;
+         tScroll[0].hight = 38;
+         tScroll[0].lump = 14;/* 进度快控制 */
+         GuiVScroll(&tScroll[0]);/* 垂直进度条 */
+
+         tButton[0].x = 0;
+         tButton[0].y = 11;
+         tButton[0].wide = 117;
+         tButton[0].high = 15;
+         tButton[0].name = Exit;
+         tButton[0].linesize = 0;
+         tButton[0].flag = 1;/* 抬起状态 */
+         GuiButton(&tButton[0]);
+
+         tButton[1].x = 0;
+         tButton[1].y = 24;
+         tButton[1].wide = 117;
+         tButton[1].high = 15;
+         tButton[1].name ="";
+         tButton[1].linesize = 0;
+         tButton[1].flag = 0;/* 抬起状态 */
+         GuiButton(&tButton[1]);
+
+         tButton[2].x = 0;
+         tButton[2].y = 37;
+         tButton[2].wide =117;
+         tButton[2].high = 15;
+         tButton[2].name = "";
+         tButton[2].linesize = 0;
+         tButton[2].flag = 0;/* 抬起状态 */
+         GuiButton(&tButton[2]);
+
+         tButton[3].x = 0;
+         tButton[3].y = 50;
+         tButton[3].wide = 128;
+         tButton[3].high = 15;
+         tButton[3].name = SingleSelect;
+         tButton[3].linesize = 0;
+         tButton[3].flag = 1;/* 按下状态 */
+         GuiButton(&tButton[3]);
+
+         FirstFlag[14] = 1;
+         break;
      }
      GuiUpdateDisplayAll();
     }
@@ -3704,15 +3816,17 @@ static void UserMain14WinFun(void *param)
             case 0:
                 switch(Win14PageID)
                 {
-                    case 0:Win14PageID = 7;break;
-                    case 1:Win14PageID = 4;break;
-                    case 2:Win14PageID = 5;break;
-                    case 3:Win14PageID = 6;break;
+                    case 0:Win14PageID = 9;break;
+                    case 1:Win14PageID = 5;break;
+                    case 2:Win14PageID = 6;break;
+                    case 3:Win14PageID = 7;break;
+                    case 4:Win14PageID = 8;break;
 
-                    case 4:Win14PageID = 7;break;
-                    case 5:Win14PageID = 4;break;
+                    case 5:Win14PageID = 9;break;
                     case 6:Win14PageID = 5;break;
                     case 7:Win14PageID = 6;break;
+                    case 8:Win14PageID = 7;break;
+                    case 9:Win14PageID = 8;break;
                 }
                 FirstFlag[14]  = 0;
                 break;
@@ -3723,7 +3837,7 @@ static void UserMain14WinFun(void *param)
                 tButton[NowButtonId].flag=1;
                 GuiButton(&tButton[NowButtonId]);//按下后的反显开
                 /*进度条*/
-                if(Win14PageID>3){tScroll[0].lump = 3*(Win14PageID-4)+NowButtonId;}/* 进度快控制 */
+                if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
                 else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
                 GuiVScroll(&tScroll[0]);/* 垂直进度条 */
                 break;
@@ -3732,33 +3846,41 @@ static void UserMain14WinFun(void *param)
         }
         if(K1_Status==RT_EOK)
         {
-            switch(NowButtonId)
+            if(Win14PageID==4 || Win14PageID==9)
             {
-                case 2:
-                    switch(Win14PageID)
-                    {
-                        case 0:Win14PageID = 1;break;
-                        case 1:Win14PageID = 2;break;
-                        case 2:Win14PageID = 3;break;
-                        case 3:Win14PageID = 0;break;
+                Win14PageID = 0;
+                FirstFlag[14]  = 0;
+            }
+            else
+            {
+                switch(NowButtonId)
+                {
+                    case 2:
+                        switch(Win14PageID)
+                        {
+                            case 0:Win14PageID = 1;break;
+                            case 1:Win14PageID = 2;break;
+                            case 2:Win14PageID = 3;break;
+                            case 3:Win14PageID = 4;break;
 
-                        case 4:Win14PageID = 1;break;
-                        case 5:Win14PageID = 2;break;
-                        case 6:Win14PageID = 3;break;
-                        case 7:Win14PageID = 0;break;
-                    }
-                    FirstFlag[14]  = 0;
-                    break;
-                default:
-                    tButton[NowButtonId].flag=0;
-                    GuiButton(&tButton[NowButtonId]);
-                    NowButtonId++;
-                    tButton[NowButtonId].flag=1;
-                    GuiButton(&tButton[NowButtonId]);
-                    if(Win14PageID>3){tScroll[0].lump = 3*(Win14PageID-4)+NowButtonId;}/* 进度快控制 */
-                    else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
-                    GuiVScroll(&tScroll[0]);/* 垂直进度条 */
-                    break;
+                            case 5:Win14PageID = 1;break;
+                            case 6:Win14PageID = 2;break;
+                            case 7:Win14PageID = 3;break;
+                            case 8:Win14PageID = 4;break;
+                        }
+                        FirstFlag[14]  = 0;
+                        break;
+                    default:
+                        tButton[NowButtonId].flag=0;
+                        GuiButton(&tButton[NowButtonId]);
+                        NowButtonId++;
+                        tButton[NowButtonId].flag=1;
+                        GuiButton(&tButton[NowButtonId]);
+                        if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
+                        else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
+                        GuiVScroll(&tScroll[0]);/* 垂直进度条 */
+                        break;
+                }
             }
             GuiUpdateDisplayAll();
         }
@@ -3797,10 +3919,18 @@ static void UserMain14WinFun(void *param)
                     {
                         case 0:GuiWinAdd(&userMain28Win);break;//AutoRange
                         case 1:GuiWinAdd(&userMain29Win);break;//TDS_CND
-                        case 2:GuiClearScreen(0);GuiWinDeleteTop();break;//GuiWinAdd(&userMain1Win);GuiWinDisplay();break;
+                        case 2:GuiWinAdd(&userMain30Win);break;//Remain
                     }
                     break;
                 case 4:
+                    switch(NowButtonId)
+                    {
+                        case 0:GuiClearScreen(0);GuiWinDeleteTop();break;//GuiWinAdd(&userMain1Win);GuiWinDisplay();break;
+                        case 1:GuiClearScreen(0);GuiWinDeleteTop();break;//GuiWinAdd(&userMain1Win);GuiWinDisplay();break;
+                        case 2:GuiClearScreen(0);GuiWinDeleteTop();break;//GuiWinAdd(&userMain1Win);GuiWinDisplay();break;
+                    }
+                    break;
+                case 5:
                     switch(NowButtonId)
                     {
                         case 0:GuiWinAdd(&userMain21Win);break;//password
@@ -3808,7 +3938,7 @@ static void UserMain14WinFun(void *param)
                         case 2:GuiWinAdd(&userMain17Win);break;//Backwash Time
                     }
                     break;
-                case 5:
+                case 6:
                     switch(NowButtonId)
                     {
                         case 0:GuiWinAdd(&userMain18Win);break;//Version
@@ -3816,7 +3946,7 @@ static void UserMain14WinFun(void *param)
                         case 2:GuiWinAdd(&userMain20Win);break;//Language
                     }
                     break;
-                case 6:
+                case 7:
                     switch(NowButtonId)
                     {
                         case 0:GuiClearScreen(0);GuiWinDeleteTop();break;//up data
@@ -3824,12 +3954,20 @@ static void UserMain14WinFun(void *param)
                         case 2:GuiWinAdd(&userMain23Win);break;//TDS Value
                     }
                     break;
-                case 7:
+                case 8:
                     switch(NowButtonId)
                     {
                         case 0:GuiWinAdd(&userMain28Win);break;//AutoRange
                         case 1:GuiWinAdd(&userMain29Win);break;//TDS_CND
-                        case 2:GuiClearScreen(0);GuiWinDeleteTop();break;//GuiWinAdd(&userMain1Win); GuiWinDisplay();break;
+                        case 2:GuiWinAdd(&userMain30Win);break;//Remain
+                    }
+                    break;
+                case 9:
+                    switch(NowButtonId)
+                    {
+                        case 0:GuiClearScreen(0);GuiWinDeleteTop();break;//GuiWinAdd(&userMain1Win);GuiWinDisplay();break;
+                        case 1:GuiClearScreen(0);GuiWinDeleteTop();break;//GuiWinAdd(&userMain1Win);GuiWinDisplay();break;
+                        case 2:GuiClearScreen(0);GuiWinDeleteTop();break;//GuiWinAdd(&userMain1Win);GuiWinDisplay();break;
                     }
                     break;
             }
@@ -4285,7 +4423,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.7");
+        GuiRowText(76,30,80,0,"0.0.8");
 
         tButton[0].x = 0;
         tButton[0].y = 50;
@@ -4461,7 +4599,7 @@ static void UserMain19WinFun(void *param)
                        tButton[1].high = 15;
                        if(Setting_Language)
                        {
-                           tButton[1].name = " Nein";
+                           tButton[1].name = "Zur{ck";
                        }
                        else
                        {
@@ -4921,13 +5059,13 @@ static void UserMain26WinFun(void *param)
 
         if(Setting_Language)
         {
-            GuiRowText(20,15,124,0,"Batterien leer");
-            GuiRowText(35,30,80,0,"erneuern");
+            GuiRowText(15,28,124,0,"Bitte Batterien");
+            GuiRowText(35,42,80,0,"erneuern");
         }
         else
         {
-            GuiRowText(25,20,110,0,"Low Voltage");
-            GuiRowText(20,35,110,0,"Renew Battery");
+            GuiRowText(25,28,110,0,"Low Voltage");
+            GuiRowText(20,42,110,0,"Renew Battery");
         }
 
         tButton[0].x = 0;
@@ -5365,5 +5503,66 @@ static void UserMain29WinFun(void *param)
            }
            GuiUpdateDisplayAll();
        }
+    }
+}
+uint8_t RemainString[4];
+static void UserMain30WinFun(void *param)
+{
+    if(FirstFlag[30] == 0)
+    {
+        FirstFlag[30] = 1;
+
+        if(Setting_Language)
+        {
+            sprintf(RemainString,"%04d Std.",Automatic_Week*7*24+Automatic_Day*24-RTC_Automatic_Time);
+            GuiRowText(40,28,115,0,RemainString);
+        }
+        else
+        {
+            sprintf(RemainString,"%04d Hours",Automatic_Week*7*24+Automatic_Day*24-RTC_Automatic_Time);
+            GuiRowText(32,28,115,0,RemainString);
+        }
+
+
+        tButton[0].x = 40;
+        tButton[0].y = 35;
+        tButton[0].wide = 45;
+        tButton[0].high = 15;
+        tButton[0].name = Exit;
+        tButton[0].linesize = 0;
+        tButton[0].flag = 1;/* 按下状态 */
+        GuiButton(&tButton[0]);
+
+        tButton[1].x = 0;
+        tButton[1].y = 50;
+        tButton[1].wide = 128;
+        tButton[1].high = 15;
+        tButton[1].name = SingleSelect;
+        tButton[1].linesize = 0;
+        tButton[1].flag = 1;/* 按下状态 */
+        GuiButton(&tButton[3]);
+        GuiUpdateDisplayAll();
+    }
+    else
+    {
+        K0_Status = rt_sem_take(K0_Sem, 0);
+        K1_Status = rt_sem_take(K1_Sem, 0);
+        K2_Status = rt_sem_take(K2_Sem, 0);
+        K2_Long_Status = rt_sem_take(K2_Long_Sem, 0);
+        if(K2_Long_Status==RT_EOK)
+        {
+        }
+        if(K0_Status==RT_EOK)
+        {
+        }
+        if(K1_Status==RT_EOK)
+        {
+        }
+        if(K2_Status==RT_EOK)
+        {
+            GuiClearScreen(0);
+            GuiWinDeleteTop();
+            FirstFlag[30]=0;
+        }
     }
 }
