@@ -5313,14 +5313,14 @@ static void UserMain28WinFun(void *param)
                         RTC_Automatic_Time=0;
                         LOG_D("RTC_Automatic_Time Change to 0\r\n");
                     }
-                   else if(Time_Range==1 && Automatic_Week<9)
+                    if(Time_Range==0 && Reminder_Week>9)
                     {
-                        Automatic_Week=9;
-                        Flash_Set(4,Automatic_Week);
-                        Automatic_Day=0;
-                        Flash_Set(5,Automatic_Day);
-                        RTC_Automatic_Time=0;
-                        LOG_D("RTC_Automatic_Time Change to 0\r\n");
+                        Reminder_Week=8;
+                        Flash_Set(1,Reminder_Week);
+                        Reminder_Day=5;
+                        Flash_Set(2,Reminder_Day);
+                        RTC_Reminder_Time=0;
+                        LOG_D("RTC_Reminder_Time Change to 0\r\n");
                     }
                     GuiClearScreen(0);
                     GuiWinDeleteTop();
