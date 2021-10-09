@@ -59,7 +59,7 @@ void MX_ADC1_Init(void)
     hadc1.Init.OversamplingMode = DISABLE;
     if (HAL_ADC_Init(&hadc1) != HAL_OK)
     {
-        Error_Handler();
+
     }
     /** Configure Analog WatchDog 1
     */
@@ -71,7 +71,7 @@ void MX_ADC1_Init(void)
     AnalogWDGConfig.LowThreshold = 0;
     if (HAL_ADC_AnalogWDGConfig(&hadc1, &AnalogWDGConfig) != HAL_OK)
     {
-      Error_Handler();
+
     }
     /** Configure Regular Channel
     */
@@ -83,7 +83,7 @@ void MX_ADC1_Init(void)
     sConfig.Offset = 0;
     if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
     {
-        Error_Handler();
+
     }
     /** Configure Regular Channel
     */
@@ -91,7 +91,7 @@ void MX_ADC1_Init(void)
     sConfig.Rank = ADC_REGULAR_RANK_2;
     if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
     {
-        Error_Handler();
+
     }
     /** Configure Regular Channel
     */
@@ -99,7 +99,7 @@ void MX_ADC1_Init(void)
     sConfig.Rank = ADC_REGULAR_RANK_3;
     if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
     {
-        Error_Handler();
+
     }
     /* USER CODE BEGIN ADC1_Init 2 */
 
@@ -146,6 +146,7 @@ void ADC_Work_Callback(void *parameter)
         BAT_Voltage = adc_value[1];
         Moto_Current = adc_value[2];
         //LOG_D("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
+        LOG_W("Moto_Current is %d\r\n",Moto_Current);
         rt_thread_mdelay(50);
     }
 }
@@ -161,13 +162,13 @@ void ADC_Init(void)
 }
 void Enable_MotoINT(void)
 {
-    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
-    LL_ADC_EnableIT_AWD1(hadc1.Instance);
+//    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
+//    LL_ADC_EnableIT_AWD1(hadc1.Instance);
 }
 void Disable_MotoINT(void)
 {
-    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
-    LL_ADC_DisableIT_AWD1(hadc1.Instance);
+//    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
+//    LL_ADC_DisableIT_AWD1(hadc1.Instance);
 }
 uint8_t Get_DC_Level(void)
 {

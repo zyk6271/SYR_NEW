@@ -4421,7 +4421,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.8");
+        GuiRowText(76,30,80,0,"0.0.7");
 
         tButton[0].x = 0;
         tButton[0].y = 50;
