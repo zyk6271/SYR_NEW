@@ -67,7 +67,7 @@ void MX_ADC1_Init(void)
     AnalogWDGConfig.WatchdogMode = ADC_ANALOGWATCHDOG_SINGLE_REG;
     AnalogWDGConfig.Channel = ADC_CHANNEL_16;
     AnalogWDGConfig.ITMode = DISABLE;
-    AnalogWDGConfig.HighThreshold = 40;
+    AnalogWDGConfig.HighThreshold = 60;
     AnalogWDGConfig.LowThreshold = 0;
     if (HAL_ADC_AnalogWDGConfig(&hadc1, &AnalogWDGConfig) != HAL_OK)
     {
@@ -146,7 +146,7 @@ void ADC_Work_Callback(void *parameter)
         BAT_Voltage = adc_value[1];
         Moto_Current = adc_value[2];
         //LOG_D("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
-        LOG_W("Moto_Current is %d\r\n",Moto_Current);
+        //LOG_W("Moto_Current is %d\r\n",Moto_Current);
         rt_thread_mdelay(50);
     }
 }
@@ -162,13 +162,13 @@ void ADC_Init(void)
 }
 void Enable_MotoINT(void)
 {
-//    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
-//    LL_ADC_EnableIT_AWD1(hadc1.Instance);
+    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
+    LL_ADC_EnableIT_AWD1(hadc1.Instance);
 }
 void Disable_MotoINT(void)
 {
-//    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
-//    LL_ADC_DisableIT_AWD1(hadc1.Instance);
+    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
+    LL_ADC_DisableIT_AWD1(hadc1.Instance);
 }
 uint8_t Get_DC_Level(void)
 {

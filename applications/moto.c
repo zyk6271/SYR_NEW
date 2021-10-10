@@ -29,6 +29,11 @@ extern uint16_t Setting_Backwashtime;
 extern uint32_t Setting_Hardness;
 extern uint8_t TDS_CND_Value;
 
+uint8_t Get_MotoValid(void)
+{
+    if(MotoWorkFlag==0)return 1;
+    else return 0;
+}
 void Moto_Forward(void)
 {
     rt_event_send(&Moto_Event, Event_Moto_Forward);

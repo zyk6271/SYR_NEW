@@ -460,9 +460,9 @@ void SetEnglish(void)
     Reminder="Reminder";
     Automatic="Automatic";
     Delta_Pressure = "Delta Pressure";
-    Delta1="Delta Press";
+    Delta1="Delta Pressure";
     Delta2="Delta Press(M)";
-    Delta3="Delta Press(A)";
+    Delta3="Delta Pressure";
     Info="Info";
     Backwash_Now ="Backwash Now";
     Exit="Exit";
@@ -545,10 +545,10 @@ void SetDetdush(void)
     Weeks052 = "(0-52) Wochen";
     Remain = "Restzeit";
 
-    Back="Back             ";
-    SingleYes="              Yes";
+    Back="Zur{ck           ";
+    SingleYes="               Ja";
     SingleSelect="                 ";
-    SingleRightBack="             Back";
+    SingleRightBack="           Zur{ck";
     LowSelect="<Batterien leer> ";
     YesOrNo="No            Yes";
 
@@ -4421,7 +4421,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.7");
+        GuiRowText(76,30,80,0,"0.0.8");
 
         tButton[0].x = 0;
         tButton[0].y = 50;
