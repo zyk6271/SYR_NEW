@@ -17,4 +17,5 @@ void Moto_Back(void);
 void Moto_Stop(void);
 void Moto_Pin_Init(void);
 void Moto_Pin_DeInit(void);
+void Moto_Current_Detect(void);
 

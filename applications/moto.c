@@ -16,18 +16,19 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
+struct rt_event Moto_Event;
 
 rt_thread_t Moto_t = RT_NULL;
-
-struct rt_event Moto_Event;
 rt_timer_t Moto_Cycle_Timer = RT_NULL;
 rt_timer_t Moto_Detect_Timer = RT_NULL;
+rt_timer_t Moto_Current_Timer = RT_NULL;
 rt_timer_t Moto_TDS_Timer = RT_NULL;
 
 uint8_t MotoWorkFlag;
 extern uint16_t Setting_Backwashtime;
 extern uint32_t Setting_Hardness;
 extern uint8_t TDS_CND_Value;
+extern uint32_t Moto_Current;
 
 uint8_t Get_MotoValid(void)
 {
@@ -84,7 +85,6 @@ void Moto_Cycle(void)
         Jump_EXIT();
     }
 }
-MSH_CMD_EXPORT(Moto_Cycle,Moto_Cycle);
 void Moto_Cycle_Timer_Callback(void *parameter)
 {
     if(MotoWorkFlag==1)
@@ -100,6 +100,23 @@ void Moto_Cycle_Timer_Callback(void *parameter)
 void Moto_TDS_Timer_Callback(void *parameter)
 {
     Jump_TDS();
+}
+void Moto_Current_Detect(void)
+{
+    rt_timer_start(Moto_Current_Timer);
+    LOG_D("Moto_Current_Timer is Start\r\n");
+}
+void Moto_Current_Timer_Callback(void *parameter)
+{
+    if(Moto_Current>=45)
+    {
+        LOG_E("Moto Current Still Overload\r\n");
+        Moto_Overload();
+    }
+    else
+    {
+        Enable_MotoINT();
+    }
 }
 void Moto_Detect_Timer_Callback(void *parameter)
 {
@@ -269,7 +286,7 @@ void Moto_Callback(void *parameter)
                 Disable_MotoINT();
                 MotoWorkFlag=0;
                 ScreenTimerRefresh();
-                LOG_I("Moto is Overload\r\n");
+                LOG_D("Moto Event Overload\r\n");
                 Jump_STALLING();
                 Moto_Reset();
                 break;
@@ -296,6 +313,7 @@ void Moto_Init(void)
     Moto_Cycle_Timer = rt_timer_create("Moto_Cycle_Timer",Moto_Cycle_Timer_Callback,RT_NULL,15*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     Moto_Detect_Timer = rt_timer_create("Moto_Detect_Timer",Moto_Detect_Timer_Callback,RT_NULL,60*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     Moto_TDS_Timer = rt_timer_create("Moto_TDS_Timer",Moto_TDS_Timer_Callback,RT_NULL,100,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    Moto_Current_Timer = rt_timer_create("Moto_Current_Timer",Moto_Current_Timer_Callback,RT_NULL,500,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     Moto_t = rt_thread_create("Moto",Moto_Callback,RT_NULL,2048,10,10);
     if(Moto_t != RT_NULL)
     {

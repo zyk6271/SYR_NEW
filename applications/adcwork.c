@@ -67,7 +67,7 @@ void MX_ADC1_Init(void)
     AnalogWDGConfig.WatchdogMode = ADC_ANALOGWATCHDOG_SINGLE_REG;
     AnalogWDGConfig.Channel = ADC_CHANNEL_16;
     AnalogWDGConfig.ITMode = DISABLE;
-    AnalogWDGConfig.HighThreshold = 60;
+    AnalogWDGConfig.HighThreshold = 45;
     AnalogWDGConfig.LowThreshold = 0;
     if (HAL_ADC_AnalogWDGConfig(&hadc1, &AnalogWDGConfig) != HAL_OK)
     {
@@ -134,7 +134,8 @@ void ADC1_IRQHandler(void)
   /* USER CODE END ADC1_IRQn 0 */
   HAL_ADC_IRQHandler(&hadc1);
   /* USER CODE BEGIN ADC1_IRQn 1 */
-  Moto_Overload();
+  Disable_MotoINT();
+  Moto_Current_Detect();
   /* USER CODE END ADC1_IRQn 1 */
 }
 void ADC_Work_Callback(void *parameter)
