@@ -11,6 +11,7 @@
 #include <rtdevice.h>
 #include "delta.h"
 #include "Pin_config.h"
+#include "moto.h"
 
 #define DBG_TAG "DELTA"
 #define DBG_LVL DBG_LOG
@@ -36,9 +37,12 @@ void Delta_press_work(void *parameter)
             LOG_D("Detected Water Flow\r\n");
             if(Deltapress_Enable)
             {
-                Counter_Deltapress++;
-                Flash_Set(10,Counter_Deltapress);
-                JumptoDelta();
+                if(Get_MotoValid())
+                {
+                    Counter_Deltapress++;
+                    Flash_Set(10,Counter_Deltapress);
+                    JumptoDelta();
+                }
             }
         }
         rt_thread_mdelay(500);

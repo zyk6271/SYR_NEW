@@ -108,7 +108,13 @@ void FlashDeInit(void)
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15);
     __HAL_RCC_SPI2_CLK_DISABLE();
 }
-void WifiDeInit(void)
+void WiFiInit(void)
+{
+    rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
+    rt_pin_write(WIFI_EN,1);
+    rt_pin_mode(WIFI_RST, PIN_MODE_INPUT);
+}
+void WiFiDeInit(void)
 {
     rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
     rt_pin_write(WIFI_EN,0);
@@ -182,7 +188,7 @@ void BeforSleep(void)
     //ADC
     ADC_Pin_DeInit();
     //WIFI
-    WifiDeInit();
+    WiFiDeInit();
     //TDS
     TDS_GpioDeInit();
     //LCD

@@ -61,9 +61,12 @@ void PowerCallback(void *parameter)
                     }
                     else if(NowBatVol<=3500 && NowBatVol>2900)//5.2
                     {
-                        PowerSet(3);
-                        LOG_D("BatteryBAD\r\n");
-                        JumpToBatteryNew();
+//                        PowerSet(3);
+//                        LOG_D("BatteryBAD\r\n");
+//                        JumpToBatteryNew();
+                        PowerSet(1);
+                        LOG_D("BatteryLow in New Bat\r\n");
+                        JumpToBatteryEmpty();
                     }
                     else if(NowBatVol<=2900)//5.2
                     {

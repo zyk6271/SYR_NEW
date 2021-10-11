@@ -14,5 +14,7 @@ void Low_Init(void);
 void SreenTimerInit(void);
 void ScreenTimerStop(void);
 void ScreenTimerRefresh(void);
+void WiFiInit(void);
+void WiFiDeInit(void);
 
 #endif /* APPLICATIONS_LOW_H_ */
