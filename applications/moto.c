@@ -67,7 +67,7 @@ void Moto_Cycle(void)
             uint32_t Setting_Backwashtime_MileSecond=0;
             Setting_Backwashtime_MileSecond = Setting_Backwashtime*1000;
             rt_timer_control(Moto_Cycle_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
-            Setting_Backwashtime_MileSecond += 30*1000;
+            Setting_Backwashtime_MileSecond += 60*1000;
             rt_timer_control(Moto_Detect_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
             LOG_D("Start Backwash with Timer %d\r\n",Setting_Backwashtime);
             rt_timer_start(Moto_Detect_Timer);
@@ -89,12 +89,9 @@ void Moto_Cycle_Timer_Callback(void *parameter)
 {
     if(MotoWorkFlag==1)
     {
-        if(rt_pin_read(MOTO_RIGHT)==0)
-        {
-            LOG_D("Moto Start Back\r\n");
-            rt_event_send(&Moto_Event, Event_Moto_Back);
-            rt_timer_start(Moto_Detect_Timer);
-        }
+        LOG_D("Moto Start Back\r\n");
+        rt_event_send(&Moto_Event, Event_Moto_Back);
+        rt_timer_start(Moto_Detect_Timer);
     }
 }
 void Moto_TDS_Timer_Callback(void *parameter)
@@ -248,6 +245,7 @@ void Moto_Callback(void *parameter)
                 rt_pin_write(MOTO_IN1,0);
                 rt_pin_write(MOTO_IN2,0);
                 Disable_MotoINT();
+                rt_timer_stop(Moto_Detect_Timer);
                 LOG_I("Moto is Free\r\n");
                 break;
             case Event_Moto_Forward:
@@ -281,6 +279,7 @@ void Moto_Callback(void *parameter)
                 }
                 break;
             case Event_Moto_Over:
+                rt_timer_stop(Moto_Detect_Timer);
                 rt_pin_write(MOTO_IN1,0);
                 rt_pin_write(MOTO_IN2,0);
                 Disable_MotoINT();
@@ -301,8 +300,7 @@ void Moto_Reset(void)
     {
         rt_pin_write(MOTO_IN1,1);
         rt_pin_write(MOTO_IN2,0);
-        rt_thread_mdelay(500);
-        Enable_MotoINT();
+        Disable_MotoINT();
         LOG_I("Moto is Back\r\n");
     }
 }

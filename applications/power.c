@@ -42,8 +42,8 @@ void PowerSet(uint8_t Flag)
 void PowerCallback(void *parameter)
 {
     LOG_D("Power Init OK\r\n");
+    rt_thread_mdelay(1000);
     LowVoltageFlag = Flash_Get(19);
-    rt_thread_mdelay(2000);
     while(1)
     {
         if(Get_DC_Level() == 0 && Low_Power_Flag==0)
@@ -54,19 +54,17 @@ void PowerCallback(void *parameter)
             {
                 if(NowBatVol>PastBatVol && NowBatVol>100 + PastBatVol)
                 {
-                    if(NowBatVol>3500)//5.2
+                    if(NowBatVol>2900)//5.2
                     {
                         PowerSet(0);
                         LOG_D("BatteryOK\r\n");
+                        Refresh_Bat();
                     }
                     else if(NowBatVol<=3500 && NowBatVol>2900)//5.2
                     {
 //                        PowerSet(3);
 //                        LOG_D("BatteryBAD\r\n");
 //                        JumpToBatteryNew();
-                        PowerSet(1);
-                        LOG_D("BatteryLow in New Bat\r\n");
-                        JumpToBatteryEmpty();
                     }
                     else if(NowBatVol<=2900)//5.2
                     {
@@ -76,20 +74,20 @@ void PowerCallback(void *parameter)
                     }
                 }
             }
-            else if(LowVoltageFlag == 3)
-            {
-                if(NowBatVol<=3500)//4.8
-                {
-                    PowerSet(1);
-                    LOG_D("BatteryLow in Bad\r\n");
-                    JumpToBatteryEmpty();
-                }
-                else
-                {
-                    PowerSet(0);
-                    LOG_D("BatteryOK in Bad\r\n");
-                }
-            }
+//            else if(LowVoltageFlag == 3)
+//            {
+//                if(NowBatVol<=3500)//4.8
+//                {
+//                    PowerSet(1);
+//                    LOG_D("BatteryLow in Bad\r\n");
+//                    JumpToBatteryEmpty();
+//                }
+//                else
+//                {
+//                    PowerSet(0);
+//                    LOG_D("BatteryOK in Bad\r\n");
+//                }
+//            }
             else if(LowVoltageFlag == 0)
             {
                 if(NowBatVol<=2900)//4.8

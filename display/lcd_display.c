@@ -786,10 +786,13 @@ void LCD_Refresh(void)
 {
     rt_sem_release(lcd_refresh_sem);
 }
-
 //以下为显示窗口部分
 uint8_t Win1PageID=0;
 extern uint8_t LowVoltageFlag;
+void Refresh_Bat(void)
+{
+    JumptoMainWin();
+}
 static void UserMain1WinFun(void *param)
 {
      if(FirstFlag[1] == 0)//绘图等第一次进入窗口的相关执行动作
@@ -1088,8 +1091,6 @@ static void UserMain1WinFun(void *param)
         }
     }
 }
-
-
 static void UserMain2WinFun(void *param)
 {
      if(FirstFlag[2] == 0)
@@ -1278,7 +1279,7 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(0,10,128,0,"Ventil blockiert");
                     GuiRowText(0,25,128,0,"Bitte Service");
                     GuiRowText(0,40,128,0,"kontaktieren ");
-                    GuiRowText(106,56,30,0,"OK");
+                    GuiRowText(106,56,30,0,"Ja");
                 }
                 else
                 {
@@ -1308,9 +1309,19 @@ static void UserMain3WinFun(void *param)
                 break;
             case NOMOTO:
                 GuiClearScreen(0);
-                GuiRowText(50,15,127,0,"Error");
-                GuiRowText(40,30,127,0,"No Motor");
-                GuiRowText(106,56,30,0,"OK");
+                if(Setting_Language)
+                {
+                    GuiRowText(0,10,128,0,"Ventil fehlt");
+                    GuiRowText(0,25,128,0,"Bitte Service");
+                    GuiRowText(0,40,128,0,"kontaktieren ");
+                    GuiRowText(106,56,30,0,"Ja");
+                }
+                else
+                {
+                    GuiRowText(50,15,127,0,"Error");
+                    GuiRowText(40,30,127,0,"No Motor");
+                    GuiRowText(106,56,30,0,"OK");
+                }
                 led_select(1);
                 Jump_Flag=1;
                 break;

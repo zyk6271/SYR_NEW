@@ -16,7 +16,7 @@
 #include "pin_config.h"
 
 #define DBG_TAG "adc"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 uint32_t adc_value[3];
@@ -130,12 +130,11 @@ void ADC_Pin_DeInit(void)
 void ADC1_IRQHandler(void)
 {
   /* USER CODE BEGIN ADC1_IRQn 0 */
-
+    Disable_MotoINT();
   /* USER CODE END ADC1_IRQn 0 */
-  HAL_ADC_IRQHandler(&hadc1);
+    HAL_ADC_IRQHandler(&hadc1);
   /* USER CODE BEGIN ADC1_IRQn 1 */
-  Disable_MotoINT();
-  Moto_Current_Detect();
+    Moto_Current_Detect();
   /* USER CODE END ADC1_IRQn 1 */
 }
 void ADC_Work_Callback(void *parameter)
