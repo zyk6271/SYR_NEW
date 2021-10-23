@@ -73,6 +73,7 @@ void Moto_Cycle(void)
             rt_timer_start(Moto_Detect_Timer);
             Moto_Forward();
             led_select(2);
+            wifi_uart_send(1,1);
         }
         else
         {
@@ -127,6 +128,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             ScreenTimerRefresh();
             Jump_NOMOTO();
             Moto_Reset();
+            wifi_uart_send(1,0);
         }
     }
     else if(MotoWorkFlag == 2)
@@ -147,6 +149,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             ScreenTimerRefresh();
             Jump_NOMOTO();
             Moto_Reset();
+            wifi_uart_send(1,0);
         }
     }
 }
@@ -180,6 +183,7 @@ void MotoLeft_Callback(void *parameter)
         }
         ScreenTimerRefresh();
         LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
+        wifi_uart_send(1,0);
     }
     else if(MotoWorkFlag==0)
     {
@@ -288,6 +292,7 @@ void Moto_Callback(void *parameter)
                 LOG_D("Moto Event Overload\r\n");
                 Jump_STALLING();
                 Moto_Reset();
+                wifi_uart_send(1,0);
                 break;
             }
         }

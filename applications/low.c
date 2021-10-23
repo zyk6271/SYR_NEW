@@ -206,63 +206,63 @@ void BeforSleep(void)
 }
 void AfterWake(void)
 {
-    //RGB
-    Led_GpioInit();
-    //MOTO
-    Moto_Pin_Init();
-    //Flash
-    FlashInit();
-    //ADC
-    ADC_Pin_Init();
-    //TDS
-//    TDS_GpioInit();
-    //Debug
-    DebugInit();
-
-    rt_pin_detach_irq(K0);
-    rt_pin_detach_irq(K1);
-    rt_pin_detach_irq(K2);
-    rt_pin_irq_enable(K0, PIN_IRQ_DISABLE);
-    rt_pin_irq_enable(K1, PIN_IRQ_DISABLE);
-    rt_pin_irq_enable(K2, PIN_IRQ_DISABLE);
-    rt_pin_mode(K0, PIN_MODE_INPUT);
-    rt_pin_mode(K1, PIN_MODE_INPUT);
-    rt_pin_mode(K2, PIN_MODE_INPUT);
+//    //RGB
+//    Led_GpioInit();
+//    //MOTO
+//    Moto_Pin_Init();
+//    //Flash
+//    FlashInit();
+//    //ADC
+//    ADC_Pin_Init();
+//    //TDS
+////    TDS_GpioInit();
+//    //Debug
+//    DebugInit();
+//
+//    rt_pin_detach_irq(K0);
+//    rt_pin_detach_irq(K1);
+//    rt_pin_detach_irq(K2);
+//    rt_pin_irq_enable(K0, PIN_IRQ_DISABLE);
+//    rt_pin_irq_enable(K1, PIN_IRQ_DISABLE);
+//    rt_pin_irq_enable(K2, PIN_IRQ_DISABLE);
+//    rt_pin_mode(K0, PIN_MODE_INPUT);
+//    rt_pin_mode(K1, PIN_MODE_INPUT);
+//    rt_pin_mode(K2, PIN_MODE_INPUT);
 }
 void EnterLowPower(void)
 {
-    Delta_Wakeup_Flag = 0;
-    Button_Wakeup_Flag=0;
-    LOG_I("Goto Stop Mode With RTC Now\r\n");
-    BeforSleep();
-    Low_Power_Flag = 1;
-    __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
-    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-    LcdRst();
-    if(Button_Wakeup_Flag)
-    {
-        SystemClock_Config();
-        Button_Wakeup_Flag = 0;
-        AfterWake();
-        LCD_BL_HIGH();
-        LCD_Refresh();
-        ScreenTimerRefresh();
-        Low_Power_Flag = 0;
-        LOG_D("Button Wake Up Now\r\n");
-        return;
-    }
-    if(Delta_Wakeup_Flag)
-    {
-        SystemClock_Config();
-        Delta_Wakeup_Flag = 0;
-        AfterWake();
-        LCD_Refresh();
-        ScreenTimerRefresh();
-        Low_Power_Flag = 0;
-        LOG_D("Delta Wake Up Now\r\n");
-        return;
-    }
+//    Delta_Wakeup_Flag = 0;
+//    Button_Wakeup_Flag=0;
+//    LOG_I("Goto Stop Mode With RTC Now\r\n");
+//    BeforSleep();
+//    Low_Power_Flag = 1;
+//    __HAL_RCC_PWR_CLK_ENABLE();
+//    __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
+//    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+//    LcdRst();
+//    if(Button_Wakeup_Flag)
+//    {
+//        SystemClock_Config();
+//        Button_Wakeup_Flag = 0;
+//        AfterWake();
+//        LCD_BL_HIGH();
+//        LCD_Refresh();
+//        ScreenTimerRefresh();
+//        Low_Power_Flag = 0;
+//        LOG_D("Button Wake Up Now\r\n");
+//        return;
+//    }
+//    if(Delta_Wakeup_Flag)
+//    {
+//        SystemClock_Config();
+//        Delta_Wakeup_Flag = 0;
+//        AfterWake();
+//        LCD_Refresh();
+//        ScreenTimerRefresh();
+//        Low_Power_Flag = 0;
+//        LOG_D("Delta Wake Up Now\r\n");
+//        return;
+//    }
 }
 void LowPowerTimerCallback(void *parameter)
 {

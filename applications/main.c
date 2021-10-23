@@ -20,6 +20,7 @@
 #include "delta.h"
 #include "power.h"
 #include "rtc.h"
+#include "wifiuart.h"
 
 #define DBG_TAG "main"
 #define DBG_LVL DBG_LOG
@@ -39,6 +40,7 @@ int main(void)
     Delta_Init();
     Button_Init();
     WiFiInit();
+    WIFI_Uart_Init();
     while (1)
     {
         rt_thread_mdelay(1000);

@@ -117,6 +117,30 @@ void Flash_Set(uint8_t id,uint32_t value)
     sprintf(Temp_KeyBuf,"%s", Key_list[id]);
     ef_set_env(Temp_KeyBuf,Temp_ValueBuf);
     LOG_D("Writing %s to key %s \r\n", Temp_ValueBuf,Temp_KeyBuf);
+    switch(id)
+    {
+    case 3:
+        wifi_uart_send(2,value);
+        break;
+    case 6:
+        wifi_uart_send(3,value);
+        break;
+    case 7:
+        wifi_uart_send(4,value);
+        break;
+    case 8:
+        counter_upload(1,value);
+        break;
+    case 9:
+        counter_upload(2,value);
+        break;
+    case 10:
+        counter_upload(3,value);
+        break;
+    case 11:
+        counter_upload(4,value);
+        break;
+    }
 }
 
 void Flash_Clear(void)

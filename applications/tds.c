@@ -22,7 +22,7 @@ uint8_t TDS_Warn = 0;
 static struct rt_semaphore rx_sem;
 static rt_device_t serial;
 rt_thread_t TDS_t = RT_NULL;
-struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;  /* 初始化配置参数 */
+static struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;  /* 初始化配置参数 */
 
 /* 接收数据回调函数 */
 static rt_err_t uart_rx_ind(rt_device_t dev, rt_size_t size)

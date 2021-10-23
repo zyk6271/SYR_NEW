@@ -25,4 +25,7 @@ void userAppPortInit(void);
 void LcdtoBackwash(void);
 void JumptoMainWin(void);
 void LCD_Refresh(void);
-
+void Remote_Manual(void);
+void Remote_Reminder(uint8_t value);
+void Remote_Automatic(uint8_t value);
+void Remote_Delta(uint8_t value);

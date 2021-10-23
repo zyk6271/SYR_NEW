@@ -720,14 +720,49 @@ void JumpToBatteryNew(void)
         JumpToBatteryNew_Flag = 1;
     }
 }
+uint8_t JumptoMainWin_Flag=0;
 void JumptoMainWin(void)
 {
-    GuiClearScreen(0);
-    GuiWinInit();
-    GuiWinAdd(&userMain1Win);
-    memset(FirstFlag,0,40);
+    if(FirstFlag[1])
+    {
+        JumptoMainWin_Flag = 1;
+    }
 }
-
+void Remote_Manual(void)
+{
+    if(Get_MotoValid())
+    {
+        Counter_Manual++;
+        Flash_Set(8,Counter_Manual);
+        RTC_Reset();
+        Moto_Cycle();
+        GuiClearScreen(0);
+        GuiWinAdd(&userMain3Win);
+        memset(FirstFlag,0,40);
+    }
+    else
+    {
+        wifi_uart_send(1,1);
+    }
+}
+void Remote_Reminder(uint8_t value)
+{
+    Reminder_Enable = value;
+    Flash_Set(3,Reminder_Enable);
+    JumptoMainWin();
+}
+void Remote_Automatic(uint8_t value)
+{
+    Automatic_Enable = value;
+    Flash_Set(6,Automatic_Enable);
+    JumptoMainWin();
+}
+void Remote_Delta(uint8_t value)
+{
+    Deltapress_Enable = value;
+    Flash_Set(7,value);
+    JumptoMainWin();
+}
 void lcd_task_entry(void *parameter)
 {
     GotValue();
@@ -769,6 +804,12 @@ void lcd_task_entry(void *parameter)
             GuiClearScreen(0);
             memset(FirstFlag,0,40);
             GuiWinAdd(&userMain27Win);
+        }
+        if(JumptoMainWin_Flag)
+        {
+            JumptoMainWin_Flag = 0;
+            GuiClearScreen(0);
+            FirstFlag[1]=0;
         }
         LcdRefresh();
         GuiWinDisplay();
