@@ -720,14 +720,14 @@ void JumpToBatteryNew(void)
         JumpToBatteryNew_Flag = 1;
     }
 }
+uint8_t JumptoMainWin_Flag=0;
 void JumptoMainWin(void)
 {
-    GuiClearScreen(0);
-    GuiWinInit();
-    GuiWinAdd(&userMain1Win);
-    memset(FirstFlag,0,40);
+    if(FirstFlag[1])
+   {
+       JumptoMainWin_Flag = 1;
+   }
 }
-
 void lcd_task_entry(void *parameter)
 {
     GotValue();
@@ -769,6 +769,12 @@ void lcd_task_entry(void *parameter)
             GuiClearScreen(0);
             memset(FirstFlag,0,40);
             GuiWinAdd(&userMain27Win);
+        }
+        if(JumptoMainWin_Flag)
+        {
+            JumptoMainWin_Flag = 0;
+            GuiClearScreen(0);
+            FirstFlag[1]=0;
         }
         LcdRefresh();
         GuiWinDisplay();

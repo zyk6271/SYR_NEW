@@ -60,12 +60,6 @@ void PowerCallback(void *parameter)
                         LOG_D("BatteryOK\r\n");
                         Refresh_Bat();
                     }
-                    else if(NowBatVol<=3500 && NowBatVol>2900)//5.2
-                    {
-//                        PowerSet(3);
-//                        LOG_D("BatteryBAD\r\n");
-//                        JumpToBatteryNew();
-                    }
                     else if(NowBatVol<=2900)//5.2
                     {
                         PowerSet(1);
@@ -74,20 +68,6 @@ void PowerCallback(void *parameter)
                     }
                 }
             }
-//            else if(LowVoltageFlag == 3)
-//            {
-//                if(NowBatVol<=3500)//4.8
-//                {
-//                    PowerSet(1);
-//                    LOG_D("BatteryLow in Bad\r\n");
-//                    JumpToBatteryEmpty();
-//                }
-//                else
-//                {
-//                    PowerSet(0);
-//                    LOG_D("BatteryOK in Bad\r\n");
-//                }
-//            }
             else if(LowVoltageFlag == 0)
             {
                 if(NowBatVol<=2900)//4.8
