@@ -52,15 +52,15 @@ void PowerCallback(void *parameter)
             NowBatVol = Get_Bat_Value();
             if(LowVoltageFlag == 1)
             {
-                if(NowBatVol>PastBatVol && NowBatVol>100 + PastBatVol)
+                if(NowBatVol>PastBatVol && NowBatVol>20 + PastBatVol)
                 {
-                    if(NowBatVol>2900)//5.2
+                    if(NowBatVol>3400)//5.2
                     {
                         PowerSet(0);
                         LOG_D("BatteryOK\r\n");
                         Refresh_Bat();
                     }
-                    else if(NowBatVol<=2900)//5.2
+                    else if(NowBatVol<=2800)//5.2
                     {
                         PowerSet(1);
                         LOG_D("BatteryLow in New Bat\r\n");
@@ -70,7 +70,7 @@ void PowerCallback(void *parameter)
             }
             else if(LowVoltageFlag == 0)
             {
-                if(NowBatVol<=2900)//4.8
+                if(NowBatVol<=2800)//4.8
                 {
                     PowerSet(1);
                     LOG_D("BatteryLow in Normal\r\n");

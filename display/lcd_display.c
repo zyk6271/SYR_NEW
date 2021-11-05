@@ -1352,7 +1352,7 @@ static void UserMain3WinFun(void *param)
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
-                    GuiRowText(0,10,128,0,"Ventil fehlt");
+                    GuiRowText(0,10,128,0,"Ventil blockiert");
                     GuiRowText(0,25,128,0,"Bitte Service");
                     GuiRowText(0,40,128,0,"kontaktieren ");
                     GuiRowText(106,56,30,0,"Ja");
