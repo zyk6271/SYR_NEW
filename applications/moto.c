@@ -27,7 +27,6 @@ rt_timer_t Moto_TDS_Timer = RT_NULL;
 uint8_t MotoWorkFlag;
 extern uint16_t Setting_Backwashtime;
 extern uint32_t Setting_Hardness;
-extern uint8_t TDS_CND_Value;
 extern uint32_t Moto_Current;
 
 uint8_t Get_MotoValid(void)
@@ -160,7 +159,7 @@ void MotoLeft_Callback(void *parameter)
         rt_event_send(&Moto_Event, Event_Moto_Free);
         if(TDS_WarnGet())
         {
-            if(GetTDS() < Setting_Hardness*TDS_CND_Value*0.1)
+            if(GetTDS() < Setting_Hardness)
             {
                 TDS_WarnSet(0);
             }
@@ -168,7 +167,7 @@ void MotoLeft_Callback(void *parameter)
         }
         else
         {
-            if(GetTDS() > Setting_Hardness*TDS_CND_Value*0.1)
+            if(GetTDS() > Setting_Hardness)
             {
                 TDS_WarnSet(1);
                 rt_timer_start(Moto_TDS_Timer);

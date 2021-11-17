@@ -13,6 +13,7 @@
 uint8_t data_parsing_id = 0;
 uint32_t TDS_Value = 0;
 uint8_t TDS_Warn = 0;
+extern uint8_t TDS_CND_Value;
 
 #define TDS_UART_NAME                   "uart2"
 #define DATA_CMD_BEGIN                   0x55       /* 结束位设置为 \r，即回车符 */
@@ -59,7 +60,7 @@ void tds_data_parsing(void *parameter)
             {
                 LOG_D("TDS_High=%x,TDS_Low=%x\r\n",data[4],data[5]);
                 TDS_Value = ((data[4]<<8) + data[5]);
-                TDS_Value = (int)(0.1 * TDS_Value);
+                TDS_Value = (int)(0.01 * TDS_Value * TDS_CND_Value);
                 LOG_D("TDS_Value is %d\r\n",TDS_Value);
             }
             else
