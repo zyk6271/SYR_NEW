@@ -353,7 +353,7 @@ lkdWin userMain23Win = {
     .y = 0,
     .wide = 128,
     .hight = 64,
-    .title = "Cuttent Value",
+    .title = "Current Value",
     .param = NULL,
     .WindowFunction = UserMain23WinFun,
         .firstflag = 0,
@@ -448,7 +448,7 @@ void SetEnglish(void)
     userMain19Win.title = "Factory Reset";
     userMain20Win.title = "Language";
     userMain21Win.title = "Password";
-    userMain23Win.title = "Cuttent Value";
+    userMain23Win.title = "Current Value";
     userMain25Win.title = "Reminder";
     userMain26Win.title = "Battery Empty";
     userMain27Win.title = "Not New Battery";
@@ -4315,7 +4315,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.8");
+        GuiRowText(76,30,80,0,"0.0.9");
 
         tButton[0].x = 0;
         tButton[0].y = 50;

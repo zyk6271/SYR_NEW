@@ -173,6 +173,11 @@ void CloseLcdVcc(void)
     rt_pin_write(LCD_CLK,0);
     rt_pin_write(LCD_NSS,0);
 }
+void OpenLcdVcc(void)
+{
+    rt_pin_mode(LCD_EN, PIN_MODE_OUTPUT);
+    rt_pin_write(LCD_EN,1);
+}
 void CloseLcdBacklight(void)
 {
     LCD_Flag = 2;

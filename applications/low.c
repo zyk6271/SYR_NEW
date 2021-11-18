@@ -166,16 +166,6 @@ void DebugInit(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-    GPIO_InitTypeDef GPIO_InitStruct1 = {0};
-    GPIO_InitStruct1.Alternate = 7;
-    GPIO_InitStruct1.Pin = GPIO_PIN_2;
-    GPIO_InitStruct1.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct1.Pull = GPIO_PULLUP;
-    GPIO_InitStruct1.Speed = GPIO_SPEED_FREQ_HIGH;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct1);
-    GPIO_InitStruct1.Pin = GPIO_PIN_3;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct1);
 }
 void BeforSleep(void)
 {
@@ -189,10 +179,10 @@ void BeforSleep(void)
     ADC_Pin_DeInit();
     //WIFI
     WiFiDeInit();
-    //TDS
-    TDS_GpioDeInit();
     //LCD
     CloseLcdVcc();
+    //TDS
+    TDS_GpioDeInit();
     //None Pin
     NoneDeInit();
     //Debug
@@ -215,9 +205,11 @@ void AfterWake(void)
     //ADC
     ADC_Pin_Init();
     //TDS
-//    TDS_GpioInit();
+    TDS_GpioInit();
     //Debug
     DebugInit();
+    //LCD
+    OpenLcdVcc();
 
     rt_pin_detach_irq(K0);
     rt_pin_detach_irq(K1);
