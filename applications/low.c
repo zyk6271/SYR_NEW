@@ -204,12 +204,12 @@ void AfterWake(void)
     FlashInit();
     //ADC
     ADC_Pin_Init();
+    //LCD
+    OpenLcdVcc();
     //TDS
     TDS_GpioInit();
     //Debug
     DebugInit();
-    //LCD
-    OpenLcdVcc();
 
     rt_pin_detach_irq(K0);
     rt_pin_detach_irq(K1);

@@ -62,6 +62,7 @@ void RTC_Reset(void)
     Flash_Set(17,0);
 }
 uint8_t RTC_Event_Flag = 0;
+extern uint8_t Jump_Flag;
 void RTC_Check_Callback(void *parameter)
 {
     while(1)
@@ -81,9 +82,10 @@ void RTC_Check_Callback(void *parameter)
                     if(Low_Power_Flag)
                     {
                         LcdInit();
+                        Jump_Flag = 1;
                         LCD_Refresh();
-                        ScreenTimerRefresh();
                     }
+                    ScreenTimerRefresh();
                     JumptoReminder();
                 }
                 else

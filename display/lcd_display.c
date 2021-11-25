@@ -116,7 +116,7 @@ static rt_err_t K1_Status;
 static rt_err_t K2_Status;
 static rt_err_t K2_Long_Status;
 
-static uint8_t Jump_Flag=0;
+uint8_t Jump_Flag=0;
 
 lkdButton tButton[20];
 lkdScroll tScroll[2];
@@ -594,7 +594,7 @@ void GotValue(void)
     TDS_CND_Value = Flash_Get(21);
     if(TDS_CND_Value==0)
     {
-        TDS_CND_Value = 10;
+        TDS_CND_Value = 19;
         Flash_Set(21,TDS_CND_Value);
     }
     Time_Range = Flash_Get(22);
@@ -683,9 +683,8 @@ void Jump_EXIT(void)
 }
 void JumptoReminder(void)
 {
-    OpenLcdDisplay();
+    LCD_BL_HIGH();
     LcdtoReminder();
-    ScreenTimerRefresh();
 }
 MSH_CMD_EXPORT(JumptoReminder,JumptoReminder);
 void JumptoAutomatic(void)
@@ -1276,7 +1275,6 @@ static void UserMain3WinFun(void *param)
                   GuiRowText(106,56,30,0,"OK");
                 }
                 led_select(1);
-                Jump_Flag=1;
                 break;
             case STALLING:
                 GuiClearScreen(0);
@@ -1294,7 +1292,6 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(106,56,30,0,"OK");
                 }
                 led_select(1);
-                Jump_Flag=1;
                 break;
             case FINISH:
                 GuiClearScreen(0);
@@ -1310,7 +1307,6 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(40,27,70,0,"Finish");
                     GuiRowText(106,56,30,0,"OK");
                 }
-                Jump_Flag=1;
                 SemJump();
                 break;
             case NOMOTO:
@@ -1329,7 +1325,6 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(106,56,30,0,"OK");
                 }
                 led_select(1);
-                Jump_Flag=1;
                 break;
             case EXIT:
                 FirstFlag[3]=0;
@@ -1337,9 +1332,9 @@ static void UserMain3WinFun(void *param)
                 GuiWinInit();
                 GuiWinAdd(&userMain1Win);
                 led_select(0);
-                Jump_Flag=1;
                 break;
             }
+            Jump_Flag=1;
             GuiUpdateDisplayAll();
         }
         K0_Status = rt_sem_take(K0_Sem, 0);
@@ -4315,7 +4310,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.10");
+        GuiRowText(76,30,80,0,"0.0.11");
 
         tButton[0].x = 0;
         tButton[0].y = 50;
@@ -4892,7 +4887,6 @@ static void UserMain25WinFun(void *param)
     if(FirstFlag[25] == 0)
     {
         FirstFlag[25] = 1;
-
         if(Setting_Language)
         {
             GuiRowText(4,15,124,0,"R{cksp{lung jetzt");
@@ -4926,6 +4920,7 @@ static void UserMain25WinFun(void *param)
         }
         if(K0_Status==RT_EOK)
         {
+            Jump_Flag = 0;
             FirstFlag[25]=0;
             GuiClearScreen(0);
             GuiWinInit();
@@ -4934,10 +4929,10 @@ static void UserMain25WinFun(void *param)
         if(K1_Status==RT_EOK)
         {
 
-
         }
         if(K2_Status==RT_EOK)
         {
+            Jump_Flag = 0;
             JumptoAutomatic();
         }
     }

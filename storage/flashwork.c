@@ -60,7 +60,7 @@ void Set_Default(void)
     Flash_Set(13,280);
     Flash_Set(14,1);
     Flash_Set(15,1);
-    Flash_Set(21,11);
+    Flash_Set(21,19);
     Flash_Set(22,0);
 }
 int Flash_Init(void)
@@ -111,14 +111,15 @@ uint32_t Flash_Get(uint8_t id)
 
 void Flash_Set(uint8_t id,uint32_t value)
 {
-    char Temp_ValueBuf[10]={0};//申请临时buffer空间
-    char Temp_KeyBuf[40]={0};//申请临时buffer空间
+    char *Temp_ValueBuf = rt_malloc(64);
+    char *Temp_KeyBuf = rt_malloc(64);
     sprintf(Temp_ValueBuf,"%ld", value);
     sprintf(Temp_KeyBuf,"%s", Key_list[id]);
     ef_set_env(Temp_KeyBuf,Temp_ValueBuf);
     LOG_D("Writing %s to key %s \r\n", Temp_ValueBuf,Temp_KeyBuf);
+    rt_free(Temp_ValueBuf);
+    rt_free(Temp_KeyBuf);
 }
-
 void Flash_Clear(void)
 {
     ef_env_set_default();
