@@ -79,10 +79,10 @@ void RTC_Check_Callback(void *parameter)
                     RTC_Event_Flag = 1;
                     Flash_Set(16,0);
                     LOG_D("Reminder_Enable\r\n");
+                    Jump_Flag = 1;
                     if(Low_Power_Flag)
                     {
                         LcdInit();
-                        Jump_Flag = 1;
                         LCD_Refresh();
                     }
                     ScreenTimerRefresh();
