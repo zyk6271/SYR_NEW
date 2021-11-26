@@ -1256,6 +1256,7 @@ static void UserMain3WinFun(void *param)
             switch(e)
             {
             case TDS:
+                Jump_Flag=1;
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
@@ -1277,6 +1278,7 @@ static void UserMain3WinFun(void *param)
                 led_select(1);
                 break;
             case STALLING:
+                Jump_Flag=1;
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
@@ -1294,6 +1296,7 @@ static void UserMain3WinFun(void *param)
                 led_select(1);
                 break;
             case FINISH:
+                Jump_Flag=0;
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
@@ -1310,6 +1313,7 @@ static void UserMain3WinFun(void *param)
                 SemJump();
                 break;
             case NOMOTO:
+                Jump_Flag=1;
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
@@ -1327,6 +1331,7 @@ static void UserMain3WinFun(void *param)
                 led_select(1);
                 break;
             case EXIT:
+                Jump_Flag=0;
                 FirstFlag[3]=0;
                 GuiClearScreen(0);
                 GuiWinInit();
@@ -1334,7 +1339,6 @@ static void UserMain3WinFun(void *param)
                 led_select(0);
                 break;
             }
-            Jump_Flag=1;
             GuiUpdateDisplayAll();
         }
         K0_Status = rt_sem_take(K0_Sem, 0);
