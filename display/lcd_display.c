@@ -116,7 +116,7 @@ static rt_err_t K1_Status;
 static rt_err_t K2_Status;
 static rt_err_t K2_Long_Status;
 
-uint8_t Jump_Flag=0;
+uint8_t screen_reload=1;
 
 lkdButton tButton[20];
 lkdScroll tScroll[2];
@@ -741,7 +741,7 @@ void lcd_task_entry(void *parameter)
             LOG_I("Lcd Refresh From Lowpower\r\n");
             OpenLcdDisplayNoBL();
             rt_thread_mdelay(10);
-            if(Jump_Flag==0)
+            if(screen_reload)
             {
                 LcdRefresh();
                 GuiClearScreen(0);
@@ -1231,7 +1231,7 @@ static void UserMain3WinFun(void *param)
     if(FirstFlag[3] == 0)
     {
         FirstFlag[3] = 1;
-        Jump_Flag=0;
+        screen_reload=1;
         GuiClearScreen(0);
         if(Setting_Language)
         {
@@ -1256,7 +1256,7 @@ static void UserMain3WinFun(void *param)
             switch(e)
             {
             case TDS:
-                Jump_Flag=1;
+                screen_reload=0;
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
@@ -1278,7 +1278,7 @@ static void UserMain3WinFun(void *param)
                 led_select(1);
                 break;
             case STALLING:
-                Jump_Flag=1;
+                screen_reload=0;
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
@@ -1296,7 +1296,7 @@ static void UserMain3WinFun(void *param)
                 led_select(1);
                 break;
             case FINISH:
-                Jump_Flag=0;
+                screen_reload=1;
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
@@ -1313,7 +1313,7 @@ static void UserMain3WinFun(void *param)
                 SemJump();
                 break;
             case NOMOTO:
-                Jump_Flag=1;
+                screen_reload=0;
                 GuiClearScreen(0);
                 if(Setting_Language)
                 {
@@ -1331,7 +1331,7 @@ static void UserMain3WinFun(void *param)
                 led_select(1);
                 break;
             case EXIT:
-                Jump_Flag=0;
+                screen_reload=1;
                 FirstFlag[3]=0;
                 GuiClearScreen(0);
                 GuiWinInit();
@@ -1349,10 +1349,10 @@ static void UserMain3WinFun(void *param)
         {
 
         }
-        if(K2_Status==RT_EOK&&Jump_Flag==1)
+        if(K2_Status==RT_EOK&&screen_reload==0)
         {
             FirstFlag[3]=0;
-            Jump_Flag=0;
+            screen_reload=1;
             led_select(0);
             GuiClearScreen(0);
             GuiWinInit();
@@ -4924,7 +4924,7 @@ static void UserMain25WinFun(void *param)
         }
         if(K0_Status==RT_EOK)
         {
-            Jump_Flag = 0;
+            screen_reload = 1;
             FirstFlag[25]=0;
             GuiClearScreen(0);
             GuiWinInit();
@@ -4936,7 +4936,7 @@ static void UserMain25WinFun(void *param)
         }
         if(K2_Status==RT_EOK)
         {
-            Jump_Flag = 0;
+            screen_reload = 1;
             JumptoAutomatic();
         }
     }
@@ -4946,7 +4946,7 @@ static void UserMain26WinFun(void *param)
     if(FirstFlag[26] == 0)
     {
         FirstFlag[26] = 1;
-        Jump_Flag=1;
+        screen_reload=0;
 
         if(Setting_Language)
         {
@@ -4989,7 +4989,7 @@ static void UserMain26WinFun(void *param)
             GuiClearScreen(0);
             GuiWinDeleteTop();
             FirstFlag[26]=0;
-            Jump_Flag=0;
+            screen_reload=1;
         }
     }
 }
@@ -4998,7 +4998,7 @@ static void UserMain27WinFun(void *param)
     if(FirstFlag[27] == 0)
     {
         FirstFlag[27] = 1;
-        Jump_Flag=1;
+        screen_reload=0;
 
         GuiRowText(13,20,115,0,"Abnormal Voltage");
         GuiRowText(20,35,110,0,"Renew Battery");
@@ -5033,7 +5033,7 @@ static void UserMain27WinFun(void *param)
             GuiClearScreen(0);
             GuiWinDeleteTop();
             FirstFlag[27]=0;
-            Jump_Flag=0;
+            screen_reload=1;
         }
     }
 }

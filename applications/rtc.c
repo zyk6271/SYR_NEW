@@ -62,7 +62,7 @@ void RTC_Reset(void)
     Flash_Set(17,0);
 }
 uint8_t RTC_Event_Flag = 0;
-extern uint8_t Jump_Flag;
+extern uint8_t screen_reload;
 void RTC_Check_Callback(void *parameter)
 {
     while(1)
@@ -79,7 +79,7 @@ void RTC_Check_Callback(void *parameter)
                     RTC_Event_Flag = 1;
                     Flash_Set(16,0);
                     LOG_D("Reminder_Enable\r\n");
-                    Jump_Flag = 1;
+                    screen_reload = 0;
                     if(Low_Power_Flag)
                     {
                         LcdInit();
