@@ -140,7 +140,6 @@ void GuiButton(lkdButton *pButton)
 //	}
 		if(pButton->flag == BUTTON_UP){//��ѡ��
 			GuiFillRect(pButton->x,pButton->y+2,endx,endy-2, backcolor);
-			GuiRangeUpdateDisplay(pButton->x,pButton->y,endx,endy);
 			if(pButton->linesize>0)GuiRowTextWithLine(pButton->x + 4,pButton->y+4,pButton->wide - 3,pButton->linesize,FONT_LEFT,pButton->name);
 			else GuiRowText(pButton->x + 4,pButton->y+4,pButton->wide - 3,FONT_LEFT,pButton->name);
 
@@ -153,7 +152,6 @@ void GuiButton(lkdButton *pButton)
 		//GuiRect(pButton->x ,pButton->y ,endx ,endy , forecolor);
 		//GuiFillRect(pButton->x+1 ,pButton->y+1 ,endx-1 ,endy-1 ,backcolor);
 		GuiFillRect(pButton->x ,pButton->y+2 ,endx ,endy-2 ,forecolor);
-		GuiRangeUpdateDisplay(pButton->x,pButton->y,endx,endy);
 		GuiExchangeColor();
 		if(pButton->linesize)GuiRowTextWithLine(pButton->x+4 ,pButton->y+4,pButton->wide-3 ,pButton->linesize,FONT_LEFT,pButton->name);
 		else GuiRowText(pButton->x+4 ,pButton->y+4,pButton->wide-3 ,FONT_LEFT,pButton->name);

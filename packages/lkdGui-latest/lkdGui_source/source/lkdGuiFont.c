@@ -3,17 +3,17 @@
   * @author  guoweilkd
   * @version V1.1.0
   * @date    2018/03/27
-  * @brief  gwGui×ÖÌåÎÄ¼þ
+  * @brief  gwGuiï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
   */
 
 #include "lkdGui.h"
 
-/* lkd×ÖÌå */
+/* lkdï¿½ï¿½ï¿½ï¿½ */
 static lkdFont *thisFont;
 
 /**
-  *@brief  ÉèÖÃµ±Ç°ÒªÊ¹ÓÃµÄ×ÖÌåÖ¸Õë
-  *@param  pFont ÒªÊ¹ÓÃµÄ×ÖÌåÖ¸Õë
+  *@brief  ï¿½ï¿½ï¿½Ãµï¿½Ç°ÒªÊ¹ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+  *@param  pFont ÒªÊ¹ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
   *@retval None
   */
 void GuiFontSet(lkdFont *pFont)
@@ -22,9 +22,9 @@ void GuiFontSet(lkdFont *pFont)
 }
 
 /**
-  *@brief  »ñÈ¡µ±Ç°×ÖÌå
+  *@brief  ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½
   *@param  None
-  *@retval µ±Ç°×ÖÌåÖ¸Õë
+  *@retval ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
   */
 lkdFont *GetCurrentFont(void)
 {
@@ -32,9 +32,9 @@ lkdFont *GetCurrentFont(void)
 }
 
 /**
-  *@brief  Ð´ÎÄ±¾
-  *@param  tInfo Ð´ÎÄ±¾Ïà¹ØÐÅÏ¢
-  *@param  str ÎÄ±¾
+  *@brief  Ð´ï¿½Ä±ï¿½
+  *@param  tInfo Ð´ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+  *@param  str ï¿½Ä±ï¿½
   *@retval None
   */
 void GuiText(fontTextInfo *tInfo, uint8_t *str)
@@ -44,19 +44,19 @@ void GuiText(fontTextInfo *tInfo, uint8_t *str)
 	lkdCoord tx = tInfo->x + tInfo->beginOffset;
 	uint16_t fontWide;
 	while(*str != '\0'){
-		/* ¼ÆËãµ±Ç°×ÖÌåµÄ¿í¶È */
+		/* ï¿½ï¿½ï¿½ãµ±Ç°ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ */
 		if(*str > 0x7f){
 			fontWide = thisFont->dwide;
 		}
 		else{
 			fontWide = thisFont->swide;
 		}
-		/* ¼ÆËãµ±Ç°x´òÓ¡×ø±ê */
+		/* ï¿½ï¿½ï¿½ãµ±Ç°xï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ */
 		if(tx + fontWide + tInfo->wInterval > endx){
 			tx = tInfo->x;
 			tInfo->y += (thisFont->dhigh + tInfo->hInterval);
 		}
-		/* ÊÇ·ñ´ïµ½½áÊø×ø±ê */
+		/* ï¿½Ç·ï¿½ïµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 		if(tInfo->y + thisFont->dhigh + tInfo->hInterval > endy){
 			break;
 		}
@@ -78,9 +78,9 @@ void GuiText(fontTextInfo *tInfo, uint8_t *str)
 }
 
 /**
-  *@brief  »ñÈ¡ÎÄ±¾ËùÕ¼ÏñËØ³¤¶È
-  *@param  str ÎÄ±¾
-  *@retval ÏñËØ³¤¶È
+  *@brief  ï¿½ï¿½È¡ï¿½Ä±ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½
+  *@param  str ï¿½Ä±ï¿½
+  *@retval ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½
   */
 uint16_t GetTextPixLen(uint8_t *str)
 {
@@ -99,12 +99,12 @@ uint16_t GetTextPixLen(uint8_t *str)
 }
 
 /**
-  *@brief  Ð´µ¥ÐÐÎÄ±¾
-  *@param  x,y ÆðÊ¼×ø±ê
-  *@param  wide µ¥ÐÐÎÄ±¾¿í¶È
-  *@param  flag ×ÖÌå¶ÔÆë±êÖ¾
-  *@param  str ÎÄ±¾
-  *@retval ÏñËØ³¤¶È
+  *@brief  Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
+  *@param  x,y ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+  *@param  wide ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½
+  *@param  flag ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
+  *@param  str ï¿½Ä±ï¿½
+  *@retval ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½
   */
 void GuiRowText(lkdCoord x, lkdCoord y,uint16_t wide, FontFlag flag,uint8_t *str)
 {
@@ -138,18 +138,18 @@ void GuiRowText(lkdCoord x, lkdCoord y,uint16_t wide, FontFlag flag,uint8_t *str
 	if(backcolor == CWHITLE){
 		tInfo.flag = 0;
 	}
-	else{//·´ÏÔ
+	else{//ï¿½ï¿½ï¿½ï¿½
 		tInfo.flag = 1;
 	}
 	GuiText(&tInfo, str);
 }
 /**
-  *@brief  Ð´µ¥ÐÐÏÂ»®ÏßÎÄ±¾
-  *@param  x,y ÆðÊ¼×ø±ê
-  *@param  wide µ¥ÐÐÎÄ±¾¿í¶È
-  *@param  flag ×ÖÌå¶ÔÆë±êÖ¾
-  *@param  str ÎÄ±¾
-  *@retval ÏñËØ³¤¶È
+  *@brief  Ð´ï¿½ï¿½ï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
+  *@param  x,y ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+  *@param  wide ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½
+  *@param  flag ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
+  *@param  str ï¿½Ä±ï¿½
+  *@retval ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½
   */
 void GuiRowTextWithLine(lkdCoord x, lkdCoord y,uint16_t wide, uint16_t linesize,FontFlag flag,uint8_t *str)
 {
@@ -183,12 +183,11 @@ void GuiRowTextWithLine(lkdCoord x, lkdCoord y,uint16_t wide, uint16_t linesize,
 	if(backcolor == CWHITLE){
 		tInfo.flag = 0;
 	}
-	else{//·´ÏÔ
+	else{//ï¿½ï¿½ï¿½ï¿½
 		tInfo.flag = 1;
 	}
-	GuiHLine(x,y+7,linesize,1);
+	GuiHLine(x,y+8,linesize,1);
 	GuiText(&tInfo, str);
-
 }
 
 void GuiFont12Align(lkdCoord x, lkdCoord y,uint16_t wide, FontFlag flag,uint8_t *str)

@@ -116,7 +116,8 @@ static rt_err_t K1_Status;
 static rt_err_t K2_Status;
 static rt_err_t K2_Long_Status;
 
-uint8_t screen_reload=1;
+uint8_t screen_reload = 1;
+uint8_t moto_done = 0;
 
 lkdButton tButton[20];
 lkdScroll tScroll[2];
@@ -550,7 +551,7 @@ void SetDetdush(void)
     SingleSelect="                 ";
     SingleRightBack="           Zur{ck";
     LowSelect="<Batterien leer> ";
-    YesOrNo="No            Yes";
+    YesOrNo="Nein           Ja";
 
     Backwash_Time="R{cksp{ldauer";
     Version="Firmware-Version";
@@ -828,7 +829,14 @@ static void UserMain1WinFun(void *param)
                 tButton[1].wide = 117;
                 tButton[1].high = 15;
                 tButton[1].name = Reminder;
-                tButton[1].linesize = 70-!Reminder_Enable*70;
+                if(Setting_Language)
+                {
+                    tButton[1].linesize = 73-!Reminder_Enable*73;
+                }
+                else
+                {
+                    tButton[1].linesize = 58-!Reminder_Enable*58;
+                }
                 tButton[1].flag = 0;/* 抬起状态 */
                 GuiButton(&tButton[1]);
 
@@ -837,7 +845,7 @@ static void UserMain1WinFun(void *param)
                 tButton[2].wide = 117;
                 tButton[2].high = 15;
                 tButton[2].name = Automatic;
-                tButton[2].linesize = 70-!Automatic_Enable*70;
+                tButton[2].linesize = 65-!Automatic_Enable*65;
                 tButton[2].flag = 0;/* 抬起状态 */
                 GuiButton(&tButton[2]);
 
@@ -848,16 +856,8 @@ static void UserMain1WinFun(void *param)
                 tButton[3].linesize = 70-!Deltapress_Enable*70;
                 if(Deltapress_Enable)
                 {
-//                    if(Setting_Deltapress)
-//                    {
-                        tButton[3].linesize = 100-!Deltapress_Enable*100;
-                        tButton[3].name = Delta3;
-//                    }
-//                    else
-//                    {
-//                        tButton[3].linesize = 100-!Deltapress_Enable*100;
-//                        tButton[3].name = Delta2;
-//                    }
+                    tButton[3].linesize = 100-!Deltapress_Enable*100;
+                    tButton[3].name = Delta3;
                 }
                 else
                 {
@@ -917,7 +917,6 @@ static void UserMain1WinFun(void *param)
                 }
                 tButton[4].flag = 1;/* 按下状态 */
                 GuiButton(&tButton[4]);
-
                 GuiUpdateDisplayAll();
                 break;
             case 2:
@@ -945,7 +944,14 @@ static void UserMain1WinFun(void *param)
                 tButton[1].wide = 117;
                 tButton[1].high = 15;
                 tButton[1].name = Reminder;
-                tButton[1].linesize = 70-!Reminder_Enable*70;
+                if(Setting_Language)
+                {
+                    tButton[1].linesize = 73-!Reminder_Enable*73;
+                }
+                else
+                {
+                    tButton[1].linesize = 58-!Reminder_Enable*58;
+                }
                 tButton[1].flag = 0;/* 抬起状态 */
                 GuiButton(&tButton[1]);
 
@@ -954,7 +960,7 @@ static void UserMain1WinFun(void *param)
                 tButton[2].wide = 117;
                 tButton[2].high = 15;
                 tButton[2].name = Automatic;
-                tButton[2].linesize = 70-!Automatic_Enable*70;
+                tButton[2].linesize = 65-!Automatic_Enable*65;
                 tButton[2].flag = 0;/* 抬起状态 */
                 GuiButton(&tButton[2]);
 
@@ -965,16 +971,8 @@ static void UserMain1WinFun(void *param)
                 tButton[3].linesize = 70-!Deltapress_Enable*70;
                 if(Deltapress_Enable)
                 {
-//                    if(Setting_Deltapress)
-//                    {
-                        tButton[3].linesize = 100-!Deltapress_Enable*100;
-                        tButton[3].name = Delta3;
-//                    }
-//                    else
-//                    {
-//                        tButton[3].linesize = 100-!Deltapress_Enable*100;
-//                        tButton[3].name = Delta2;
-//                    }
+                    tButton[3].linesize = 100-!Deltapress_Enable*100;
+                    tButton[3].name = Delta3;
                 }
                 else
                 {
@@ -1231,6 +1229,7 @@ static void UserMain3WinFun(void *param)
     if(FirstFlag[3] == 0)
     {
         FirstFlag[3] = 1;
+        moto_done = 0;
         screen_reload=1;
         GuiClearScreen(0);
         if(Setting_Language)
@@ -1302,7 +1301,7 @@ static void UserMain3WinFun(void *param)
                 {
                     GuiRowText(25,15,80,0,"R{cksp{lung");
                     GuiRowText(18,27,105,0,"abgeschlossen");
-                    GuiRowText(106,56,30,0,"OK");
+                    GuiRowText(106,56,30,0,"Ja");
                 }
                 else
                 {
@@ -1340,6 +1339,7 @@ static void UserMain3WinFun(void *param)
                 break;
             }
             GuiUpdateDisplayAll();
+            moto_done = 1;
         }
         K0_Status = rt_sem_take(K0_Sem, 0);
         K1_Status = rt_sem_take(K1_Sem, 0);
@@ -1349,10 +1349,10 @@ static void UserMain3WinFun(void *param)
         {
 
         }
-        if(K2_Status==RT_EOK&&screen_reload==0)
+        if(K2_Status==RT_EOK && moto_done==1)
         {
             FirstFlag[3]=0;
-            screen_reload=1;
+            screen_reload = 1;
             led_select(0);
             GuiClearScreen(0);
             GuiWinInit();
@@ -2236,7 +2236,7 @@ static void UserMain6WinFun(void *param)
         }
         else
         {
-            GuiRowText(20,15,100,0,"Deltapress is");
+            GuiRowText(5,15,128,0,"Delta Pressure is");
         }
         tButton[0].y = 23;
         tButton[0].high = 15;
@@ -4143,7 +4143,7 @@ static void UserMain17WinFun(void *param)
         }
         else
         {
-            sprintf(BackwashString,"Back: %03d Sec.",Setting_Backwashtime);
+            sprintf(BackwashString,"Time: %03d Sec.",Setting_Backwashtime);
         }
 
         tButton[0].x = 15;
@@ -4314,7 +4314,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.11");
+        GuiRowText(76,30,80,0,"0.0.12");
 
         tButton[0].x = 0;
         tButton[0].y = 50;
@@ -4749,12 +4749,7 @@ static void UserMain22WinFun(void *param)
         }
         if(K1_Status==RT_EOK)
         {
-//            tButton[NowButtonId].flag=0;
-//            GuiButton(&tButton[NowButtonId]);
-//            NowButtonId++;
-//            if(NowButtonId==1){NowButtonId=0;}
-//            tButton[NowButtonId].flag=1;
-//            GuiButton(&tButton[NowButtonId]);
+
         }
         if(K2_Status==RT_EOK)
         {
@@ -4871,13 +4866,11 @@ static void UserMain24WinFun(void *param)//password
         {
             if(TdsValueOffsetTemp==0)
             {
-                //TdsValueZeroOffset=Tds_Work();
                 rt_kprintf("Zero Offset is %d\r\n",TdsValueZeroOffset);
             }
             else
 
             {
-                //TdsValueOffset = (double)TdsValueOffsetTemp / (double)(Tds_Work()-TdsValueZeroOffset);
                 printf("Offset is %5.3f\r\n",TdsValueOffset);
             }
             GuiClearScreen(0);
@@ -4894,7 +4887,7 @@ static void UserMain25WinFun(void *param)
         if(Setting_Language)
         {
             GuiRowText(4,15,124,0,"R{cksp{lung jetzt");
-            GuiRowText(30,30,80,0,"Durchf{hren?");
+            GuiRowText(30,30,80,0,"durchf{hren?");
         }
         else
         {
@@ -4905,7 +4898,7 @@ static void UserMain25WinFun(void *param)
         tButton[3].y = 50;
         tButton[3].wide = 128;
         tButton[3].high = 15;
-        tButton[3].name = YesOrNo;
+        tButton[3].name = SingleYes;
         tButton[3].linesize = 0;
         tButton[3].flag = 1;/* 按下状态 */
         GuiButton(&tButton[3]);
@@ -4924,11 +4917,7 @@ static void UserMain25WinFun(void *param)
         }
         if(K0_Status==RT_EOK)
         {
-            screen_reload = 1;
-            FirstFlag[25]=0;
-            GuiClearScreen(0);
-            GuiWinInit();
-            GuiWinAdd(&userMain1Win);
+
         }
         if(K1_Status==RT_EOK)
         {
@@ -4936,7 +4925,6 @@ static void UserMain25WinFun(void *param)
         }
         if(K2_Status==RT_EOK)
         {
-            screen_reload = 1;
             JumptoAutomatic();
         }
     }
