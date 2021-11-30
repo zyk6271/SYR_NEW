@@ -38,7 +38,7 @@ int main(void)
     RTC_Init();
     Delta_Init();
     Button_Init();
-    WiFiInit();
+    WiFiDeInit();
     while (1)
     {
         rt_thread_mdelay(1000);

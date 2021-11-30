@@ -177,8 +177,8 @@ void BeforSleep(void)
     FlashDeInit();
     //ADC
     ADC_Pin_DeInit();
-    //WIFI
-    WiFiDeInit();
+//    //WIFI
+//    WiFiDeInit();
     //LCD
     CloseLcdVcc();
     //TDS
@@ -210,6 +210,8 @@ void AfterWake(void)
     TDS_GpioInit();
     //Debug
     DebugInit();
+//    //WIFI
+//    WiFiInit();
 
     rt_pin_detach_irq(K0);
     rt_pin_detach_irq(K1);
