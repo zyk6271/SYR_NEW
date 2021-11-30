@@ -138,11 +138,11 @@ void GuiButton(lkdButton *pButton)
 //		GuiRLine(endx,pButton->y + 1,endy,forecolor);
 //		GuiHLine(pButton->x + 1,endy,endx,forecolor);
 //	}
-		if(pButton->flag == BUTTON_UP){//��ѡ��
-			GuiFillRect(pButton->x,pButton->y+2,endx,endy-2, backcolor);
-			if(pButton->linesize>0)GuiRowTextWithLine(pButton->x + 4,pButton->y+4,pButton->wide - 3,pButton->linesize,FONT_LEFT,pButton->name);
-			else GuiRowText(pButton->x + 4,pButton->y+4,pButton->wide - 3,FONT_LEFT,pButton->name);
-
+    if(pButton->flag == BUTTON_UP)
+    {
+        GuiFillRect(pButton->x,pButton->y+2,endx,endy-2, backcolor);
+        if(pButton->linesize>0)GuiRowTextWithLine(pButton->x + 4,pButton->y+4,pButton->wide - 3,pButton->linesize,FONT_LEFT,pButton->name);
+        else GuiRowText(pButton->x + 4,pButton->y+4,pButton->wide - 3,FONT_LEFT,pButton->name);
 	}
 	else{
 		//GuiFillRect(pButton->x,pButton->y,endx,endy, backcolor);

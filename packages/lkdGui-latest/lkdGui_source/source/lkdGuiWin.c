@@ -20,8 +20,10 @@ void GuiWinDraw(lkdWin *pWindow)
 {
 	lkdColour forecolor,backcolor;
 
-	forecolor = GuiGetForecolor();
-	backcolor=  GuiGetbackcolor();
+	forecolor = 1;
+	backcolor=  0;
+	GuiSetForecolor(forecolor);
+	GuiSetbackcolor(backcolor);
 
 	if(pWindow->x + pWindow->wide - 1 > GUIXMAX || pWindow->y + pWindow->hight - 1 > GUIYMAX ||\
 		 pWindow->x < 0 || pWindow->y < 0 || pWindow->wide == 0 || pWindow->hight == 0){
