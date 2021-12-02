@@ -18,26 +18,21 @@ static struct GuiWinManage winManage;
   */
 void GuiWinDraw(lkdWin *pWindow)
 {
-	lkdColour forecolor,backcolor;
-
-	forecolor = 1;
-	backcolor=  0;
-	GuiSetForecolor(forecolor);
-	GuiSetbackcolor(backcolor);
-
-	if(pWindow->x + pWindow->wide - 1 > GUIXMAX || pWindow->y + pWindow->hight - 1 > GUIYMAX ||\
-		 pWindow->x < 0 || pWindow->y < 0 || pWindow->wide == 0 || pWindow->hight == 0){
-		   return;
-	}
-	if(pWindow->title != NULL){
-		GuiFillRect(pWindow->x, pWindow->y, pWindow->x + pWindow->wide - 1,\
-		11, forecolor);
-		GuiExchangeColor();
-		GuiRowText(pWindow->x + 4, pWindow->y+2, pWindow->wide - 4,\
-			FONT_MID,pWindow->title);
-		GuiExchangeColor();
-	}
-	GuiUpdateDisplayAll();
+    if(pWindow->x + pWindow->wide - 1 > GUIXMAX || pWindow->y + pWindow->hight - 1 > GUIYMAX ||\
+         pWindow->x < 0 || pWindow->y < 0 || pWindow->wide == 0 || pWindow->hight == 0){
+           return;
+    }
+    if(pWindow->title != NULL){
+        GuiSetForecolor(1);
+        GuiSetbackcolor(0);
+        GuiFillRect(pWindow->x, pWindow->y, pWindow->x + pWindow->wide - 1,\
+        11, 1);
+        GuiExchangeColor();
+        GuiRowText(pWindow->x + 4, pWindow->y+2, pWindow->wide - 4,\
+            FONT_MID,pWindow->title);
+        GuiExchangeColor();
+    }
+    GuiUpdateDisplayAll();
 }
 
 /**
