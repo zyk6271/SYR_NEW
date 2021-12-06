@@ -29,9 +29,14 @@ extern uint16_t Setting_Backwashtime;
 extern uint32_t Setting_Hardness;
 extern uint32_t Moto_Current;
 
+#define MOTO_STOP 0
+#define MOTO_FORWARD 1
+#define MOTO_BACK 2
+#define MOTO_RESET 3
+
 uint8_t Get_MotoValid(void)
 {
-    if(MotoWorkFlag==0)return 1;
+    if(MotoWorkFlag == MOTO_STOP)return 1;
     else return 0;
 }
 void Moto_Forward(void)
@@ -60,7 +65,7 @@ void Moto_Cycle(void)
     TDS_GpioInit();
     if(Get_Bat_Level()==0)
     {
-        if(MotoWorkFlag == 0)
+        if(MotoWorkFlag == MOTO_STOP)
         {
             ScreenTimerStop();
             uint32_t Setting_Backwashtime_MileSecond=0;
@@ -86,7 +91,7 @@ void Moto_Cycle(void)
 }
 void Moto_Cycle_Timer_Callback(void *parameter)
 {
-    if(MotoWorkFlag==1)
+    if(MotoWorkFlag == MOTO_FORWARD)
     {
         LOG_D("Moto Start Back\r\n");
         rt_event_send(&Moto_Event, Event_Moto_Back);
@@ -116,32 +121,32 @@ void Moto_Current_Timer_Callback(void *parameter)
 }
 void Moto_Detect_Timer_Callback(void *parameter)
 {
-    if(MotoWorkFlag==1)
+    if(MotoWorkFlag == MOTO_FORWARD)
     {
         if(rt_pin_read(MOTO_RIGHT)==1)
         {
             LOG_D("No Moto,Start to Free\r\n");
             rt_event_send(&Moto_Event, Event_Moto_Free);
-            MotoWorkFlag=0;
+            MotoWorkFlag=MOTO_STOP;
             ScreenTimerRefresh();
             Jump_NOMOTO();
             Moto_Reset();
         }
     }
-    else if(MotoWorkFlag == 2)
+    else if(MotoWorkFlag == MOTO_BACK)
     {
         if(rt_pin_read(MOTO_LEFT)==0)
         {
             LOG_D("Moto Cycle Done\r\n");
             rt_event_send(&Moto_Event, Event_Moto_Free);
-            MotoWorkFlag=0;
+            MotoWorkFlag = MOTO_STOP;
             ScreenTimerRefresh();
             Jump_FINISH();
         }
         else
         {
             LOG_D("No Moto,Start to Free\r\n");
-            MotoWorkFlag=0;
+            MotoWorkFlag = MOTO_STOP;
             rt_event_send(&Moto_Event, Event_Moto_Free);
             ScreenTimerRefresh();
             Jump_NOMOTO();
@@ -151,10 +156,10 @@ void Moto_Detect_Timer_Callback(void *parameter)
 }
 void MotoLeft_Callback(void *parameter)
 {
-    Moto_Stop();
-    if(MotoWorkFlag==2)
+    if(MotoWorkFlag == MOTO_BACK)
     {
-        MotoWorkFlag=0;
+        Moto_Stop();
+        MotoWorkFlag = MOTO_STOP;
         rt_timer_stop(Moto_Detect_Timer);
         rt_event_send(&Moto_Event, Event_Moto_Free);
         if(TDS_WarnGet())
@@ -180,16 +185,24 @@ void MotoLeft_Callback(void *parameter)
         ScreenTimerRefresh();
         LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
     }
-    else if(MotoWorkFlag==0)
+    else if(MotoWorkFlag == MOTO_STOP)
     {
         rt_event_send(&Moto_Event, Event_Moto_Free);
+    }
+    else if(MotoWorkFlag == MOTO_RESET)
+    {
+        MotoWorkFlag = MOTO_STOP;
+        Moto_Stop();
     }
 }
 void MotoRight_Callback(void *parameter)
 {
-    Moto_Stop();
-    TDS_Work();
-    rt_timer_start(Moto_Cycle_Timer);
+    if(MotoWorkFlag == MOTO_FORWARD)
+    {
+        Moto_Stop();
+        TDS_Work();
+        rt_timer_start(Moto_Cycle_Timer);
+    }
 }
 void Moto_Pin_Init(void)
 {
@@ -248,7 +261,7 @@ void Moto_Callback(void *parameter)
                 LOG_I("Moto is Free\r\n");
                 break;
             case Event_Moto_Forward:
-                MotoWorkFlag=1;
+                MotoWorkFlag = MOTO_FORWARD;
                 if(rt_pin_read(MOTO_RIGHT)==1 || rt_pin_read(MOTO_LEFT)==0)
                 {
                     rt_pin_write(MOTO_IN1,0);
@@ -263,7 +276,7 @@ void Moto_Callback(void *parameter)
                 }
                 break;
             case Event_Moto_Back:
-                MotoWorkFlag=2;
+                MotoWorkFlag = MOTO_BACK;
                 if(rt_pin_read(MOTO_RIGHT)==0 || rt_pin_read(MOTO_LEFT)==1)
                 {
                     rt_pin_write(MOTO_IN1,1);
@@ -282,7 +295,7 @@ void Moto_Callback(void *parameter)
                 rt_pin_write(MOTO_IN1,0);
                 rt_pin_write(MOTO_IN2,0);
                 Disable_MotoINT();
-                MotoWorkFlag=0;
+                MotoWorkFlag = MOTO_STOP;
                 ScreenTimerRefresh();
                 LOG_D("Moto Event Overload\r\n");
                 Jump_STALLING();
@@ -297,6 +310,7 @@ void Moto_Reset(void)
 {
     if(rt_pin_read(MOTO_RIGHT)==0 || rt_pin_read(MOTO_LEFT)==1)
     {
+        MotoWorkFlag = MOTO_RESET;
         rt_pin_write(MOTO_IN1,1);
         rt_pin_write(MOTO_IN2,0);
         Disable_MotoINT();
