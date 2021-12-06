@@ -88,6 +88,11 @@ int Flash_Init(void)
         LOG_E("easyflash_init fail\r\n");
         return RT_ERROR;
     };
+    if(Flash_Get(0)==0)
+    {
+        Set_Default();
+        Flash_Set(0,1);
+    }
     LOG_I("Storage Init Success\r\n");
     return RT_EOK;
 }
@@ -108,7 +113,6 @@ uint32_t Flash_Get(uint8_t id)
     LOG_D("Reading Key %s value %ld \r\n", Key_list[id], read_value);//输出
     return read_value;
 }
-
 void Flash_Set(uint8_t id,uint32_t value)
 {
     char *Temp_ValueBuf = rt_malloc(64);
@@ -124,7 +128,6 @@ void Flash_Clear(void)
 {
     ef_env_set_default();
     LOG_D("Flash Set Clear");
-    Set_Default();
-    rt_thread_mdelay(2000);
+    rt_thread_mdelay(1000);
     rt_hw_cpu_reset();
 }

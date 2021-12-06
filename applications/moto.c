@@ -65,7 +65,7 @@ void Moto_Cycle(void)
     TDS_GpioInit();
     if(Get_Bat_Level()==0)
     {
-        if(MotoWorkFlag == MOTO_STOP)
+        if(MotoWorkFlag == MOTO_STOP || MotoWorkFlag == MOTO_RESET)
         {
             ScreenTimerStop();
             uint32_t Setting_Backwashtime_MileSecond=0;
