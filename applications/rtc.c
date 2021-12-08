@@ -100,6 +100,7 @@ void RTC_Check_Callback(void *parameter)
                     RTC_Automatic_Time = 0;
                     RTC_Event_Flag = 1;
                     Flash_Set(17,0);
+                    screen_reload = 0;
                     LOG_D("Automatic_Enable\r\n");
                     if(Low_Power_Flag)
                     {

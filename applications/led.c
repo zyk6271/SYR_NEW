@@ -66,12 +66,13 @@ void led_select(uint8_t type)//red:1,green:2,blue:3
 }
 void Led_GpioInit(void)
 {
-    if(led_state !=0 )
+    if(led_state == 0 )
     {
-        agile_led_resume(LED_R);
-        agile_led_resume(LED_G);
-        agile_led_resume(LED_B);
+        led_select(0);
     }
+    agile_led_resume(LED_R);
+    agile_led_resume(LED_G);
+    agile_led_resume(LED_B);
 }
 void Led_GpioDeInit(void)
 {
