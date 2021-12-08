@@ -17,6 +17,8 @@ static agile_led_t *LED_R = RT_NULL;
 static agile_led_t *LED_G = RT_NULL;
 static agile_led_t *LED_B = RT_NULL;
 
+static uint8_t led_state  = 0;
+
 void Led_Init(void)
 {
     if(LED_R == RT_NULL)
@@ -34,6 +36,7 @@ void Led_Init(void)
 }
 void led_select(uint8_t type)//red:1,green:2,blue:3
 {
+    led_state = type;
     switch(type)
     {
     case 0:
@@ -63,9 +66,12 @@ void led_select(uint8_t type)//red:1,green:2,blue:3
 }
 void Led_GpioInit(void)
 {
-    agile_led_resume(LED_R);
-    agile_led_resume(LED_G);
-    agile_led_resume(LED_B);
+    if(led_state !=0 )
+    {
+        agile_led_resume(LED_R);
+        agile_led_resume(LED_G);
+        agile_led_resume(LED_B);
+    }
 }
 void Led_GpioDeInit(void)
 {

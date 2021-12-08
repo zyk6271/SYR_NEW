@@ -637,6 +637,10 @@ void LcdtoReminder(void)
         GuiClearScreen(0);
         GuiWinAdd(&userMain25Win);
     }
+    else
+    {
+        FirstFlag[25]=0;
+    }
 }
 void LcdtoBackwash(void)
 {
@@ -645,8 +649,12 @@ void LcdtoBackwash(void)
         memset(FirstFlag,0,40);
         GuiClearScreen(0);
         GuiWinAdd(&userMain3Win);
-        Moto_Cycle();
     }
+    else
+    {
+        FirstFlag[25]=0;
+    }
+    Moto_Cycle();
 }
 void Jump_TDS(void)
 {
@@ -663,7 +671,6 @@ void Jump_STALLING(void)
 void Jump_FINISH(void)
 {
     rt_event_send(&lcd_jump_event, FINISH);
-    SemJump();
 }
 void Jump_NOMOTO(void)
 {
@@ -1301,7 +1308,7 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(40,27,70,0,"Finish");
                     GuiRowText(106,56,30,0,"OK");
                 }
-                led_select(0);
+                SemJump();
                 break;
             case NOMOTO:
                 screen_reload=0;
@@ -1345,6 +1352,7 @@ static void UserMain3WinFun(void *param)
         {
             FirstFlag[3]=0;
             screen_reload = 1;
+            led_select(0);
             GuiClearScreen(0);
             GuiWinInit();
             GuiWinAdd(&userMain1Win);
