@@ -639,7 +639,7 @@ void LcdtoReminder(void)
     }
     else
     {
-        FirstFlag[25]=0;
+        FirstFlag[3]=0;
     }
 }
 void LcdtoBackwash(void)
@@ -649,12 +649,12 @@ void LcdtoBackwash(void)
         memset(FirstFlag,0,40);
         GuiClearScreen(0);
         GuiWinAdd(&userMain3Win);
+        Moto_Cycle();
     }
     else
     {
-        FirstFlag[25]=0;
+        FirstFlag[3]=0;
     }
-    Moto_Cycle();
 }
 void Jump_TDS(void)
 {
