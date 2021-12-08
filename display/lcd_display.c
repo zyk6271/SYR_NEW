@@ -636,6 +636,7 @@ void LcdtoReminder(void)
         memset(FirstFlag,0,40);
         GuiClearScreen(0);
         GuiWinAdd(&userMain25Win);
+        GuiWinDisplay();
     }
     else
     {
@@ -649,6 +650,7 @@ void LcdtoBackwash(void)
         memset(FirstFlag,0,40);
         GuiClearScreen(0);
         GuiWinAdd(&userMain3Win);
+        GuiWinDisplay();
         Moto_Cycle();
     }
     else
