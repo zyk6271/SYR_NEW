@@ -2,30 +2,28 @@
 #include "rtdevice.h"
 #include "stm32l4xx.h"
 #include "pin_config.h"
-#include "tds.h"
+#include "tds_uart.h"
+#include "tds_service.h"
 #include "adcwork.h"
 #include "string.h"
 
-#define DBG_TAG "TDS"
+#define DBG_TAG "TDS_UART"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
 uint8_t data_parsing_id = 0;
 uint32_t TDS_Value = 0;
 uint8_t TDS_Warn = 0;
-extern uint8_t TDS_CND_Value;
 
 #define TDS_UART_NAME                   "uart2"
 #define DATA_CMD_BEGIN                   0x55       /* 结束位设置为 \r，即回车符 */
 #define ONE_DATA_MAXLEN                  11         /* 不定长数据的最大长度 */
 
-/* 用于接收消息的信号量 */
 static struct rt_semaphore rx_sem;
 static rt_device_t serial;
 rt_thread_t TDS_t = RT_NULL;
 struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;  /* 初始化配置参数 */
 
-/* 接收数据回调函数 */
 static rt_err_t uart_rx_ind(rt_device_t dev, rt_size_t size)
 {
     /* 串口接收到数据后产生中断，调用此回调函数，然后发送接收信号量 */
@@ -53,26 +51,11 @@ void tds_data_parsing(void *parameter)
     while (1)
     {
         ch = uart_sample_get_char();
-        data[data_parsing_id++] = ch;
-        if(data_parsing_id == ONE_DATA_MAXLEN)
-        {
-            if(data[0] == DATA_CMD_BEGIN)
-            {
-                LOG_D("TDS_High=%x,TDS_Low=%x\r\n",data[4],data[5]);
-                TDS_Value = ((data[4]<<8) + data[5]);
-                TDS_Value = (int)(0.01 * TDS_Value * TDS_CND_Value);
-                LOG_D("TDS_Value is %d\r\n",TDS_Value);
-            }
-            else
-            {
-                LOG_D("TDS_Value Error\r\n");
-            }
-            data_parsing_id = 0;
-        }
+        uart_receive_input(ch);
     }
 }
 
-void TDS_Init(void)
+void TDS_Uart_Init(void)
 {
     char uart_name[RT_NAME_MAX];
 
@@ -109,7 +92,6 @@ void TDS_Init(void)
     }
     LOG_D("TDS Init Success\r\n");
 }
-MSH_CMD_EXPORT(TDS_Init, TDS_Init);
 void TDS_GpioInit(void)
 {
     __HAL_RCC_USART2_CLK_ENABLE();
@@ -149,6 +131,7 @@ uint32_t TDS_Work(void)
         return 0;
     }
 }
+MSH_CMD_EXPORT(TDS_Work,TDS_Work);
 uint32_t GetTDS(void)
 {
     return TDS_Value;

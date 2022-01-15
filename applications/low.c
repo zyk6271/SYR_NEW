@@ -29,6 +29,7 @@ uint8_t Delta_Wakeup_Flag;
 uint8_t RTC_Wakeup_Flag;
 uint8_t Low_Power_Flag;
 extern uint8_t MotoWorkFlag;
+extern uint8_t WiFi_Enable;
 
 extern uint8_t LCD_Flag;
 extern SPI_HandleTypeDef hspi2;
@@ -111,8 +112,18 @@ void FlashDeInit(void)
 void WiFiInit(void)
 {
     rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
-    rt_pin_write(WIFI_EN,1);
-    rt_pin_mode(WIFI_RST, PIN_MODE_INPUT);
+    rt_pin_write(WIFI_EN,WiFi_Enable);
+    if(WiFi_Enable)
+    {
+        Wifi_LedOpen();
+        rt_pin_mode(WIFI_RST, PIN_MODE_INPUT);
+    }
+    else
+    {
+        Wifi_LedClose();
+        rt_pin_mode(WIFI_RST, PIN_MODE_OUTPUT);
+        rt_pin_write(WIFI_RST,0);
+    }
 }
 void WiFiDeInit(void)
 {
@@ -178,7 +189,7 @@ void BeforSleep(void)
     //ADC
     ADC_Pin_DeInit();
 //    //WIFI
-//    WiFiDeInit();
+    WiFiDeInit();
     //LCD
     CloseLcdVcc();
     //TDS
@@ -210,8 +221,8 @@ void AfterWake(void)
     TDS_GpioInit();
     //Debug
     DebugInit();
-//    //WIFI
-//    WiFiInit();
+    //WIFI
+    WiFiInit();
 
     rt_pin_detach_irq(K0);
     rt_pin_detach_irq(K1);

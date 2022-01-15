@@ -42,17 +42,14 @@ void led_select(uint8_t type)//red:1,green:2,blue:3
     case 0:
         agile_led_stop(LED_R);
         agile_led_stop(LED_G);
-        agile_led_stop(LED_B);
         break;
     case 1:
         agile_led_stop(LED_G);
-        agile_led_stop(LED_B);
         agile_led_set_light_mode(LED_R, "500,500", -1);
         agile_led_start(LED_R);
         break;
     case 2:
         agile_led_stop(LED_R);
-        agile_led_stop(LED_B);
         agile_led_set_light_mode(LED_G, "100,0", -1);
         agile_led_start(LED_G);
         break;
@@ -60,7 +57,6 @@ void led_select(uint8_t type)//red:1,green:2,blue:3
         agile_led_stop(LED_R);
         agile_led_stop(LED_G);
         agile_led_set_light_mode(LED_B, "100,0", -1);
-        agile_led_start(LED_B);
         break;
     }
 }
@@ -85,4 +81,12 @@ void Led_GpioDeInit(void)
     rt_pin_write(LED_R_PIN, 1);
     rt_pin_mode(LED_B_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(LED_B_PIN, 1);
+}
+void Wifi_LedOpen(void)
+{
+    agile_led_on(LED_B);
+}
+void Wifi_LedClose(void)
+{
+    agile_led_off(LED_B);
 }

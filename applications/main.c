@@ -13,7 +13,7 @@
 #include "key.h"
 #include "moto.h"
 #include "adcwork.h"
-#include "tds.h"
+#include "tds_service.h"
 #include "low.h"
 #include "lcd_display.h"
 #include "led.h"
@@ -28,17 +28,19 @@
 int main(void)
 {
     Flash_Init();
+    Flash2Mem();
     ADC_Init();
     Led_Init();
     Moto_Init();
-    TDS_Init();
+    TDS_Uart_Init();
+    TDS_Service_Init();
     Power_Init();
     LCD_Init();
     Low_Init();
     RTC_Init();
     Delta_Init();
     Button_Init();
-    WiFiDeInit();
+    WiFiInit();
     while (1)
     {
         rt_thread_mdelay(1000);

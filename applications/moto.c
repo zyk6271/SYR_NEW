@@ -5,7 +5,7 @@
 #include "pin_config.h"
 #include "adcwork.h"
 #include "rtc.h"
-#include "tds.h"
+#include "tds_service.h"
 #include "lcd_display.h"
 #include "led.h"
 #include "power.h"

@@ -50,6 +50,7 @@ const char *Key_list[] =
     "TDS_State",                          //20
     "TDS_CND",                            //21
     "Time_Range"                          //22
+    "WiFi"                                //23
 };
 void Set_Default(void)
 {
@@ -62,6 +63,7 @@ void Set_Default(void)
     Flash_Set(15,1);
     Flash_Set(21,19);
     Flash_Set(22,0);
+    Flash_Set(23,0);
 }
 int Flash_Init(void)
 {
