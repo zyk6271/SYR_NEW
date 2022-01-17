@@ -173,7 +173,8 @@ void tds_uart_service(void)
             offset += 9;
             continue;
         }
-        LOG_D("Enter in data_handle,Command is %X\r\n",tds_data_process_buf[offset + FRAME_TYPE]);
+        LOG_I("crc correct (crc:0x%X data:0x%X)\r\n",get_check_sum((unsigned char *)tds_data_process_buf + offset,rx_value_len - 1),tds_data_process_buf[offset + rx_value_len]);
+        //LOG_D("Enter in Data_Handle,Command is %X\r\n",tds_data_process_buf[offset + FRAME_TYPE]);
         tds_handle(offset);
         offset += rx_value_len;
     }

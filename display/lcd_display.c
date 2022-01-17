@@ -568,8 +568,8 @@ void SetDetdush(void)
     Remain = "Restzeit";
     WiFi = "WiFi";
     Blank = " ";
-    Open = "Open";
-    Close = "Close";
+    Open = "aktiviert";
+    Close = "deaktiviert";
 
     Back="Zur{ck           ";
     SingleYes="               Ja";
@@ -5593,18 +5593,34 @@ static void UserMain31WinFun(void *param)
 
         NowButtonId = WiFi_Enable;
 
-        tButton[0].x = 45;
+        if(Setting_Language)
+        {
+            tButton[0].x = 25;
+            tButton[0].wide = 82;
+        }
+        else
+        {
+            tButton[0].x = 42;
+            tButton[0].wide = 42;
+        }
         tButton[0].y = 15;
-        tButton[0].wide = 45;
         tButton[0].high = 15;
         tButton[0].name = Close;
         tButton[0].linesize = 0;
         tButton[0].flag = !WiFi_Enable;/* 按下状态 */
         GuiButton(&tButton[0]);
 
-        tButton[1].x = 50;
+        if(Setting_Language)
+        {
+            tButton[1].x = 32;
+            tButton[1].wide = 70;
+        }
+        else
+        {
+            tButton[1].x = 45;
+            tButton[1].wide = 35;
+        }
         tButton[1].y = 30;
-        tButton[1].wide = 40;
         tButton[1].high = 15;
         tButton[1].name = Open;
         tButton[1].linesize = 0;
