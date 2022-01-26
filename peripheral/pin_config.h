@@ -32,10 +32,10 @@
 //MOTO.
 #define MOTO_MODE                   5
 #define MOTO_VCC                    4
-#define MOTO_IN1                    6
-#define MOTO_IN2                    7
-#define MOTO_LEFT                   24
-#define MOTO_RIGHT                  25
+#define MOTO_IN1                    7
+#define MOTO_IN2                    6
+#define MOTO_LEFT                   25
+#define MOTO_RIGHT                  24
 
 //Flash
 #define FLASH_EN                    38
