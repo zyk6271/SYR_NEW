@@ -773,6 +773,7 @@ void lcd_task_entry(void *parameter)
                 GuiClearScreen(0);
                 GuiWinInit();
                 memset(FirstFlag,0,40);
+                NowSetting=0;
                 GuiWinAdd(&userMain1Win);
             }
             else
