@@ -69,11 +69,11 @@ void Moto_Cycle(void)
         {
             ScreenTimerStop();
             uint32_t Setting_Backwashtime_MileSecond=0;
-            Setting_Backwashtime_MileSecond = Setting_Backwashtime*1000;
+            Setting_Backwashtime_MileSecond = (Setting_Backwashtime-20)*1000;
             rt_timer_control(Moto_Cycle_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
             Setting_Backwashtime_MileSecond += 60*1000;
             rt_timer_control(Moto_Detect_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
-            LOG_D("Start Backwash with Timer %d\r\n",Setting_Backwashtime);
+            LOG_D("Start Backwash with Timer %d\r\n",(Setting_Backwashtime-20));
             rt_timer_start(Moto_Detect_Timer);
             Moto_Forward();
             led_select(2);

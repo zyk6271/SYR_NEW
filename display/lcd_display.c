@@ -542,8 +542,8 @@ void SetDetdush(void)
     userMain25Win.title = "Erinnerung";
     userMain26Win.title = "Batterien leer";
     userMain27Win.title = "Batterien leer";
-    userMain28Win.title = "BereichIntervall";
-    userMain29Win.title = "LeitwertAbgleich";
+    userMain28Win.title = "Intervall";
+    userMain29Win.title = "LW-Abgleich";
     userMain30Win.title = "Restzeit";
 
     Manual = "Manuell";
@@ -613,7 +613,7 @@ void Flash2Mem(void)
     Setting_Backwashtime = Flash_Get(14);
     if(Setting_Backwashtime==0||Setting_Backwashtime>120)
     {
-        Setting_Backwashtime = 1;
+        Setting_Backwashtime = 21;
         Flash_Set(14,Setting_Backwashtime);
     }
     Setting_Language = Flash_Get(15);
@@ -3293,9 +3293,18 @@ static void UserMain13WinFun(void *param)
         {
             if(LowVoltageFlag==1)
             {
-                tButton[1].x = 50;
-                tButton[1].wide = 25;
-                tButton[1].name = "LOW";
+                if(Setting_Language)
+                {
+                    tButton[1].x = 40;
+                    tButton[1].wide = 50;
+                    tButton[1].name = "gering";
+                }
+                else
+                {
+                    tButton[1].x = 50;
+                    tButton[1].wide = 25;
+                    tButton[1].name = "LOW";
+                }
             }
             else if(LowVoltageFlag==0)
             {
@@ -3307,7 +3316,6 @@ static void UserMain13WinFun(void *param)
         tButton[1].linesize = 0;
         tButton[1].flag = 1;/* 按下状态 */
         GuiButton(&tButton[1]);
-
 
         tButton[2].x = 0;
         tButton[2].y = 50;
@@ -4354,7 +4362,7 @@ static void UserMain17WinFun(void *param)
             switch(NowButtonId)
             {
                 case 0:
-                    if(Set_Backwash_Temp>1)Set_Backwash_Temp-=1;
+                    if(Set_Backwash_Temp>21)Set_Backwash_Temp-=1;
                     if(Setting_Language)
                     {
                         sprintf(BackwashString,"Zeit: %03d Sek.",Set_Backwash_Temp);
@@ -4454,7 +4462,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.15");
+        GuiRowText(76,30,80,0,"0.0.16");
 
         tButton[0].x = 0;
         tButton[0].y = 50;

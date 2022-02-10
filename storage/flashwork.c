@@ -59,9 +59,9 @@ void Set_Default(void)
     Flash_Set(5,5);
     Flash_Set(6,1);
     Flash_Set(13,280);
-    Flash_Set(14,1);
+    Flash_Set(14,21);
     Flash_Set(15,1);
-    Flash_Set(21,19);
+    Flash_Set(21,11);
     Flash_Set(22,0);
     Flash_Set(23,0);
 }
