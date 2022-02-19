@@ -132,6 +132,7 @@ lkdScroll tScroll[2];
 char NowButtonId=0;
 char NowSetting=0;
 char FirstFlag[40]={0};
+char Win14PageID=0;
 extern uint8_t LCD_Flag;
 extern void defaultFontInit(void);
 
@@ -774,6 +775,7 @@ void lcd_task_entry(void *parameter)
                 GuiWinInit();
                 memset(FirstFlag,0,40);
                 NowSetting=0;
+                Win14PageID = 0;
                 GuiWinAdd(&userMain1Win);
             }
             else
@@ -3354,7 +3356,6 @@ static void UserMain13WinFun(void *param)
         }
     }
 }
-uint8_t volatile Win14PageID=0;
 static void UserMain14WinFun(void *param)
 {
     if(FirstFlag[14]  == 0)
@@ -3407,7 +3408,6 @@ static void UserMain14WinFun(void *param)
          tButton[3].flag = 1;/* 按下状态 */
          GuiButton(&tButton[3]);
 
-         FirstFlag[14] = 1;
          break;
      case 1:
          NowButtonId=0;
@@ -3456,7 +3456,6 @@ static void UserMain14WinFun(void *param)
          tButton[3].flag = 1;/* 按下状态 */
          GuiButton(&tButton[3]);
 
-         FirstFlag[14] = 1;
          break;
      case 2:
          NowButtonId=0;
@@ -3504,7 +3503,6 @@ static void UserMain14WinFun(void *param)
          tButton[3].flag = 1;/* 按下状态 */
          GuiButton(&tButton[3]);
 
-         FirstFlag[14] = 1;
          break;
      case 3:
         NowButtonId=0;
@@ -3552,7 +3550,6 @@ static void UserMain14WinFun(void *param)
         tButton[3].flag = 1;/* 按下状态 */
         GuiButton(&tButton[3]);
 
-        FirstFlag[14] = 1;
         break;
      case 4:
          NowButtonId=0;
@@ -3561,7 +3558,7 @@ static void UserMain14WinFun(void *param)
          tScroll[0].x = 119;
          tScroll[0].y = 13;
          tScroll[0].hight = 38;
-         tScroll[0].lump = 12;/* 进度快控制 */
+         tScroll[0].lump = 15;/* 进度快控制 */
          GuiVScroll(&tScroll[0]);/* 垂直进度条 */
 
          tButton[0].x = 0;
@@ -3600,7 +3597,6 @@ static void UserMain14WinFun(void *param)
          tButton[3].flag = 1;/* 按下状态 */
          GuiButton(&tButton[3]);
 
-         FirstFlag[14] = 1;
          break;
      case 5:
          NowButtonId=2;
@@ -3648,7 +3644,6 @@ static void UserMain14WinFun(void *param)
          tButton[3].flag = 1;/* 按下状态 */
          GuiButton(&tButton[3]);
 
-         FirstFlag[14] = 1;
          break;
      case 6:
          NowButtonId=2;
@@ -3697,7 +3692,6 @@ static void UserMain14WinFun(void *param)
          tButton[3].flag = 1;/* 按下状态 */
          GuiButton(&tButton[3]);
 
-         FirstFlag[14] = 1;
          break;
      case 7:
          NowButtonId=2;
@@ -3744,7 +3738,7 @@ static void UserMain14WinFun(void *param)
          tButton[3].linesize = 0;
          tButton[3].flag = 1;/* 按下状态 */
          GuiButton(&tButton[3]);
-         FirstFlag[14] = 1;
+
          break;
      case 8:
         NowButtonId=2;
@@ -3792,10 +3786,9 @@ static void UserMain14WinFun(void *param)
         tButton[3].flag = 1;/* 按下状态 */
         GuiButton(&tButton[3]);
 
-        FirstFlag[14] = 1;
         break;
      case 9:
-         NowButtonId=2;
+         NowButtonId=0;
 
          tScroll[0].max = 15;
          tScroll[0].x = 119;
@@ -3810,7 +3803,7 @@ static void UserMain14WinFun(void *param)
          tButton[0].high = 15;
          tButton[0].name = Exit;
          tButton[0].linesize = 0;
-         tButton[0].flag = 0;/* 抬起状态 */
+         tButton[0].flag = 1;/* 抬起状态 */
          GuiButton(&tButton[0]);
 
          tButton[1].x = 0;
@@ -3828,7 +3821,7 @@ static void UserMain14WinFun(void *param)
          tButton[2].high = 15;
          tButton[2].name = Blank;
          tButton[2].linesize = 0;
-         tButton[2].flag = 1;/* 抬起状态 */
+         tButton[2].flag = 0;/* 抬起状态 */
          GuiButton(&tButton[2]);
 
          tButton[3].x = 0;
@@ -3840,9 +3833,9 @@ static void UserMain14WinFun(void *param)
          tButton[3].flag = 1;/* 按下状态 */
          GuiButton(&tButton[3]);
 
-         FirstFlag[14] = 1;
          break;
      }
+     FirstFlag[14] = 1;
      GuiUpdateDisplayAll();
     }
     else
@@ -3857,70 +3850,86 @@ static void UserMain14WinFun(void *param)
         }
         if(K0_Status==RT_EOK)
         {
-            switch(NowButtonId)
+            if(Win14PageID==4 || Win14PageID==9)
             {
-            case 0:
-                switch(Win14PageID)
-                {
-                    case 0:Win14PageID = 9;break;
-                    case 1:Win14PageID = 5;break;
-                    case 2:Win14PageID = 6;break;
-                    case 3:Win14PageID = 7;break;
-                    case 4:Win14PageID = 8;break;
-
-                    case 5:Win14PageID = 4;break;
-                    case 6:Win14PageID = 5;break;
-                    case 7:Win14PageID = 6;break;
-                    case 8:Win14PageID = 7;break;
-                    case 9:Win14PageID = 8;break;
-                }
+                Win14PageID = 8;
                 FirstFlag[14]  = 0;
-                break;
-            default:
-                tButton[NowButtonId].flag=0;
-                GuiButton(&tButton[NowButtonId]);//当前行数反显取消
-                if(NowButtonId>0)NowButtonId--;
-                tButton[NowButtonId].flag=1;
-                GuiButton(&tButton[NowButtonId]);//按下后的反显开
-                /*进度条*/
-                if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
-                else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
-                GuiVScroll(&tScroll[0]);/* 垂直进度条 */
-                break;
             }
-            GuiUpdateDisplayAll();
-        }
-        if(K1_Status==RT_EOK)
-        {
-            switch(NowButtonId)
+            else
             {
-                case 2:
+                switch(NowButtonId)
+                {
+                case 0:
                     switch(Win14PageID)
                     {
-                        case 0:Win14PageID = 1;break;
-                        case 1:Win14PageID = 2;break;
-                        case 2:Win14PageID = 3;break;
-                        case 3:Win14PageID = 4;break;
-                        case 4:Win14PageID = 0;break;
+                        case 0:Win14PageID = 9;break;
+                        case 1:Win14PageID = 5;break;
+                        case 2:Win14PageID = 6;break;
+                        case 3:Win14PageID = 7;break;
+                        //case 4:Win14PageID = 8;break;
 
-                        case 5:Win14PageID = 1;break;
-                        case 6:Win14PageID = 2;break;
-                        case 7:Win14PageID = 3;break;
-                        case 8:Win14PageID = 4;break;
-                        case 9:Win14PageID = 0;break;
+                        case 5:Win14PageID = 4;break;
+                        case 6:Win14PageID = 5;break;
+                        case 7:Win14PageID = 6;break;
+                        case 8:Win14PageID = 7;break;
+                        //case 9:Win14PageID = 8;break;
                     }
                     FirstFlag[14]  = 0;
                     break;
                 default:
                     tButton[NowButtonId].flag=0;
-                    GuiButton(&tButton[NowButtonId]);
-                    NowButtonId++;
+                    GuiButton(&tButton[NowButtonId]);//当前行数反显取消
+                    if(NowButtonId>0)NowButtonId--;
                     tButton[NowButtonId].flag=1;
-                    GuiButton(&tButton[NowButtonId]);
+                    GuiButton(&tButton[NowButtonId]);//按下后的反显开
+                    /*进度条*/
                     if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
                     else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
                     GuiVScroll(&tScroll[0]);/* 垂直进度条 */
                     break;
+                }
+            }
+            GuiUpdateDisplayAll();
+        }
+        if(K1_Status==RT_EOK)
+        {
+            if(Win14PageID==4 || Win14PageID==9)
+            {
+                Win14PageID = 0;
+                FirstFlag[14]  = 0;
+            }
+            else
+            {
+                switch(NowButtonId)
+                {
+                    case 2:
+                        switch(Win14PageID)
+                        {
+                            case 0:Win14PageID = 1;break;
+                            case 1:Win14PageID = 2;break;
+                            case 2:Win14PageID = 3;break;
+                            case 3:Win14PageID = 4;break;
+                            //case 4:Win14PageID = 0;break;
+
+                            case 5:Win14PageID = 1;break;
+                            case 6:Win14PageID = 2;break;
+                            case 7:Win14PageID = 3;break;
+                            case 8:Win14PageID = 4;break;
+                            //case 9:Win14PageID = 0;break;
+                        }
+                        FirstFlag[14]  = 0;
+                        break;
+                    default:
+                        tButton[NowButtonId].flag=0;
+                        GuiButton(&tButton[NowButtonId]);
+                        NowButtonId++;
+                        tButton[NowButtonId].flag=1;
+                        GuiButton(&tButton[NowButtonId]);
+                        if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
+                        else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
+                        GuiVScroll(&tScroll[0]);/* 垂直进度条 */
+                        break;
+                }
             }
             GuiUpdateDisplayAll();
         }
@@ -4023,7 +4032,7 @@ static void UserMain15WinFun(void *param)
     if(FirstFlag[15] == 0)
     {
         FirstFlag[15] = 1;
-        Set_Delta_Temp=Setting_Deltapress;
+        Set_Delta_Temp = Setting_Deltapress;
 
         tButton[0].x = 25;
         tButton[0].y = 12;
@@ -4463,7 +4472,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.16");
+        GuiRowText(76,30,80,0,"0.0.17");
 
         tButton[0].x = 0;
         tButton[0].y = 50;
