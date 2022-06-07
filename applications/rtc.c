@@ -26,11 +26,11 @@ extern uint8_t Automatic_Enable;
 extern uint8_t LCD_Flag;
 extern uint8_t RTC_Wakeup_Flag;
 extern uint8_t Low_Power_Flag;
+extern uint8_t screen_reload;
 
+uint8_t RTC_Event_Flag = 0;
 uint32_t RTC_Reminder_Time = 0;
 uint32_t RTC_Automatic_Time = 0;
-uint32_t Reminder_Time = 0;
-uint32_t Automatic_Time = 0;
 
 void RTC_Timer_Entry(void)
 {
@@ -61,8 +61,6 @@ void RTC_Reset(void)
     Flash_Set(16,0);
     Flash_Set(17,0);
 }
-uint8_t RTC_Event_Flag = 0;
-extern uint8_t screen_reload;
 void RTC_Check_Callback(void *parameter)
 {
     while(1)
@@ -192,8 +190,6 @@ void RTC_Init(void)
 {
     RTC_Reminder_Time = Flash_Get(16);
     RTC_Automatic_Time = Flash_Get(17);
-    Reminder_Time = Reminder_Week*7*24+Reminder_Day*24;
-    Automatic_Time = Automatic_Week*7*24+Automatic_Day*24;
 
     __HAL_RCC_RTC_ENABLE();
     HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);

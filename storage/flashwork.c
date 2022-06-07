@@ -19,7 +19,7 @@
 #include "easyflash.h"
 
 #define DBG_TAG "FLASH"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 rt_spi_flash_device_t fm25q16;
@@ -95,6 +95,7 @@ int Flash_Init(void)
         Set_Default();
         Flash_Set(0,1);
     }
+    Flash2Mem();
     LOG_I("Storage Init Success\r\n");
     return RT_EOK;
 }

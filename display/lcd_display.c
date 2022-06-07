@@ -117,6 +117,8 @@ extern rt_sem_t K2_Sem;
 extern rt_sem_t K2_Long_Sem;
 
 extern uint32_t TDS_Value;
+extern uint32_t RTC_Reminder_Time;
+extern uint32_t RTC_Automatic_Time;
 
 static rt_err_t K0_Status;
 static rt_err_t K1_Status;
@@ -660,8 +662,7 @@ void LcdtoReminder(void)
 {
     if(FirstFlag[25]==0)
     {
-        memset(FirstFlag,0,40);
-        GuiClearScreen(0);
+        GuiClear();
         GuiWinAdd(&userMain25Win);
     }
     else
@@ -673,9 +674,8 @@ void LcdtoBackwash(void)
 {
     if(FirstFlag[3]==0)
     {
-        memset(FirstFlag,0,40);
+        GuiClear();
         Moto_Cycle();
-        GuiClearScreen(0);
         GuiWinAdd(&userMain3Win);
     }
     else
@@ -687,12 +687,14 @@ void Jump_TDS(void)
 {
     Counter_Error++;
     Flash_Set(11,Counter_Error);
+    wifi_coe_update();
     rt_event_send(&lcd_jump_event, TDS);
 }
 void Jump_STALLING(void)
 {
     Counter_Error++;
     Flash_Set(11,Counter_Error);
+    wifi_coe_update();
     rt_event_send(&lcd_jump_event, STALLING);
 }
 void Jump_FINISH(void)
@@ -703,6 +705,7 @@ void Jump_NOMOTO(void)
 {
     Counter_Error++;
     Flash_Set(11,Counter_Error);
+    wifi_coe_update();
     rt_event_send(&lcd_jump_event, NOMOTO);
 }
 void Jump_EXIT(void)
@@ -714,12 +717,12 @@ void JumptoReminder(void)
     LCD_BL_HIGH();
     LcdtoReminder();
 }
-MSH_CMD_EXPORT(JumptoReminder,JumptoReminder);
 void JumptoAutomatic(void)
 {
     OpenLcdDisplayNoBL();
     Counter_Automatic++;
     Flash_Set(9,Counter_Automatic);
+    wifi_coa_update();
     LcdtoBackwash();
 }
 void JumptoDelta(void)
@@ -732,6 +735,7 @@ void JumpToBatteryEmpty(void)
 {
     Counter_Error++;
     Flash_Set(11,Counter_Error);
+    wifi_coe_update();
     if(FirstFlag[1])
     {
         JumpToBatteryEmpty_Flag = 1;
@@ -742,6 +746,7 @@ void JumpToBatteryNew(void)
 {
     Counter_Error++;
     Flash_Set(11,Counter_Error);
+    wifi_coe_update();
     if(FirstFlag[1])
     {
         JumpToBatteryNew_Flag = 1;
@@ -771,9 +776,7 @@ void lcd_task_entry(void *parameter)
             if(screen_reload)
             {
                 LcdRefresh();
-                GuiClearScreen(0);
-                GuiWinInit();
-                memset(FirstFlag,0,40);
+                GuiClear();
                 NowSetting=0;
                 Win14PageID = 0;
                 GuiWinAdd(&userMain1Win);
@@ -787,15 +790,14 @@ void lcd_task_entry(void *parameter)
         if(JumpToBatteryEmpty_Flag)
         {
             JumpToBatteryEmpty_Flag = 0;
-            GuiClearScreen(0);
-            memset(FirstFlag,0,40);
+            GuiClear();
             GuiWinAdd(&userMain26Win);
         }
         if(JumpToBatteryNew_Flag)
         {
             JumpToBatteryNew_Flag = 0;
-            GuiClearScreen(0);
-            memset(FirstFlag,0,40);
+            GuiClear();
+            GuiWinInit();
             GuiWinAdd(&userMain27Win);
         }
         if(JumptoMainWin_Flag)
@@ -808,6 +810,33 @@ void lcd_task_entry(void *parameter)
         GuiWinDisplay();
         rt_thread_mdelay(50);
     }
+}
+void GuiClear(void)
+{
+    GuiClearScreen(0);
+    memset(FirstFlag,0,sizeof(FirstFlag));
+    memset(tButton,0,sizeof(tButton));
+    memset(tScroll,0,sizeof(tScroll));
+    GuiWinDisplay();
+}
+void Refresh_Display(void)
+{
+    memset(FirstFlag,0,sizeof(FirstFlag));
+    memset(tButton,0,sizeof(tButton));
+    memset(tScroll,0,sizeof(tScroll));
+    GuiWinRefresh(GuiGetTopWin());
+}
+void Refresh_Language(uint8_t value)
+{
+    if(value)
+    {
+        SetDetdush();
+    }
+    else
+    {
+        SetEnglish();
+    }
+    Refresh_Display();
 }
 void LCD_Init(void)
 {
@@ -1223,9 +1252,10 @@ static void UserMain2WinFun(void *param)
                         FirstFlag[2]=0;
                         Counter_Manual++;
                         Flash_Set(8,Counter_Manual);
+                        wifi_com_update();
                         RTC_Reset();
+                        GuiClear();
                         Moto_Cycle();
-                        GuiClearScreen(0);
                         GuiWinAdd(&userMain3Win);
                    }
                    else
@@ -1358,7 +1388,9 @@ static void UserMain3WinFun(void *param)
                 break;
             case EXIT:
                 screen_reload=1;
-                FirstFlag[3]=0;
+                memset(FirstFlag,0,sizeof(FirstFlag));
+                memset(tButton,0,sizeof(tButton));
+                memset(tScroll,0,sizeof(tScroll));
                 GuiClearScreen(0);
                 GuiWinInit();
                 GuiWinAdd(&userMain1Win);
@@ -1381,7 +1413,7 @@ static void UserMain3WinFun(void *param)
             FirstFlag[3]=0;
             screen_reload = 1;
             led_select(0);
-            GuiClearScreen(0);
+            GuiClear();
             GuiWinInit();
             GuiWinAdd(&userMain1Win);
         }
@@ -1806,14 +1838,23 @@ static void UserMain4WinFun(void *param)
                 case 2:
                     FirstFlag[4]=0;
                     NowSetting=0;
-                    RTC_Reminder_Time=0;
-                    LOG_D("RTC_Reminder_Time Change to 0\r\n");
-                    Reminder_Week=Reminder_Week_Temp;
-                    Flash_Set(1,Reminder_Week_Temp);
-                    Reminder_Day=Reminder_Day_Temp;
-                    Flash_Set(2,Reminder_Day_Temp);
-                    Reminder_Enable=Reminder_Enable_Temp;
-                    Flash_Set(3,Reminder_Enable_Temp);
+
+                    if(Reminder_Week != Reminder_Week_Temp || Reminder_Day != Reminder_Day_Temp)
+                     {
+                        Reminder_Week = Reminder_Week_Temp;
+                        Flash_Set(4,Reminder_Week);
+                        Reminder_Day = Reminder_Day_Temp;
+                        Flash_Set(5,Reminder_Day);
+                        RTC_Reminder_Time=0;
+                        LOG_D("RTC_Reminder_Time Change to 0\r\n");
+                        wifi_rse_update();
+                     }
+                     if(Reminder_Enable != Reminder_Enable_Temp)
+                     {
+                         Reminder_Enable = Reminder_Enable_Temp;
+                         Flash_Set(6,Reminder_Enable);
+                         wifi_sse_update();
+                     }
                     GuiClearScreen(0);
                     GuiWinDeleteTop();
                     break;
@@ -1825,7 +1866,6 @@ static void UserMain4WinFun(void *param)
 uint8_t Automatic_Week_Temp;
 uint8_t Automatic_Day_Temp;
 uint8_t Automatic_Enable_Temp;
-extern uint32_t RTC_Automatic_Time ;
 char AutomaticWeekstring[10]={0};
 char AutomaticDaystring[10]={0};
 static void UserMain5WinFun(void *param)
@@ -2234,14 +2274,22 @@ static void UserMain5WinFun(void *param)
                 case 2:
                     FirstFlag[5]=0;
                     NowSetting=0;
-                    Automatic_Week=Automatic_Week_Temp;
-                    Flash_Set(4,Automatic_Week_Temp);
-                    Automatic_Day=Automatic_Day_Temp;
-                    Flash_Set(5,Automatic_Day_Temp);
-                    RTC_Automatic_Time=0;
-                    LOG_D("RTC_Automatic_Time Change to 0\r\n");
-                    Automatic_Enable=Automatic_Enable_Temp;
-                    Flash_Set(6,Automatic_Enable_Temp);
+                    if(Automatic_Week != Automatic_Week_Temp || Automatic_Day != Automatic_Day_Temp)
+                    {
+                        Automatic_Week = Automatic_Week_Temp;
+                        Flash_Set(4,Automatic_Week);
+                        Automatic_Day = Automatic_Day_Temp;
+                        Flash_Set(5,Automatic_Day);
+                        RTC_Automatic_Time=0;
+                        LOG_D("RTC_Automatic_Time Change to 0\r\n");
+                        wifi_rsa_update();
+                    }
+                    if(Automatic_Enable!=Automatic_Enable_Temp)
+                    {
+                        Automatic_Enable = Automatic_Enable_Temp;
+                        Flash_Set(6,Automatic_Enable);
+                        wifi_ssa_update();
+                    }
                     GuiClearScreen(0);
                     GuiWinDeleteTop();
                     break;
@@ -2352,6 +2400,7 @@ static void UserMain6WinFun(void *param)
                     Delta_Close();
                 }
                 Flash_Set(7,Deltapress_Enable_Temp);
+                wifi_ssd_update();
             }
             GuiClearScreen(0);
             GuiWinDeleteTop();
@@ -2626,8 +2675,8 @@ static void UserMain9WinFun(void *param)
         }
         else
         {
-            tButton[1].x = 40;
-            tButton[1].wide = 50;
+            tButton[1].x = 47;
+            tButton[1].wide = 40;
         }
         tButton[1].y = 22;
         tButton[1].high = 15;
@@ -2639,13 +2688,14 @@ static void UserMain9WinFun(void *param)
         if(Setting_Language)
         {
             tButton[2].x = 40;
+            tButton[2].wide = 45;
         }
         else
         {
-            tButton[2].x = 45;
+            tButton[2].x = 50;
+            tButton[2].wide = 33;
         }
         tButton[2].y = 34;
-        tButton[2].wide = 45;
         tButton[2].high = 15;
         tButton[2].name = Exit;
         tButton[2].linesize = 0;
@@ -2706,7 +2756,7 @@ static void UserMain9WinFun(void *param)
                         confirmed = 1;
                         tButton[1].x = 30;
                         tButton[1].y = 22;
-                        tButton[1].wide = 68;
+                        tButton[1].wide = 70;
                         tButton[1].high = 15;
                         if(Setting_Language)
                         {
@@ -2720,9 +2770,9 @@ static void UserMain9WinFun(void *param)
                         tButton[1].flag = 1;/* 按下状态 */
                         GuiButton(&tButton[1]);
 
-                        tButton[2].x = 38;
+                        tButton[2].x = 42;
                         tButton[2].y = 34;
-                        tButton[2].wide = 45;
+                        tButton[2].wide = 47;
                         tButton[2].high = 15;
                         if(Setting_Language)
                         {
@@ -2744,6 +2794,7 @@ static void UserMain9WinFun(void *param)
                         GuiClearScreen(0);
                         Counter_Manual=0;
                         Flash_Set(8,0);
+                        wifi_com_update();
                         GuiWinDeleteTop();
                         FirstFlag[9]=0;
                     }
@@ -2794,8 +2845,8 @@ static void UserMain10WinFun(void *param)
          }
          else
          {
-             tButton[1].x = 40;
-             tButton[1].wide = 50;
+             tButton[1].x = 47;
+             tButton[1].wide = 40;
          }
          tButton[1].y = 22;
          tButton[1].high = 15;
@@ -2807,18 +2858,20 @@ static void UserMain10WinFun(void *param)
          if(Setting_Language)
          {
              tButton[2].x = 40;
+             tButton[2].wide = 45;
          }
          else
          {
-             tButton[2].x = 45;
+             tButton[2].x = 50;
+             tButton[2].wide = 33;
          }
          tButton[2].y = 34;
-         tButton[2].wide = 45;
          tButton[2].high = 15;
          tButton[2].name = Exit;
          tButton[2].linesize = 0;
          tButton[2].flag = 0;/* 按下状态 */
          GuiButton(&tButton[2]);
+
 
          tButton[3].x = 0;
          tButton[3].y = 50;
@@ -2874,7 +2927,7 @@ static void UserMain10WinFun(void *param)
                          confirmed = 1;
                          tButton[1].x = 30;
                          tButton[1].y = 22;
-                         tButton[1].wide = 68;
+                         tButton[1].wide = 70;
                          tButton[1].high = 15;
                          if(Setting_Language)
                          {
@@ -2888,9 +2941,9 @@ static void UserMain10WinFun(void *param)
                          tButton[1].flag = 1;/* 按下状态 */
                          GuiButton(&tButton[1]);
 
-                         tButton[2].x = 38;
+                         tButton[2].x = 42;
                          tButton[2].y = 34;
-                         tButton[2].wide = 45;
+                         tButton[2].wide = 47;
                          tButton[2].high = 15;
                          if(Setting_Language)
                          {
@@ -2912,6 +2965,7 @@ static void UserMain10WinFun(void *param)
                          GuiClearScreen(0);
                          Counter_Automatic=0;
                          Flash_Set(9,0);
+                         wifi_coa_update();
                          GuiWinDeleteTop();
                          FirstFlag[10]=0;
                      }
@@ -2961,8 +3015,8 @@ static void UserMain11WinFun(void *param)
          }
          else
          {
-             tButton[1].x = 40;
-             tButton[1].wide = 50;
+             tButton[1].x = 47;
+             tButton[1].wide = 40;
          }
          tButton[1].y = 22;
          tButton[1].high = 15;
@@ -2974,18 +3028,20 @@ static void UserMain11WinFun(void *param)
          if(Setting_Language)
          {
              tButton[2].x = 40;
+             tButton[2].wide = 45;
          }
          else
          {
-             tButton[2].x = 45;
+             tButton[2].x = 50;
+             tButton[2].wide = 33;
          }
          tButton[2].y = 34;
-         tButton[2].wide = 45;
          tButton[2].high = 15;
          tButton[2].name = Exit;
          tButton[2].linesize = 0;
          tButton[2].flag = 0;/* 按下状态 */
          GuiButton(&tButton[2]);
+
 
          tButton[3].x = 0;
          tButton[3].y = 50;
@@ -3039,7 +3095,7 @@ static void UserMain11WinFun(void *param)
                       confirmed = 1;
                       tButton[1].x = 30;
                       tButton[1].y = 22;
-                      tButton[1].wide = 68;
+                      tButton[1].wide = 70;
                       tButton[1].high = 15;
                       if(Setting_Language)
                       {
@@ -3053,9 +3109,9 @@ static void UserMain11WinFun(void *param)
                       tButton[1].flag = 1;/* 按下状态 */
                       GuiButton(&tButton[1]);
 
-                      tButton[2].x = 38;
+                      tButton[2].x = 42;
                       tButton[2].y = 34;
-                      tButton[2].wide = 45;
+                      tButton[2].wide = 47;
                       tButton[2].high = 15;
                       if(Setting_Language)
                       {
@@ -3077,6 +3133,7 @@ static void UserMain11WinFun(void *param)
                       GuiClearScreen(0);
                       Counter_Deltapress=0;
                       Flash_Set(10,0);
+                      wifi_cod_update();
                       GuiWinDeleteTop();
                       FirstFlag[11]=0;
                   }
@@ -3122,13 +3179,13 @@ static void UserMain12WinFun(void *param)
 
         if(Setting_Language)
         {
-         tButton[1].x = 15;
-         tButton[1].wide = 95;
+            tButton[1].x = 15;
+            tButton[1].wide = 95;
         }
         else
         {
-         tButton[1].x = 40;
-         tButton[1].wide = 50;
+            tButton[1].x = 47;
+            tButton[1].wide = 40;
         }
         tButton[1].y = 22;
         tButton[1].high = 15;
@@ -3139,19 +3196,21 @@ static void UserMain12WinFun(void *param)
 
         if(Setting_Language)
         {
-         tButton[2].x = 40;
+            tButton[2].x = 40;
+            tButton[2].wide = 45;
         }
         else
         {
-         tButton[2].x = 45;
+            tButton[2].x = 50;
+            tButton[2].wide = 33;
         }
         tButton[2].y = 34;
-        tButton[2].wide = 45;
         tButton[2].high = 15;
         tButton[2].name = Exit;
         tButton[2].linesize = 0;
         tButton[2].flag = 0;/* 按下状态 */
         GuiButton(&tButton[2]);
+
 
         tButton[3].x = 0;
         tButton[3].y = 50;
@@ -3205,7 +3264,7 @@ static void UserMain12WinFun(void *param)
                        confirmed = 1;
                        tButton[1].x = 30;
                        tButton[1].y = 22;
-                       tButton[1].wide = 68;
+                       tButton[1].wide = 70;
                        tButton[1].high = 15;
                        if(Setting_Language)
                        {
@@ -3219,9 +3278,9 @@ static void UserMain12WinFun(void *param)
                        tButton[1].flag = 1;/* 按下状态 */
                        GuiButton(&tButton[1]);
 
-                       tButton[2].x = 38;
+                       tButton[2].x = 42;
                        tButton[2].y = 34;
-                       tButton[2].wide = 45;
+                       tButton[2].wide = 47;
                        tButton[2].high = 15;
                        if(Setting_Language)
                        {
@@ -3243,6 +3302,7 @@ static void UserMain12WinFun(void *param)
                        GuiClearScreen(0);
                        Counter_Error=0;
                        Flash_Set(11,0);
+                       wifi_coe_update();
                        GuiWinDeleteTop();
                        FirstFlag[12]=0;
                    }
@@ -4145,8 +4205,8 @@ static void UserMain16WinFun(void *param)
         }
         else
         {
-            tButton[1].x = 45;
-            tButton[1].wide = 40;
+            tButton[1].x = 50;
+            tButton[1].wide = 33;
         }
         tButton[1].name = Save;
         tButton[1].linesize = 0;
@@ -4156,13 +4216,14 @@ static void UserMain16WinFun(void *param)
         if(Setting_Language)
         {
             tButton[2].x = 40;
+            tButton[2].wide = 45;
         }
         else
         {
-            tButton[2].x = 45;
+            tButton[2].x = 50;
+            tButton[2].wide = 33;
         }
         tButton[2].y = 36;
-        tButton[2].wide = 45;
         tButton[2].high = 15;
         tButton[2].name = Exit;
         tButton[2].linesize = 0;
@@ -4271,6 +4332,7 @@ static void UserMain16WinFun(void *param)
                 case 1:
                     Setting_Hardness=Set_Hardness_Temp;
                     Flash_Set(13,Set_Hardness_Temp);
+                    wifi_cnl_update();
                     GuiClearScreen(0);
                     GuiWinDeleteTop();
                     FirstFlag[16]=0;
@@ -4320,8 +4382,8 @@ static void UserMain17WinFun(void *param)
         }
         else
         {
-            tButton[1].x = 45;
-            tButton[1].wide = 40;
+            tButton[1].x = 50;
+            tButton[1].wide = 33;
         }
         tButton[1].y = 24;
         tButton[1].high = 15;
@@ -4339,8 +4401,8 @@ static void UserMain17WinFun(void *param)
         }
         else
         {
-            tButton[2].x = 45;
-            tButton[2].wide = 40;
+            tButton[2].x = 50;
+            tButton[2].wide = 33;
         }
         tButton[2].name = Exit;
         tButton[2].linesize = 0;
@@ -4379,7 +4441,7 @@ static void UserMain17WinFun(void *param)
                     }
                     else
                     {
-                        sprintf(BackwashString,"Back: %03d Sec.",Set_Backwash_Temp);
+                        sprintf(BackwashString,"Time: %03d Sec.",Set_Backwash_Temp);
                     }
                     tButton[0].name = BackwashString;
                     GuiButton(&tButton[0]);
@@ -4413,7 +4475,7 @@ static void UserMain17WinFun(void *param)
                     }
                     else
                     {
-                        sprintf(BackwashString,"Back: %03d Sec.",Set_Backwash_Temp);
+                        sprintf(BackwashString,"Time: %03d Sec.",Set_Backwash_Temp);
                     }
                     tButton[0].name = BackwashString;
                     GuiButton(&tButton[0]);
@@ -4449,6 +4511,7 @@ static void UserMain17WinFun(void *param)
                 case 1:
                     Setting_Backwashtime=Set_Backwash_Temp;
                     Flash_Set(14,Set_Backwash_Temp);
+                    wifi_rsd_update();
                     GuiClearScreen(0);
                     GuiWinDeleteTop();
                     GuiWinDisplay();
@@ -4530,7 +4593,7 @@ static void UserMain19WinFun(void *param)
         else
         {
             tButton[0].x = 47;
-            tButton[0].wide = 38;
+            tButton[0].wide = 40;
             tButton[0].name = Factory_Reset;
         }
         tButton[0].linesize = 0;
@@ -4540,13 +4603,14 @@ static void UserMain19WinFun(void *param)
         if(Setting_Language)
         {
             tButton[1].x = 40;
+            tButton[1].wide = 45;
         }
         else
         {
-            tButton[1].x = 45;
+            tButton[1].x = 50;
+            tButton[1].wide = 33;
         }
         tButton[1].y = 31;
-        tButton[1].wide = 45;
         tButton[1].high = 15;
         tButton[1].name = Exit;
         tButton[1].linesize = 0;
@@ -4769,6 +4833,7 @@ static void UserMain20WinFun(void *param)
                 case 0:
                     Setting_Language = 0;
                     Flash_Set(15,Setting_Language);
+                    wifi_lng_update();
                     SetEnglish();
                     GuiClearScreen(0);
                     GuiWinDeleteTop();
@@ -4777,6 +4842,7 @@ static void UserMain20WinFun(void *param)
                 case 1:
                     Setting_Language = 1;
                     Flash_Set(15,Setting_Language);
+                    wifi_lng_update();
                     SetDetdush();
                     GuiClearScreen(0);
                     GuiWinDeleteTop();
@@ -4924,7 +4990,7 @@ double TdsValueOffset=0;
 uint16_t TdsValueZeroOffset=0;
 uint16_t TdsValueOffsetTemp;
 uint8_t CurrentTdsString[10]={0};
-static void UserMain23WinFun(void *param)//password
+static void UserMain23WinFun(void *param)
 {
     uint32_t TdsValue,result=0;
     if(FirstFlag[23] == 0)
@@ -4951,6 +5017,7 @@ static void UserMain23WinFun(void *param)//password
         sprintf(CurrentTdsString,"%05dus/cm",TdsValue);
         GuiRowText(30,25,110,0,CurrentTdsString);
         GuiUpdateDisplayAll();
+        wifi_cnd_update(TdsValue);
         rt_thread_mdelay(1000);
         K0_Status = rt_sem_take(K0_Sem, 0);
         K1_Status = rt_sem_take(K1_Sem, 0);
@@ -5213,8 +5280,8 @@ static void UserMain28WinFun(void *param)
         }
         else
         {
-            tButton[1].x = 45;
-            tButton[1].wide = 35;
+            tButton[1].x = 50;
+            tButton[1].wide = 33;
         }
         tButton[1].y = 24;
         tButton[1].high = 15;
@@ -5226,13 +5293,14 @@ static void UserMain28WinFun(void *param)
         if(Setting_Language)
         {
             tButton[2].x = 40;
+            tButton[2].wide = 45;
         }
         else
         {
-            tButton[2].x = 45;
+            tButton[2].x = 50;
+            tButton[2].wide = 33;
         }
         tButton[2].y = 36;
-        tButton[2].wide = 45;
         tButton[2].high = 15;
         tButton[2].name = Exit;
         tButton[2].linesize = 0;
@@ -5341,26 +5409,8 @@ static void UserMain28WinFun(void *param)
                      GuiButton(&tButton[2]);
                      break;
                 case 1:
-                    Time_Range=Time_Range_Temp;
-                    Flash_Set(22,Time_Range);
-                    if(Time_Range==0 && Automatic_Week>9)
-                    {
-                        Automatic_Week=8;
-                        Flash_Set(4,Automatic_Week);
-                        Automatic_Day=5;
-                        Flash_Set(5,Automatic_Day);
-                        RTC_Automatic_Time=0;
-                        LOG_D("RTC_Automatic_Time Change to 0\r\n");
-                    }
-                    if(Time_Range==0 && Reminder_Week>9)
-                    {
-                        Reminder_Week=8;
-                        Flash_Set(1,Reminder_Week);
-                        Reminder_Day=5;
-                        Flash_Set(2,Reminder_Day);
-                        RTC_Reminder_Time=0;
-                        LOG_D("RTC_Reminder_Time Change to 0\r\n");
-                    }
+                    syr_range_set(Time_Range_Temp);
+                    wifi_rsi_update();
                     GuiClearScreen(0);
                     GuiWinDeleteTop();
                     GuiWinDisplay();
@@ -5528,6 +5578,7 @@ static void UserMain29WinFun(void *param)
                    if(TDS_CND_Value_Temp==0)TDS_CND_Value_Temp=1;
                    TDS_CND_Value=TDS_CND_Value_Temp;
                    Flash_Set(21,TDS_CND_Value_Temp);
+                   wifi_cnf_update();
                    GuiClearScreen(0);
                    GuiWinDeleteTop();
                    FirstFlag[29]=0;
@@ -5561,9 +5612,17 @@ static void UserMain30WinFun(void *param)
         }
 
 
-        tButton[0].x = 40;
+        if(Setting_Language)
+        {
+            tButton[0].x = 40;
+            tButton[0].wide = 45;
+        }
+        else
+        {
+            tButton[0].x = 50;
+            tButton[0].wide = 33;
+        }
         tButton[0].y = 35;
-        tButton[0].wide = 45;
         tButton[0].high = 15;
         tButton[0].name = Exit;
         tButton[0].linesize = 0;
@@ -5711,7 +5770,7 @@ static void UserMain31WinFun(void *param)
          {
             WiFi_Enable = NowButtonId;
             Flash_Set(23,NowButtonId);
-            WiFiInit();
+            WiFi_Init();
             GuiClearScreen(0);
             GuiWinDeleteTop();
             FirstFlag[31]=0;

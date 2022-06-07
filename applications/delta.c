@@ -41,6 +41,7 @@ void Delta_press_work(void *parameter)
                 {
                     Counter_Deltapress++;
                     Flash_Set(10,Counter_Deltapress);
+                    wifi_cod_update();
                     JumptoDelta();
                 }
             }
@@ -62,7 +63,6 @@ void Delta_Init(void)
         LOG_I("Deltapress is Enable\r\n");
         rt_pin_irq_enable(WATER_FLOW, PIN_IRQ_ENABLE);
     }
-    //Delta_Sem = rt_sem_create("delta_sem", 0, RT_IPC_FLAG_FIFO);
     Delta_t = rt_thread_create("delta_thread", Delta_press_work, RT_NULL, 2048, 10, 10);
     if(Delta_t != RT_NULL)
     {
@@ -71,7 +71,6 @@ void Delta_Init(void)
 }
 void Delta_release(void)
 {
-    //rt_sem_release(Delta_Sem);
     Delta_Status = 1;
     Delta_Wakeup_Flag = 1;
 }

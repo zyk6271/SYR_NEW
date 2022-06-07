@@ -16,16 +16,16 @@
 
 rt_thread_t tds_sevice_t = RT_NULL;
 
-volatile unsigned char tds_data_process_buf[PROTOCOL_HEAD + 64];      //串口数据处理缓存
-volatile unsigned char tds_uart_rx_buf[PROTOCOL_HEAD + 64];          //串口接收缓存
+static volatile unsigned char tds_data_process_buf[PROTOCOL_HEAD + 64];      //串口数据处理缓存
+static volatile unsigned char tds_uart_rx_buf[PROTOCOL_HEAD + 64];          //串口接收缓存
 
-volatile unsigned char *queue_in = NULL;
-volatile unsigned char *queue_out = NULL;
+static volatile unsigned char *queue_in = NULL;
+static volatile unsigned char *queue_out = NULL;
 
 extern uint32_t TDS_Value;
 extern uint8_t TDS_CND_Value;
 
-unsigned char get_queue_total_data(void)
+static unsigned char get_queue_total_data(void)
 {
   if(queue_in != queue_out)
     return 1;
@@ -81,7 +81,7 @@ char *my_strcpy(char *dest, const char *src)
  * @param  Null
  * @return Read the data
  */
-unsigned char Queue_Read_Byte(void)
+static unsigned char Queue_Read_Byte(void)
 {
   unsigned char value = 0;
 
@@ -110,7 +110,7 @@ unsigned char get_check_sum(unsigned char *pack, unsigned short pack_len)
 
     return check_sum;
 }
-void uart_receive_input(unsigned char value)
+void tds_uart_receive_input(unsigned char value)
 {
     if(1 == queue_out - queue_in) {
         LOG_W("Wifi Queue is Full\r\n");
@@ -174,7 +174,6 @@ void tds_uart_service(void)
             continue;
         }
         LOG_I("crc correct (crc:0x%X data:0x%X)\r\n",get_check_sum((unsigned char *)tds_data_process_buf + offset,rx_value_len - 1),tds_data_process_buf[offset + rx_value_len]);
-        //LOG_D("Enter in Data_Handle,Command is %X\r\n",tds_data_process_buf[offset + FRAME_TYPE]);
         tds_handle(offset);
         offset += rx_value_len;
     }

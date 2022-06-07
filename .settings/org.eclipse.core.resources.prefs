@@ -1,2 +1,7 @@
 eclipse.preferences.version=1
+encoding//uart/uart.c=GBK
+encoding//uart/uart.h=GBK
+encoding//uart/uart_api.h=GBK
+encoding//uart/uart_core.c=GBK
+encoding//uart/uart_core.h=GBK
 encoding/<project>=UTF-8

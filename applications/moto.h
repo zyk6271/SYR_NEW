@@ -10,7 +10,7 @@
 
 uint8_t Get_MotoValid(void);
 void Moto_Init(void);
-void Moto_Cycle(void);
+uint8_t Moto_Cycle(void);
 void Moto_Overload(void);
 void Moto_Forward(void);
 void Moto_Back(void);

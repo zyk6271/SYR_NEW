@@ -59,7 +59,7 @@ void Moto_Overload(void)
     rt_pin_write(MOTO_IN2,0);
     rt_event_send(&Moto_Event, Event_Moto_Over);
 }
-void Moto_Cycle(void)
+uint8_t Moto_Cycle(void)
 {
     RTC_Clear();
     TDS_GpioInit();
@@ -77,16 +77,19 @@ void Moto_Cycle(void)
             rt_timer_start(Moto_Detect_Timer);
             Moto_Forward();
             led_select(2);
+            return RT_EOK;
         }
         else
         {
             LOG_D("Moto is Working Now");
+            return RT_EBUSY;
         }
     }
     else
     {
         LOG_D("Moto Not Work(Low Voltage)");
         Jump_EXIT();
+        return RT_ERROR;
     }
 }
 void Moto_Cycle_Timer_Callback(void *parameter)
@@ -254,6 +257,7 @@ void Moto_Callback(void *parameter)
             switch(e)
             {
             case Event_Moto_Free:
+                wifi_ras_update();
                 rt_pin_write(MOTO_IN1,0);
                 rt_pin_write(MOTO_IN2,0);
                 Disable_MotoINT();
@@ -264,6 +268,7 @@ void Moto_Callback(void *parameter)
                 MotoWorkFlag = MOTO_FORWARD;
                 if(rt_pin_read(MOTO_RIGHT)==1 || rt_pin_read(MOTO_LEFT)==0)
                 {
+                    wifi_ras_update();
                     rt_pin_write(MOTO_IN1,0);
                     rt_pin_write(MOTO_IN2,1);
                     rt_thread_mdelay(500);

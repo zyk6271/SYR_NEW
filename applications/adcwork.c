@@ -16,7 +16,7 @@
 #include "pin_config.h"
 
 #define DBG_TAG "adc"
-#define DBG_LVL DBG_INFO
+#define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
 uint32_t adc_value[3];
@@ -144,6 +144,7 @@ void ADC_Work_Callback(void *parameter)
     {
         DC_Voltage = adc_value[0];
         BAT_Voltage = adc_value[1];
+        //BAT_Voltage = 3200;
         Moto_Current = adc_value[2];
         //LOG_I("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
         //LOG_W("Moto_Current is %d\r\n",Moto_Current);
@@ -172,11 +173,15 @@ void Disable_MotoINT(void)
 }
 uint8_t Get_DC_Level(void)
 {
+    if(DC_Voltage>2800)return 1;
+    else return 0;
+}
+uint32_t Get_DC_Value(void)
+{
     uint32_t value;
     value  = DC_Voltage;
     LOG_D("DC Value is %ld\r\n",value);
-    if(value>2800)return 1;
-    else return 0;
+    return value;
 }
 uint32_t Get_Bat_Value(void)
 {

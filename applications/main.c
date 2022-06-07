@@ -25,22 +25,23 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
+uint32_t MCU_Version = 100;
+uint32_t SN = 111110000;
+
 int main(void)
 {
     Flash_Init();
-    Flash2Mem();
     ADC_Init();
     Led_Init();
     Moto_Init();
-    TDS_Uart_Init();
-    TDS_Service_Init();
+    TDS_Init();
     Power_Init();
     LCD_Init();
     Low_Init();
     RTC_Init();
     Delta_Init();
     Button_Init();
-    WiFiInit();
+    WiFi_Init();
     while (1)
     {
         rt_thread_mdelay(1000);

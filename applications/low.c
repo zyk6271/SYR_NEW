@@ -109,7 +109,7 @@ void FlashDeInit(void)
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15);
     __HAL_RCC_SPI2_CLK_DISABLE();
 }
-void WiFiInit(void)
+void WiFi_Pin_Init(void)
 {
     rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
     rt_pin_write(WIFI_EN,WiFi_Enable);
@@ -222,7 +222,7 @@ void AfterWake(void)
     //Debug
     DebugInit();
     //WIFI
-    WiFiInit();
+    WiFi_Init();
 
     rt_pin_detach_irq(K0);
     rt_pin_detach_irq(K1);
@@ -236,37 +236,40 @@ void AfterWake(void)
 }
 void EnterLowPower(void)
 {
-    Delta_Wakeup_Flag = 0;
-    Button_Wakeup_Flag=0;
-    LOG_I("Goto Stop Mode With RTC Now\r\n");
-    BeforSleep();
-    Low_Power_Flag = 1;
-    __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
-    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-    LcdRst();
-    if(Button_Wakeup_Flag)
+    if(0)
     {
-        SystemClock_Config();
-        Button_Wakeup_Flag = 0;
-        AfterWake();
-        LCD_BL_HIGH();
-        LCD_Refresh();
-        ScreenTimerRefresh();
-        Low_Power_Flag = 0;
-        LOG_D("Button Wake Up Now\r\n");
-        return;
-    }
-    if(Delta_Wakeup_Flag)
-    {
-        SystemClock_Config();
         Delta_Wakeup_Flag = 0;
-        AfterWake();
-        LCD_Refresh();
-        ScreenTimerRefresh();
-        Low_Power_Flag = 0;
-        LOG_D("Delta Wake Up Now\r\n");
-        return;
+        Button_Wakeup_Flag=0;
+        LOG_I("Goto Stop Mode With RTC Now\r\n");
+        BeforSleep();
+        Low_Power_Flag = 1;
+        __HAL_RCC_PWR_CLK_ENABLE();
+        __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
+        HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+        LcdRst();
+        if(Button_Wakeup_Flag)
+        {
+            SystemClock_Config();
+            Button_Wakeup_Flag = 0;
+            AfterWake();
+            LCD_BL_HIGH();
+            LCD_Refresh();
+            ScreenTimerRefresh();
+            Low_Power_Flag = 0;
+            LOG_D("Button Wake Up Now\r\n");
+            return;
+        }
+        if(Delta_Wakeup_Flag)
+        {
+            SystemClock_Config();
+            Delta_Wakeup_Flag = 0;
+            AfterWake();
+            LCD_Refresh();
+            ScreenTimerRefresh();
+            Low_Power_Flag = 0;
+            LOG_D("Delta Wake Up Now\r\n");
+            return;
+        }
     }
 }
 void LowPowerTimerCallback(void *parameter)

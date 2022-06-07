@@ -24,6 +24,8 @@ uint32_t PastBatVol;
 uint8_t LowVoltageFlag;
 extern uint8_t Low_Power_Flag;
 extern uint8_t RTC_Wakeup_Flag;
+extern uint32_t BAT_Voltage;
+extern uint32_t DC_Voltage;
 
 rt_thread_t power_t = RT_NULL;
 
@@ -37,6 +39,7 @@ void PowerSet(uint8_t Flag)
     {
         LowVoltageFlag = Flag;
         Flash_Set(19, LowVoltageFlag);
+        wifi_sup_update();
     }
 }
 void PowerCallback(void *parameter)
@@ -49,7 +52,7 @@ void PowerCallback(void *parameter)
         if(Get_DC_Level() == 0 && Low_Power_Flag==0)
         {
             PastBatVol = NowBatVol;
-            NowBatVol = Get_Bat_Value();
+            NowBatVol = BAT_Voltage;
             if(LowVoltageFlag == 1)
             {
                 if(NowBatVol>PastBatVol && NowBatVol>20 + PastBatVol)
