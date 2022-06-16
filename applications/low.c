@@ -115,12 +115,10 @@ void WiFi_Pin_Init(void)
     rt_pin_write(WIFI_EN,WiFi_Enable);
     if(WiFi_Enable)
     {
-        Wifi_LedOpen();
         rt_pin_mode(WIFI_RST, PIN_MODE_INPUT);
     }
     else
     {
-        Wifi_LedClose();
         rt_pin_mode(WIFI_RST, PIN_MODE_OUTPUT);
         rt_pin_write(WIFI_RST,0);
     }

@@ -90,6 +90,8 @@
 #define         COE_GET_CMD                  0x39
 #define         COE_PUT_CMD                  0x3A
 #define         CND_PUT_CMD                  0x3B
+#define         WFS_SET_CMD                  0x3C
+#define         WFT_SET_CMD                  0x3D
 
 unsigned short set_wifi_uart_byte(unsigned short dest, unsigned char byte);
 unsigned short set_wifi_uart_buffer(unsigned short dest, const unsigned char *src, unsigned short len);

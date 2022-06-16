@@ -317,5 +317,6 @@ void data_handle(unsigned short offset,unsigned char value_len)
         case COD_GET_CMD:cod_get_cb();break;//Delta计数器获取
         case COE_SET_CMD:coe_set_cb(value);break;//Error计数器清空
         case COE_GET_CMD:coe_get_cb();break;//Error计数器获取
+        case WFS_SET_CMD:wfs_set_cb(value);break;//WIFI状态获取
     }
 }

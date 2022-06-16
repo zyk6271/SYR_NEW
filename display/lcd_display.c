@@ -45,7 +45,8 @@ char *Conductivity = RT_NULL;
 char *Password = RT_NULL;
 char *Backwash_Now = RT_NULL;
 char *Exit = RT_NULL;
-char *WiFi = RT_NULL;
+char *WiFi_Control = RT_NULL;
+char *WiFi_Reset = RT_NULL;
 char *Remain = RT_NULL;
 char *Weeks = RT_NULL;
 char *Days = RT_NULL;
@@ -91,6 +92,7 @@ static void UserMain28WinFun(void *param);
 static void UserMain29WinFun(void *param);
 static void UserMain30WinFun(void *param);
 static void UserMain31WinFun(void *param);
+static void UserMain32WinFun(void *param);
 
 uint8_t Reminder_Week=0;
 uint8_t Reminder_Day=0;
@@ -135,8 +137,8 @@ char NowButtonId=0;
 char NowSetting=0;
 char FirstFlag[40]={0};
 char Win14PageID=0;
+char confirmed = 0;
 extern uint8_t LCD_Flag;
-extern void defaultFontInit(void);
 
 //以下为窗口参数配置
 lkdWin userMain1Win = {
@@ -444,9 +446,19 @@ lkdWin userMain31Win = {
     .y = 0,
     .wide = 128,
     .hight = 64,
-    .title = "WiFi Control",
+    .title = "WiFi Enable",
     .param = NULL,
     .WindowFunction = UserMain31WinFun,
+        .firstflag = 0,
+};
+lkdWin userMain32Win = {
+    .x = 0,
+    .y = 0,
+    .wide = 128,
+    .hight = 64,
+    .title = "WiFi Reset",
+    .param = NULL,
+    .WindowFunction = UserMain32WinFun,
         .firstflag = 0,
 };
 void SetEnglish(void)
@@ -497,7 +509,8 @@ void SetEnglish(void)
     Weeks09 = "(0-9) Weeks";
     Weeks052 = "(0-52) Weeks";
     Remain = "Remain";
-    WiFi = "WiFi";
+    WiFi_Control = "WiFi Enable";
+    WiFi_Reset = "WiFi Reset";
     Blank = " ";
     Open = "Open";
     Close = "Close";
@@ -569,7 +582,8 @@ void SetDetdush(void)
     Weeks09 = "(0-9) Wochen";
     Weeks052 = "(0-52) Wochen";
     Remain = "Restzeit";
-    WiFi = "WiFi";
+    WiFi_Control = "WiFi Enable";
+    WiFi_Reset = "WiFi Reset";
     Blank = " ";
     Open = "aktiviert";
     Close = "deaktiviert";
@@ -2641,7 +2655,6 @@ static void UserMain8WinFun(void *param)
 uint8_t ManualString[20];
 static void UserMain9WinFun(void *param)
 {
-    static uint8_t confirmed;
     if(FirstFlag[9] == 0)
     {
         FirstFlag[9] = 1;
@@ -2811,7 +2824,6 @@ static void UserMain9WinFun(void *param)
 uint8_t AutomaticString[15];
 static void UserMain10WinFun(void *param)
 {
-    static uint8_t confirmed;
     if(FirstFlag[10] == 0)
      {
          FirstFlag[10] = 1;
@@ -2982,7 +2994,6 @@ static void UserMain10WinFun(void *param)
 uint8_t DeltaString[15];
 static void UserMain11WinFun(void *param)
 {
-    static uint8_t confirmed;
     if(FirstFlag[11] == 0)
      {
          FirstFlag[11] = 1;
@@ -3150,7 +3161,6 @@ static void UserMain11WinFun(void *param)
 uint8_t ErrorString[15];
 static void UserMain12WinFun(void *param)
 {
-    static uint8_t confirmed;
     if(FirstFlag[12] == 0)
     {
         FirstFlag[12] = 1;
@@ -3596,7 +3606,7 @@ static void UserMain14WinFun(void *param)
         tButton[2].y = 37;
         tButton[2].wide =117;
         tButton[2].high = 15;
-        tButton[2].name = WiFi;
+        tButton[2].name = WiFi_Control;
         tButton[2].linesize = 0;
         tButton[2].flag = 0;/* 抬起状态 */
         GuiButton(&tButton[2]);
@@ -3618,14 +3628,14 @@ static void UserMain14WinFun(void *param)
          tScroll[0].x = 119;
          tScroll[0].y = 13;
          tScroll[0].hight = 38;
-         tScroll[0].lump = 15;/* 进度快控制 */
+         tScroll[0].lump = 12;/* 进度快控制 */
          GuiVScroll(&tScroll[0]);/* 垂直进度条 */
 
          tButton[0].x = 0;
          tButton[0].y = 11;
          tButton[0].wide = 117;
          tButton[0].high = 15;
-         tButton[0].name = Exit;
+         tButton[0].name = WiFi_Reset;
          tButton[0].linesize = 0;
          tButton[0].flag = 1;/* 抬起状态 */
          GuiButton(&tButton[0]);
@@ -3634,7 +3644,7 @@ static void UserMain14WinFun(void *param)
          tButton[1].y = 24;
          tButton[1].wide = 117;
          tButton[1].high = 15;
-         tButton[1].name =Blank;
+         tButton[1].name = Exit;
          tButton[1].linesize = 0;
          tButton[1].flag = 0;/* 抬起状态 */
          GuiButton(&tButton[1]);
@@ -3832,7 +3842,7 @@ static void UserMain14WinFun(void *param)
         tButton[2].y = 37;
         tButton[2].wide = 117;
         tButton[2].high = 15;
-        tButton[2].name = WiFi;
+        tButton[2].name = WiFi_Control;
         tButton[2].linesize = 0;
         tButton[2].flag = 1;/* 抬起状态 */
         GuiButton(&tButton[2]);
@@ -3848,7 +3858,7 @@ static void UserMain14WinFun(void *param)
 
         break;
      case 9:
-         NowButtonId=0;
+         NowButtonId=2;
 
          tScroll[0].max = 15;
          tScroll[0].x = 119;
@@ -3861,16 +3871,16 @@ static void UserMain14WinFun(void *param)
          tButton[0].y = 11;
          tButton[0].wide = 117;
          tButton[0].high = 15;
-         tButton[0].name = Exit;
+         tButton[0].name = WiFi_Reset;
          tButton[0].linesize = 0;
-         tButton[0].flag = 1;/* 抬起状态 */
+         tButton[0].flag = 0;/* 抬起状态 */
          GuiButton(&tButton[0]);
 
          tButton[1].x = 0;
          tButton[1].y = 24;
          tButton[1].wide = 117;
          tButton[1].high = 15;
-         tButton[1].name =Blank;
+         tButton[1].name = Exit;
          tButton[1].linesize = 0;
          tButton[1].flag = 0;/* 抬起状态 */
          GuiButton(&tButton[1]);
@@ -3881,7 +3891,7 @@ static void UserMain14WinFun(void *param)
          tButton[2].high = 15;
          tButton[2].name = Blank;
          tButton[2].linesize = 0;
-         tButton[2].flag = 0;/* 抬起状态 */
+         tButton[2].flag = 1;/* 抬起状态 */
          GuiButton(&tButton[2]);
 
          tButton[3].x = 0;
@@ -3910,86 +3920,70 @@ static void UserMain14WinFun(void *param)
         }
         if(K0_Status==RT_EOK)
         {
-            if(Win14PageID==4 || Win14PageID==9)
+            switch(NowButtonId)
             {
-                Win14PageID = 8;
-                FirstFlag[14]  = 0;
-            }
-            else
-            {
-                switch(NowButtonId)
+            case 0:
+                switch(Win14PageID)
                 {
-                case 0:
-                    switch(Win14PageID)
-                    {
-                        case 0:Win14PageID = 9;break;
-                        case 1:Win14PageID = 5;break;
-                        case 2:Win14PageID = 6;break;
-                        case 3:Win14PageID = 7;break;
-                        //case 4:Win14PageID = 8;break;
+                    case 0:Win14PageID = 9;break;
+                    case 1:Win14PageID = 5;break;
+                    case 2:Win14PageID = 6;break;
+                    case 3:Win14PageID = 7;break;
+                    case 4:Win14PageID = 8;break;
 
-                        case 5:Win14PageID = 4;break;
-                        case 6:Win14PageID = 5;break;
-                        case 7:Win14PageID = 6;break;
-                        case 8:Win14PageID = 7;break;
-                        //case 9:Win14PageID = 8;break;
-                    }
-                    FirstFlag[14]  = 0;
-                    break;
-                default:
-                    tButton[NowButtonId].flag=0;
-                    GuiButton(&tButton[NowButtonId]);//当前行数反显取消
-                    if(NowButtonId>0)NowButtonId--;
-                    tButton[NowButtonId].flag=1;
-                    GuiButton(&tButton[NowButtonId]);//按下后的反显开
-                    /*进度条*/
-                    if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
-                    else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
-                    GuiVScroll(&tScroll[0]);/* 垂直进度条 */
-                    break;
+                    case 5:Win14PageID = 4;break;
+                    case 6:Win14PageID = 5;break;
+                    case 7:Win14PageID = 6;break;
+                    case 8:Win14PageID = 7;break;
+                    case 9:Win14PageID = 8;break;
                 }
+                FirstFlag[14] = 0;
+            break;
+            default:
+                tButton[NowButtonId].flag=0;
+                GuiButton(&tButton[NowButtonId]);//当前行数反显取消
+                if(NowButtonId>0)NowButtonId--;
+                tButton[NowButtonId].flag=1;
+                GuiButton(&tButton[NowButtonId]);//按下后的反显开
+                /*进度条*/
+                if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
+                else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
+                GuiVScroll(&tScroll[0]);/* 垂直进度条 */
+                break;
             }
             GuiUpdateDisplayAll();
         }
         if(K1_Status==RT_EOK)
         {
-            if(Win14PageID==4 || Win14PageID==9)
-            {
-                Win14PageID = 0;
-                FirstFlag[14]  = 0;
-            }
-            else
-            {
-                switch(NowButtonId)
+        switch(NowButtonId)
+        {
+            case 2:
+                switch(Win14PageID)
                 {
-                    case 2:
-                        switch(Win14PageID)
-                        {
-                            case 0:Win14PageID = 1;break;
-                            case 1:Win14PageID = 2;break;
-                            case 2:Win14PageID = 3;break;
-                            case 3:Win14PageID = 4;break;
-                            //case 4:Win14PageID = 0;break;
+                    case 0:Win14PageID = 1;break;
+                    case 1:Win14PageID = 2;break;
+                    case 2:Win14PageID = 3;break;
+                    case 3:Win14PageID = 4;break;
+                    case 4:Win14PageID = 0;break;
 
-                            case 5:Win14PageID = 1;break;
-                            case 6:Win14PageID = 2;break;
-                            case 7:Win14PageID = 3;break;
-                            case 8:Win14PageID = 4;break;
-                            //case 9:Win14PageID = 0;break;
-                        }
-                        FirstFlag[14]  = 0;
-                        break;
-                    default:
-                        tButton[NowButtonId].flag=0;
-                        GuiButton(&tButton[NowButtonId]);
-                        NowButtonId++;
-                        tButton[NowButtonId].flag=1;
-                        GuiButton(&tButton[NowButtonId]);
-                        if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
-                        else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
-                        GuiVScroll(&tScroll[0]);/* 垂直进度条 */
-                        break;
+                    case 5:Win14PageID = 1;break;
+                    case 6:Win14PageID = 2;break;
+                    case 7:Win14PageID = 3;break;
+                    case 8:Win14PageID = 4;break;
+                    case 9:Win14PageID = 0;break;
                 }
+                FirstFlag[14]  = 0;
+                break;
+            default:
+                tButton[NowButtonId].flag=0;
+                GuiButton(&tButton[NowButtonId]);
+                NowButtonId++;
+                tButton[NowButtonId].flag=1;
+                GuiButton(&tButton[NowButtonId]);
+                if(Win14PageID>4){tScroll[0].lump = 3*(Win14PageID-5)+NowButtonId;}/* 进度快控制 */
+                else {tScroll[0].lump = NowButtonId+3*Win14PageID;}/* 进度快控制 */
+                GuiVScroll(&tScroll[0]);/* 垂直进度条 */
+                break;
             }
             GuiUpdateDisplayAll();
         }
@@ -4034,8 +4028,8 @@ static void UserMain14WinFun(void *param)
                 case 4:
                     switch(NowButtonId)
                     {
-                        case 0:GuiClearScreen(0);GuiWinDeleteTop();break;//Exit
-                        case 1:GuiClearScreen(0);GuiWinDeleteTop();break;//空
+                        case 0:GuiWinAdd(&userMain32Win);break;//WIFI_Reset
+                        case 1:GuiClearScreen(0);GuiWinDeleteTop();break;//Exit
                         case 2:GuiClearScreen(0);GuiWinDeleteTop();break;//空
                     }
                     break;
@@ -4068,14 +4062,14 @@ static void UserMain14WinFun(void *param)
                     {
                         case 0:GuiWinAdd(&userMain28Win);break;//AutoRange
                         case 1:GuiWinAdd(&userMain29Win);break;//TDS_CND
-                        case 2:GuiWinAdd(&userMain31Win);break;//WIFI
+                        case 2:GuiWinAdd(&userMain31Win);break;//WIFI_Control
                     }
                     break;
                 case 9:
                     switch(NowButtonId)
                     {
-                        case 0:GuiClearScreen(0);GuiWinDeleteTop();break;//Exit
-                        case 1:GuiClearScreen(0);GuiWinDeleteTop();break;//空
+                        case 0:GuiWinAdd(&userMain32Win);break;//WIFI_Reset
+                        case 1:GuiClearScreen(0);GuiWinDeleteTop();break;//Exit
                         case 2:GuiClearScreen(0);GuiWinDeleteTop();break;//空
                     }
                     break;
@@ -4575,7 +4569,6 @@ static void UserMain18WinFun(void *param)
 }
 static void UserMain19WinFun(void *param)
 {
-    static uint8_t confirmed;
     if(FirstFlag[19] == 0)
     {
         FirstFlag[19] = 1;
@@ -5770,10 +5763,152 @@ static void UserMain31WinFun(void *param)
          {
             WiFi_Enable = NowButtonId;
             Flash_Set(23,NowButtonId);
-            WiFi_Init();
+            WiFi_Pin_Init();
             GuiClearScreen(0);
             GuiWinDeleteTop();
             FirstFlag[31]=0;
          }
+    }
+}
+static void UserMain32WinFun(void *param)
+{
+    if(FirstFlag[32] == 0)
+    {
+        FirstFlag[32] = 1;
+        NowButtonId=0;
+        confirmed = 0;
+
+        if(Setting_Language)
+        {
+            tButton[0].x = 15;
+            tButton[0].wide = 95;
+        }
+        else
+        {
+             tButton[0].x = 47;
+             tButton[0].wide = 40;
+        }
+        tButton[0].y = 22;
+        tButton[0].high = 15;
+        tButton[0].name = Reset;
+        tButton[0].linesize = 0;
+        tButton[0].flag = 1;/* 按下状态 */
+        GuiButton(&tButton[0]);
+
+        if(Setting_Language)
+        {
+            tButton[1].x = 40;
+            tButton[1].wide = 45;
+        }
+        else
+        {
+            tButton[1].x = 50;
+            tButton[1].wide = 33;
+        }
+        tButton[1].y = 34;
+        tButton[1].high = 15;
+        tButton[1].name = Exit;
+        tButton[1].linesize = 0;
+        tButton[1].flag = 0;/* 按下状态 */
+        GuiButton(&tButton[1]);
+
+        tButton[2].x = 0;
+        tButton[2].y = 50;
+        tButton[2].wide = 128;
+        tButton[2].high = 15;
+        tButton[2].name = SingleSelect;
+        tButton[2].linesize = 0;
+        tButton[2].flag = 1;/* 按下状态 */
+        GuiButton(&tButton[2]);
+
+        GuiUpdateDisplayAll();
+    }
+    else
+    {
+        K0_Status = rt_sem_take(K0_Sem, 0);
+        K1_Status = rt_sem_take(K1_Sem, 0);
+        K2_Status = rt_sem_take(K2_Sem, 0);
+        K2_Long_Status = rt_sem_take(K2_Long_Sem, 0);
+        if(K0_Status==RT_EOK)
+        {
+            tButton[NowButtonId].flag=0;
+            GuiButton(&tButton[NowButtonId]);
+            if(NowButtonId){NowButtonId=0;}
+            else NowButtonId=1;
+            tButton[NowButtonId].flag=1;
+            GuiButton(&tButton[NowButtonId]);
+            GuiUpdateDisplayAll();
+        }
+        if(K1_Status==RT_EOK)
+        {
+             tButton[NowButtonId].flag=0;
+             GuiButton(&tButton[NowButtonId]);
+             if(NowButtonId){NowButtonId=0;}
+             else NowButtonId=1;
+             tButton[NowButtonId].flag=1;
+             GuiButton(&tButton[NowButtonId]);
+             GuiUpdateDisplayAll();
+        }
+        if(K2_Status==RT_EOK)
+        {
+            switch(NowButtonId)
+             {
+             case 0:
+             if(confirmed==0)
+             {
+                 GuiClearScreen(0);
+                 GuiWinDraw(&userMain32Win);
+
+                 confirmed = 1;
+                 tButton[0].x = 30;
+                 tButton[0].y = 22;
+                 tButton[0].wide = 70;
+                 tButton[0].high = 15;
+                 if(Setting_Language)
+                 {
+                     tButton[0].name = "   Ja";
+                 }
+                 else
+                 {
+                     tButton[0].name = "Confirmed";
+                 }
+                 tButton[0].linesize = 0;
+                 tButton[0].flag = 1;/* 按下状态 */
+                 GuiButton(&tButton[0]);
+
+                 tButton[1].x = 42;
+                 tButton[1].y = 34;
+                 tButton[1].wide = 47;
+                 tButton[1].high = 15;
+                 if(Setting_Language)
+                 {
+                     tButton[1].name = "Zur{ck";
+                 }
+                 else
+                 {
+                     tButton[1].name = "Return";
+                 }
+                 tButton[1].linesize = 0;
+                 tButton[1].flag = 0;/* 按下状态 */
+                 GuiButton(&tButton[1]);
+
+                 GuiButton(&tButton[2]);
+                 GuiUpdateDisplayAll();
+             }
+             else
+             {
+                 wifi_factory();
+                 GuiClearScreen(0);
+                 GuiWinDeleteTop();
+                 FirstFlag[32]=0;
+             }
+             break;
+             case 1:
+                 GuiClearScreen(0);
+                 GuiWinDeleteTop();
+                 FirstFlag[32]=0;
+             break;
+         }
+     }
     }
 }
