@@ -25,7 +25,7 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-uint32_t MCU_Version = 100;
+uint32_t MCU_Version = 102;
 uint32_t SN = 111110000;
 
 int main(void)

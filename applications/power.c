@@ -22,6 +22,7 @@ uint32_t NowDcVol;
 uint32_t NowBatVol;
 uint32_t PastBatVol;
 uint8_t LowVoltageFlag;
+
 extern uint8_t Low_Power_Flag;
 extern uint8_t RTC_Wakeup_Flag;
 extern uint32_t BAT_Voltage;
@@ -47,13 +48,15 @@ void PowerCallback(void *parameter)
     LOG_D("Power Init OK\r\n");
     rt_thread_mdelay(1000);
     LowVoltageFlag = Flash_Get(19);
+    NowDcVol = Get_DC_Level();
     while(1)
     {
         if(Get_DC_Level() == 0 && Low_Power_Flag==0)
         {
+            NowDcVol = 0;
             PastBatVol = NowBatVol;
             NowBatVol = BAT_Voltage;
-            if(LowVoltageFlag == 1)
+            if(LowVoltageFlag)
             {
                 if(NowBatVol>PastBatVol && NowBatVol>20 + PastBatVol)
                 {
@@ -71,7 +74,7 @@ void PowerCallback(void *parameter)
                     }
                 }
             }
-            else if(LowVoltageFlag == 0)
+            else
             {
                 if(NowBatVol<=2860)//4.8
                 {
@@ -81,12 +84,13 @@ void PowerCallback(void *parameter)
                 }
             }
         }
-        else if(Get_DC_Level() == 0 && Low_Power_Flag==1)
-        {
-
-        }
         else if(Get_DC_Level())
         {
+            if(!NowDcVol)
+            {
+                NowDcVol = 1;
+                Refresh_Bat();
+            }
             PowerSet(0);
         }
         rt_thread_mdelay(5000);
@@ -94,6 +98,6 @@ void PowerCallback(void *parameter)
 }
 void Power_Init(void)
 {
-    power_t = rt_thread_create("power", PowerCallback, RT_NULL, 2048, 30, 10);
+    power_t = rt_thread_create("power", PowerCallback, RT_NULL, 2048, 12, 10);
     if(power_t!=RT_NULL)rt_thread_startup(power_t);
 }

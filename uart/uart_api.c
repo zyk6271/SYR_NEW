@@ -270,12 +270,16 @@ void wifi_coe_update(void)
 {
     wifi_uart_write_command_value(COE_PUT_CMD, syr_count_error_get());
 }
-void wfs_set_cb(uint32_t value)
+void wst_set_cb(uint32_t value)
 {
-    wifi_uart_write_command_value(WFS_SET_CMD,value);
+    wifi_uart_write_command_value(WST_SET_CMD,value);
     wifi_led(value);
 }
 void wifi_factory(void)
 {
-    wifi_uart_write_command_value(WFT_SET_CMD,0);
+    wifi_uart_write_command_value(WFA_SET_CMD,0);
+}
+void wifi_status_get(void)
+{
+    wifi_uart_write_command_value(WST_GET_CMD,0);
 }

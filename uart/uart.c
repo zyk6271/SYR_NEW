@@ -82,6 +82,7 @@ void wifi_uart_init(void)
 }
 void wifi_service_callback(void *parameter)
 {
+    wifi_status_get();
     while(1)
     {
         wifi_uart_service();

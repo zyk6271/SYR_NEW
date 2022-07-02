@@ -744,7 +744,7 @@ void JumptoDelta(void)
     OpenLcdDisplayNoBL();
     LcdtoBackwash();
 }
-uint8_t JumpToBatteryEmpty_Flag=0;
+uint8_t JumpToBatteryEmpty_Flag = 0;
 void JumpToBatteryEmpty(void)
 {
     Counter_Error++;
@@ -755,7 +755,7 @@ void JumpToBatteryEmpty(void)
         JumpToBatteryEmpty_Flag = 1;
     }
 }
-uint8_t JumpToBatteryNew_Flag=0;
+uint8_t JumpToBatteryNew_Flag = 0;
 void JumpToBatteryNew(void)
 {
     Counter_Error++;
@@ -774,6 +774,21 @@ void JumptoMainWin(void)
        JumptoMainWin_Flag = 1;
    }
 }
+void GuiClear(void)
+{
+    memset(FirstFlag,0,sizeof(FirstFlag));
+    memset(tButton,0,sizeof(tButton));
+    memset(tScroll,0,sizeof(tScroll));
+    GuiClearScreen(0);
+    GuiUpdateDisplayAll();
+}
+void Refresh_Display(void)
+{
+    memset(FirstFlag,0,sizeof(FirstFlag));
+    memset(tButton,0,sizeof(tButton));
+    memset(tScroll,0,sizeof(tScroll));
+    GuiWinRefresh(GuiGetTopWin());
+}
 void lcd_task_entry(void *parameter)
 {
     Lcd_Event_Init();
@@ -782,6 +797,7 @@ void lcd_task_entry(void *parameter)
     LOG_D("LCD Init Success\r\n");
     while(1)
     {
+        LcdRefresh();
         if(rt_sem_take(lcd_refresh_sem, 0)==RT_EOK)
         {
             LOG_I("Lcd Refresh From Lowpower\r\n");
@@ -789,7 +805,6 @@ void lcd_task_entry(void *parameter)
             rt_thread_mdelay(10);
             if(screen_reload)
             {
-                LcdRefresh();
                 GuiClear();
                 NowSetting=0;
                 Win14PageID = 0;
@@ -797,9 +812,12 @@ void lcd_task_entry(void *parameter)
             }
             else
             {
-                LcdRefresh();
                 GuiUpdateDisplayAll();
             }
+        }
+        else
+        {
+            GuiWinDisplay();
         }
         if(JumpToBatteryEmpty_Flag)
         {
@@ -811,34 +829,16 @@ void lcd_task_entry(void *parameter)
         {
             JumpToBatteryNew_Flag = 0;
             GuiClear();
-            GuiWinInit();
             GuiWinAdd(&userMain27Win);
         }
         if(JumptoMainWin_Flag)
         {
             JumptoMainWin_Flag = 0;
-            GuiClearScreen(0);
-            FirstFlag[1]=0;
+            GuiClear();
+            GuiWinAdd(&userMain1Win);
         }
-        LcdRefresh();
-        GuiWinDisplay();
         rt_thread_mdelay(50);
     }
-}
-void GuiClear(void)
-{
-    GuiClearScreen(0);
-    memset(FirstFlag,0,sizeof(FirstFlag));
-    memset(tButton,0,sizeof(tButton));
-    memset(tScroll,0,sizeof(tScroll));
-    GuiWinDisplay();
-}
-void Refresh_Display(void)
-{
-    memset(FirstFlag,0,sizeof(FirstFlag));
-    memset(tButton,0,sizeof(tButton));
-    memset(tScroll,0,sizeof(tScroll));
-    GuiWinRefresh(GuiGetTopWin());
 }
 void Refresh_Language(uint8_t value)
 {
@@ -5762,7 +5762,7 @@ static void UserMain31WinFun(void *param)
          if(K2_Status==RT_EOK)
          {
             WiFi_Enable = NowButtonId;
-            Flash_Set(23,NowButtonId);
+            Flash_Set(23,WiFi_Enable);
             WiFi_Pin_Init();
             GuiClearScreen(0);
             GuiWinDeleteTop();

@@ -7,7 +7,7 @@
 #include "adcwork.h"
 
 #define DBG_TAG "RTC"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 rt_timer_t RTC_Timer=RT_NULL;

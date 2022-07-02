@@ -144,11 +144,10 @@ void ADC_Work_Callback(void *parameter)
     {
         DC_Voltage = adc_value[0];
         BAT_Voltage = adc_value[1];
-        //BAT_Voltage = 3200;
         Moto_Current = adc_value[2];
-        //LOG_I("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
+        //LOG_D("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
         //LOG_W("Moto_Current is %d\r\n",Moto_Current);
-        rt_thread_mdelay(50);
+        rt_thread_mdelay(500);
     }
 }
 void ADC_Init(void)
@@ -173,20 +172,15 @@ void Disable_MotoINT(void)
 }
 uint8_t Get_DC_Level(void)
 {
-    if(DC_Voltage>2800)return 1;
-    else return 0;
+    return DC_Voltage>1100?1:0;
 }
 uint32_t Get_DC_Value(void)
 {
-    uint32_t value;
-    value  = DC_Voltage;
-    LOG_D("DC Value is %ld\r\n",value);
-    return value;
+    LOG_D("DC Value is %ld\r\n",DC_Voltage);
+    return DC_Voltage;
 }
 uint32_t Get_Bat_Value(void)
 {
-    uint32_t value;
-    value  = BAT_Voltage;
-    LOG_D("BAT Value is %ld\r\n",value);
-    return value;
+    LOG_D("BAT Value is %ld\r\n",BAT_Voltage);
+    return BAT_Voltage;
 }

@@ -19,7 +19,7 @@
 #include "easyflash.h"
 
 #define DBG_TAG "FLASH"
-#define DBG_LVL DBG_INFO
+#define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
 rt_spi_flash_device_t fm25q16;
@@ -49,8 +49,8 @@ const char *Key_list[] =
     "BAT_State",                          //19
     "TDS_State",                          //20
     "TDS_CND",                            //21
-    "Time_Range"                          //22
-    "WiFi"                                //23
+    "Time_Range",                         //22
+    "WiFi_Enable",                        //23
 };
 void Set_Default(void)
 {
