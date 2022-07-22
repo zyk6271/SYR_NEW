@@ -19,7 +19,7 @@
 #include "easyflash.h"
 
 #define DBG_TAG "FLASH"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 rt_spi_flash_device_t fm25q16;
@@ -50,7 +50,7 @@ const char *Key_list[] =
     "TDS_State",                          //20
     "TDS_CND",                            //21
     "Time_Range",                         //22
-    "WiFi_Enable",                        //23
+    "WiFi_Enable"                         //23
 };
 void Set_Default(void)
 {
@@ -118,14 +118,12 @@ uint32_t Flash_Get(uint8_t id)
 }
 void Flash_Set(uint8_t id,uint32_t value)
 {
-    char *Temp_ValueBuf = rt_malloc(64);
-    char *Temp_KeyBuf = rt_malloc(64);
-    sprintf(Temp_ValueBuf,"%ld", value);
-    sprintf(Temp_KeyBuf,"%s", Key_list[id]);
-    ef_set_env(Temp_KeyBuf,Temp_ValueBuf);
-    LOG_D("Writing %s to key %s \r\n", Temp_ValueBuf,Temp_KeyBuf);
-    rt_free(Temp_ValueBuf);
-    rt_free(Temp_KeyBuf);
+    char Set_ValueBuf[32]={0};
+    char Set_KeyBuf[32]={0};
+    sprintf(Set_ValueBuf,"%ld", value);
+    sprintf(Set_KeyBuf,"%s", Key_list[id]);
+    ef_set_env(Set_KeyBuf,Set_ValueBuf);
+    LOG_D("Writing %s to key %s \r\n", Set_ValueBuf,Set_KeyBuf);
 }
 void Flash_Clear(void)
 {

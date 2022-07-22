@@ -9,10 +9,10 @@
 #include "12864.h"
 
 #define DBG_TAG "DeviceInfo"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-rt_thread_t button_task=RT_NULL;
+rt_thread_t button_task = RT_NULL;
 
 rt_sem_t K0_Sem = RT_NULL;
 rt_sem_t K0_Long_Sem = RT_NULL;
@@ -86,7 +86,8 @@ void K0_LongSem_Release(void *parameter)
         }
         else
         {
-            LOG_D("K0 Long Counter is %d",K0_Long_Sem_Counter++);
+            K0_Long_Sem_Counter++;
+            LOG_D("K0 Long Counter is %d",K0_Long_Sem_Counter);
         }
     }
     else {
@@ -107,10 +108,12 @@ void K1_LongSem_Release(void *parameter)
         }
         else
         {
-            LOG_D("K1 Long Counter is %d",K1_Long_Sem_Counter++);
+            K1_Long_Sem_Counter++;
+            LOG_D("K1 Long Counter is %d",K1_Long_Sem_Counter);
         }
     }
-    else {
+    else
+    {
         rt_sem_release(K1_Sem);
     }
 }
@@ -128,7 +131,8 @@ void K2_LongSem_Release(void *parameter)
         }
         else
         {
-            LOG_D("K2 Long Counter is %d",K2_Long_Sem_Counter++);
+            K2_Long_Sem_Counter++;
+            LOG_D("K2 Long Counter is %d",K2_Long_Sem_Counter);
         }
     }
 }

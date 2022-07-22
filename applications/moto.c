@@ -59,6 +59,7 @@ void Moto_Overload(void)
     rt_pin_write(MOTO_IN2,0);
     rt_event_send(&Moto_Event, Event_Moto_Over);
 }
+MSH_CMD_EXPORT(Moto_Overload,Moto_Overload);
 uint8_t Moto_Cycle(void)
 {
     RTC_Clear();
@@ -336,4 +337,3 @@ void Moto_Init(void)
         rt_thread_startup(Moto_t);
     }
 }
-MSH_CMD_EXPORT(Moto_Init,Moto_Init);

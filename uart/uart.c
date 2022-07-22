@@ -91,7 +91,7 @@ void wifi_service_callback(void *parameter)
 }
 void wifi_service_init(void)
 {
-    wifi_serv_t = rt_thread_create("wifi-service", wifi_service_callback, RT_NULL, 2048, 8, 10);
+    wifi_serv_t = rt_thread_create("wifi-service", wifi_service_callback, RT_NULL, 1024, 8, 10);
     if(wifi_serv_t != RT_NULL)
     {
         rt_thread_startup(wifi_serv_t);

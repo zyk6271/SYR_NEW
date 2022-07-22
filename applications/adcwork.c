@@ -16,7 +16,7 @@
 #include "pin_config.h"
 
 #define DBG_TAG "adc"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 uint32_t adc_value[3];
@@ -154,7 +154,7 @@ void ADC_Init(void)
 {
     MX_DMA_Init();
     MX_ADC1_Init();
-    adc_work = rt_thread_create("adc_work", ADC_Work_Callback, RT_NULL, 1024, 15, 10);
+    adc_work = rt_thread_create("adc_work", ADC_Work_Callback, RT_NULL, 512, 15, 10);
     if(adc_work != RT_NULL)
     {
         rt_thread_startup(adc_work);
@@ -172,7 +172,7 @@ void Disable_MotoINT(void)
 }
 uint8_t Get_DC_Level(void)
 {
-    return DC_Voltage>1100?1:0;
+    return DC_Voltage>2800?1:0;
 }
 uint32_t Get_DC_Value(void)
 {

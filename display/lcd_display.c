@@ -17,6 +17,7 @@
 
 rt_thread_t lcd_task=RT_NULL;
 rt_sem_t lcd_refresh_sem = RT_NULL;
+rt_timer_t DoneJump_Timer=RT_NULL;
 
 char *Manual = RT_NULL;
 char *Reminder = RT_NULL;
@@ -651,9 +652,18 @@ void Flash2Mem(void)
     }
     WiFi_Enable = Flash_Get(23);
 }
+void K2_Setjump_Sem_Release(void *parameter)
+{
+     rt_sem_release(K2_Sem);
+}
+void DoneJump (void)
+{
+    rt_timer_start(DoneJump_Timer);
+}
 void Lcd_Event_Init(void)
 {
     rt_event_init(&lcd_jump_event, "lcd_jump_event", RT_IPC_FLAG_FIFO);
+    DoneJump_Timer = rt_timer_create("DoneJump_Timer",K2_Setjump_Sem_Release,RT_NULL,4000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
 }
 //以下为显示启动以及测试部分
 void userAppPortInit(void)
@@ -1281,19 +1291,6 @@ static void UserMain2WinFun(void *param)
                 }
             }
 }
-rt_timer_t SemJump_Timer=RT_NULL;
-void K2_Setjump_Sem_Release(void *parameter)
-{
-     rt_sem_release(K2_Sem);
-}
-void SemJump (void)
-{
-    if(SemJump_Timer == RT_NULL)
-    {
-        SemJump_Timer = rt_timer_create("SemJump_Timer",K2_Setjump_Sem_Release,RT_NULL,4000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
-    }
-    rt_timer_start(SemJump_Timer);
-}
 static void UserMain3WinFun(void *param)
 {
     rt_uint32_t e;
@@ -1380,7 +1377,7 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(40,27,70,0,"Finish");
                     GuiRowText(106,56,30,0,"OK");
                 }
-                SemJump();
+                DoneJump();
                 break;
             case NOMOTO:
                 screen_reload=0;
@@ -4529,7 +4526,7 @@ static void UserMain18WinFun(void *param)
         FirstFlag[18] = 1;
 
         GuiRowText(19,30,80,0,"SYR BFC:");
-        GuiRowText(76,30,80,0,"0.0.17");
+        GuiRowText(76,30,80,0,"0.0.18");
 
         tButton[0].x = 0;
         tButton[0].y = 50;
@@ -5761,9 +5758,7 @@ static void UserMain31WinFun(void *param)
          }
          if(K2_Status==RT_EOK)
          {
-            WiFi_Enable = NowButtonId;
-            Flash_Set(23,WiFi_Enable);
-            WiFi_Pin_Init();
+            WiFi_Enable_Change(NowButtonId);
             GuiClearScreen(0);
             GuiWinDeleteTop();
             FirstFlag[31]=0;

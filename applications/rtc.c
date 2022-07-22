@@ -211,7 +211,6 @@ void RTC_Init(void)
     RTC_Check_Init();
     LOG_D("RTC Init is Success\r\n");
 }
-MSH_CMD_EXPORT(RTC_Init,RTC_Init);
 void RTC_Alarm_IRQHandler(void)
 {
     if(Low_Power_Flag)
@@ -222,4 +221,3 @@ void RTC_Alarm_IRQHandler(void)
     }
     HAL_RTC_AlarmIRQHandler(&RtcHandle);
 }
-

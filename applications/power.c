@@ -58,7 +58,7 @@ void PowerCallback(void *parameter)
             NowBatVol = BAT_Voltage;
             if(LowVoltageFlag)
             {
-                if(NowBatVol>PastBatVol && NowBatVol>20 + PastBatVol)
+                if(NowBatVol>PastBatVol && NowBatVol>100 + PastBatVol)
                 {
                     if(NowBatVol>3100)//5.2
                     {
@@ -69,8 +69,8 @@ void PowerCallback(void *parameter)
                     else if(NowBatVol<=3100)//4.8
                     {
                         PowerSet(1);
-                        LOG_D("BatteryLow in New Bat\r\n");
-                        JumpToBatteryEmpty();
+                        LOG_D("New Battery is too low\r\n");
+                        JumpToBatteryNew();
                     }
                 }
             }
@@ -86,14 +86,17 @@ void PowerCallback(void *parameter)
         }
         else if(Get_DC_Level())
         {
-            if(!NowDcVol)
+            if(NowDcVol == 0)
             {
                 NowDcVol = 1;
-                Refresh_Bat();
+                if(LowVoltageFlag)
+                {
+                    Refresh_Bat();
+                    PowerSet(0);
+                }
             }
-            PowerSet(0);
         }
-        rt_thread_mdelay(5000);
+        rt_thread_mdelay(500);
     }
 }
 void Power_Init(void)
