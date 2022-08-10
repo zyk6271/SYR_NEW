@@ -1853,9 +1853,9 @@ static void UserMain4WinFun(void *param)
                     if(Reminder_Week != Reminder_Week_Temp || Reminder_Day != Reminder_Day_Temp)
                      {
                         Reminder_Week = Reminder_Week_Temp;
-                        Flash_Set(4,Reminder_Week);
+                        Flash_Set(1,Reminder_Week);
                         Reminder_Day = Reminder_Day_Temp;
-                        Flash_Set(5,Reminder_Day);
+                        Flash_Set(2,Reminder_Day);
                         RTC_Reminder_Time=0;
                         LOG_D("RTC_Reminder_Time Change to 0\r\n");
                         wifi_rse_update();
@@ -1863,7 +1863,7 @@ static void UserMain4WinFun(void *param)
                      if(Reminder_Enable != Reminder_Enable_Temp)
                      {
                          Reminder_Enable = Reminder_Enable_Temp;
-                         Flash_Set(6,Reminder_Enable);
+                         Flash_Set(3,Reminder_Enable);
                          wifi_sse_update();
                      }
                     GuiClearScreen(0);

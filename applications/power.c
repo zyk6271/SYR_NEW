@@ -49,6 +49,10 @@ void PowerCallback(void *parameter)
     rt_thread_mdelay(1000);
     LowVoltageFlag = Flash_Get(19);
     NowDcVol = Get_DC_Level();
+    if(NowDcVol)
+    {
+        PowerSet(0);
+    }
     while(1)
     {
         if(Get_DC_Level() == 0 && Low_Power_Flag==0)

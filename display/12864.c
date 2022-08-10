@@ -142,6 +142,7 @@ void OpenLcdDisplay(void)
         case 3:
             LCD_Flag=1;
             LcdInit();
+            GuiUpdateDisplayAll();
             break;
         default:break;
     }

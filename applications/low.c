@@ -38,14 +38,13 @@ extern void SystemClock_Config(void);
 void LcdVccTimerCallback(void *parameter)
 {
     LOG_D("Lcd Vcc Timer is come\r\n");
+    LCD_Flag = 3;
     if(!WiFi_Enable)
     {
-        LCD_Flag = 3;
         EnterLowPower();
     }
     else
     {
-        LCD_Flag = 2;
         CloseLcdVcc();
         LOG_D("Not Sleep Because of WIFI\r\n");
     }

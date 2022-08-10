@@ -65,7 +65,7 @@ void Set_Default(void)
     Flash_Set(22,0);
     Flash_Set(23,0);
 }
-int Flash_Init(void)
+void Flash_Init(void)
 {
     rt_err_t status;
     extern rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name);
@@ -76,20 +76,11 @@ int Flash_Init(void)
     if (RT_NULL == fm25q16)
     {
         LOG_E("sfud fail\r\n");
-        return RT_ERROR;
     };
     status = fal_init();
-    if (status == 0)
-    {
-        LOG_E("fal_init fail\r\n");
-        return RT_ERROR;
-    };
+    RT_ASSERT(status == 1);
     status = easyflash_init();
-    if (status != EF_NO_ERR)
-    {
-        LOG_E("easyflash_init fail\r\n");
-        return RT_ERROR;
-    };
+    RT_ASSERT(status == EF_NO_ERR);
     if(Flash_Get(0)==0)
     {
         Set_Default();
@@ -118,8 +109,8 @@ uint32_t Flash_Get(uint8_t id)
 }
 void Flash_Set(uint8_t id,uint32_t value)
 {
-    char Set_ValueBuf[32]={0};
-    char Set_KeyBuf[32]={0};
+    char Set_ValueBuf[64]={0};
+    char Set_KeyBuf[64]={0};
     sprintf(Set_ValueBuf,"%ld", value);
     sprintf(Set_KeyBuf,"%s", Key_list[id]);
     ef_set_env(Set_KeyBuf,Set_ValueBuf);

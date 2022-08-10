@@ -12,7 +12,7 @@
 
 #include "rtthread.h"
 
-int Flash_Init(void);
+void Flash_Init(void);
 uint32_t Flash_Get(uint8_t id);
 void Flash_Set(uint8_t id,uint32_t value);
 void Flash_Clear(void);
