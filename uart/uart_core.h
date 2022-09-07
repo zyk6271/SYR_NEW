@@ -3,9 +3,9 @@
 
 #define Control_UART 1
 
-#define WIFI_DATA_PROCESS_LMT           1024             //单包1024byte
-#define WIFI_UART_RECV_BUF_LMT          1024              //串口数据接收缓存区大小,如MCU的RAM不够,可缩小
-#define WIFIR_UART_SEND_BUF_LMT         1024              //根据用户DP数据大小量定，用户可根据实际情况修改
+#define WIFI_DATA_PROCESS_LMT           512             //单包1024byte
+#define WIFI_UART_RECV_BUF_LMT          512              //串口数据接收缓存区大小,如MCU的RAM不够,可缩小
+#define WIFIR_UART_SEND_BUF_LMT         512              //根据用户DP数据大小量定，用户可根据实际情况修改
 
 //=============================================================================
 //帧的字节命令
