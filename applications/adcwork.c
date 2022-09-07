@@ -145,7 +145,7 @@ void ADC_Work_Callback(void *parameter)
         DC_Voltage = adc_value[0];
         BAT_Voltage = adc_value[1];
         Moto_Current = adc_value[2];
-        //LOG_D("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
+        //LOG_I("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
         //LOG_W("Moto_Current is %d\r\n",Moto_Current);
         rt_thread_mdelay(500);
     }
