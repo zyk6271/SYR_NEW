@@ -111,8 +111,7 @@ void wifi_led(uint8_t type)
         if(wifi_status == 5)
         {
             wifi_status = 4;
-            agile_led_set_light_mode(LED_B, "1000,1000", -1);
-            agile_led_start(LED_B);
+            agile_led_stop(LED_B);
         }
         break;
     case 5://AP开
