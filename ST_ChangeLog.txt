@@ -11,3 +11,4 @@
 7.Add Sync for Wifi if Device is powered by batteries
 8.Add RCP and EMR Command
 9.Add LPTIM for EMR
+10.Add tickless mode
