@@ -15,68 +15,53 @@
 #include "pin_config.h"
 #include "lcd_display.h"
 #include "lkdgui.h"
+#include "pm.h"
+#include "rthw.h"
 
 #define DBG_TAG "LowPower"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
+#define LCD_BACKLIGHT_TIME      60*1000
+#define LCD_SLEEP_TIME          120*1000
+
 rt_timer_t Screen_Backlight_Timer=RT_NULL;
-rt_timer_t Screen_Vcc_Timer=RT_NULL;
-rt_timer_t LowPowerTimer=RT_NULL;
 
 uint8_t Button_Wakeup_Flag;
 uint8_t Delta_Wakeup_Flag;
-uint8_t RTC_Wakeup_Flag;
-uint8_t Low_Power_Flag;
-extern uint8_t MotoWorkFlag;
-extern uint8_t WiFi_Enable;
 
 extern uint8_t LCD_Flag;
-extern SPI_HandleTypeDef hspi2;
-extern void SystemClock_Config(void);
+extern uint8_t Deltapress_Enable;
 
-void LcdVccTimerCallback(void *parameter)
-{
-    LOG_D("Lcd Vcc Timer is come\r\n");
-    LCD_Flag = 3;
-    EnterLowPower();
-}
 void LcdBacklightTimerCallback(void *parameter)
 {
-    LOG_D("Lcd Backlight Timer is come\r\n");
     LCD_Flag = 2;
     CloseLcdBacklight();
 }
 void SreenTimerInit(void)
 {
-    Screen_Backlight_Timer=rt_timer_create("Lcd_Backlight_Timer",LcdBacklightTimerCallback,RT_NULL,60*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
-    if(Screen_Backlight_Timer!=RT_NULL)
+    Screen_Backlight_Timer=rt_timer_create("Lcd_Backlight_Timer",LcdBacklightTimerCallback,RT_NULL,LCD_BACKLIGHT_TIME,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
+    if(Screen_Backlight_Timer != RT_NULL)
     {
         rt_timer_start(Screen_Backlight_Timer);
-    }
-    Screen_Vcc_Timer=rt_timer_create("Lcd_Vcc_Timer",LcdVccTimerCallback,RT_NULL,120*1000,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
-    if(Screen_Vcc_Timer!=RT_NULL)
-    {
-        rt_timer_start(Screen_Vcc_Timer);
     }
 }
 void ScreenTimerStop(void)
 {
     rt_timer_stop(Screen_Backlight_Timer);
-    rt_timer_stop(Screen_Vcc_Timer);
 }
 void ScreenTimerRefresh(void)
 {
-    Low_Power_Flag = 0;
+    rt_pm_module_delay_sleep(PM_LCD_ID,LCD_SLEEP_TIME);
     rt_timer_start(Screen_Backlight_Timer);
-    if(MotoWorkFlag == 0)
-    {
-        rt_timer_start(Screen_Vcc_Timer);
-    }
 }
 void button_wakeup(void *parameter)
 {
     Button_Wakeup_Flag=1;
+}
+void delta_wakeup(void *parameter)
+{
+    Delta_Wakeup_Flag=1;
 }
 void FlashInit(void)
 {
@@ -109,28 +94,41 @@ void FlashDeInit(void)
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15);
     __HAL_RCC_SPI2_CLK_DISABLE();
 }
-void WiFiInit(void)
+void WiFi_Pin_Init(void)
 {
-    rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
-    rt_pin_write(WIFI_EN,WiFi_Enable);
-    if(WiFi_Enable)
-    {
-        Wifi_LedOpen();
-        rt_pin_mode(WIFI_RST, PIN_MODE_INPUT);
-    }
-    else
-    {
-        Wifi_LedClose();
-        rt_pin_mode(WIFI_RST, PIN_MODE_OUTPUT);
-        rt_pin_write(WIFI_RST,0);
-    }
-}
-void WiFiDeInit(void)
-{
-    rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
-    rt_pin_write(WIFI_EN,0);
+    __HAL_RCC_USART1_CLK_ENABLE();
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    /**USART1 GPIO Configuration
+    PA9     ------> USART1_TX
+    PA10     ------> USART1_RX
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     rt_pin_mode(WIFI_RST, PIN_MODE_OUTPUT);
+    rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
+    rt_pin_write(WIFI_EN, PIN_HIGH);
+    rt_pin_write(WIFI_RST, PIN_LOW);
+}
+void WiFi_Pin_DeInit(void)
+{
+    wifi_led(0);
+    rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
+    rt_pin_mode(WIFI_RST, PIN_MODE_OUTPUT);
+    rt_pin_write(WIFI_EN,0);
     rt_pin_write(WIFI_RST,0);
+}
+void WiFi_Pin_Reset(void)
+{
+    rt_pin_mode(WIFI_EN, PIN_MODE_OUTPUT);
+    rt_pin_mode(WIFI_RST, PIN_MODE_OUTPUT);
+    rt_pin_write(WIFI_EN,0);
+    rt_pin_write(WIFI_RST,1);
 }
 void NoneDeInit(void)
 {
@@ -161,6 +159,7 @@ void NoneDeInit(void)
     rt_pin_mode(40,PIN_MODE_OUTPUT);
     rt_pin_write(40,0);
 }
+
 void DebugInit(void)
 {
     __HAL_RCC_USART3_CLK_ENABLE();
@@ -178,7 +177,36 @@ void DebugInit(void)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 }
-void BeforSleep(void)
+void IRQ_Bund(void)
+{
+    rt_pin_attach_irq(K0, PIN_IRQ_MODE_FALLING, button_wakeup, RT_NULL);
+    rt_pin_attach_irq(K1, PIN_IRQ_MODE_FALLING, button_wakeup, RT_NULL);
+    rt_pin_attach_irq(K2, PIN_IRQ_MODE_FALLING, button_wakeup, RT_NULL);
+    rt_pin_irq_enable(K0, PIN_IRQ_ENABLE);
+    rt_pin_irq_enable(K1, PIN_IRQ_ENABLE);
+    rt_pin_irq_enable(K2, PIN_IRQ_ENABLE);
+    if(Deltapress_Enable)
+    {
+        rt_pin_attach_irq(WATER_FLOW, PIN_IRQ_MODE_FALLING, delta_wakeup, RT_NULL);
+        rt_pin_irq_enable(WATER_FLOW, Deltapress_Enable);
+    }
+}
+void IRQ_DeBund(void)
+{
+    rt_pin_detach_irq(K0);
+    rt_pin_detach_irq(K1);
+    rt_pin_detach_irq(K2);
+    rt_pin_detach_irq(WATER_FLOW);
+    rt_pin_irq_enable(K0, PIN_IRQ_DISABLE);
+    rt_pin_irq_enable(K1, PIN_IRQ_DISABLE);
+    rt_pin_irq_enable(K2, PIN_IRQ_DISABLE);
+    rt_pin_irq_enable(WATER_FLOW, PIN_IRQ_DISABLE);
+    rt_pin_mode(K0, PIN_MODE_INPUT);
+    rt_pin_mode(K1, PIN_MODE_INPUT);
+    rt_pin_mode(K2, PIN_MODE_INPUT);
+    rt_pin_mode(WATER_FLOW, PIN_MODE_INPUT);
+}
+void BeforeSleep(void)
 {
     //RGB
     Led_GpioDeInit();
@@ -187,115 +215,69 @@ void BeforSleep(void)
     //Flash
     FlashDeInit();
     //ADC
-    ADC_Pin_DeInit();
-//    //WIFI
-    WiFiDeInit();
+    ADC_DMA_DeInit();
+    //WIFI
+    WiFi_Pin_DeInit();
     //LCD
     CloseLcdVcc();
     //TDS
     TDS_GpioDeInit();
     //None Pin
     NoneDeInit();
-    //Debug
-    rt_pin_attach_irq(K0, PIN_IRQ_MODE_FALLING, button_wakeup, RT_NULL);
-    rt_pin_attach_irq(K1, PIN_IRQ_MODE_FALLING, button_wakeup, RT_NULL);
-    rt_pin_attach_irq(K2, PIN_IRQ_MODE_FALLING, button_wakeup, RT_NULL);
-    rt_pin_irq_enable(K0, PIN_IRQ_ENABLE);
-    rt_pin_irq_enable(K1, PIN_IRQ_ENABLE);
-    rt_pin_irq_enable(K2, PIN_IRQ_ENABLE);
-    Delta_Reload();
+    //IRQ_Bund
+    IRQ_Bund();
 }
 void AfterWake(void)
 {
+    //WIFI
+    WiFi_Pin_Init();
     //RGB
     Led_GpioInit();
     //MOTO
     Moto_Pin_Init();
     //Flash
     FlashInit();
-    //ADC
-    ADC_Pin_Init();
     //LCD
     OpenLcdVcc();
     //TDS
     TDS_GpioInit();
-    //Debug
+    //Debug Uart
     DebugInit();
-    //WIFI
-    WiFiInit();
-
-    rt_pin_detach_irq(K0);
-    rt_pin_detach_irq(K1);
-    rt_pin_detach_irq(K2);
-    rt_pin_irq_enable(K0, PIN_IRQ_DISABLE);
-    rt_pin_irq_enable(K1, PIN_IRQ_DISABLE);
-    rt_pin_irq_enable(K2, PIN_IRQ_DISABLE);
-    rt_pin_mode(K0, PIN_MODE_INPUT);
-    rt_pin_mode(K1, PIN_MODE_INPUT);
-    rt_pin_mode(K2, PIN_MODE_INPUT);
+    //IRQ_DeBund
+    IRQ_DeBund();
 }
-void EnterLowPower(void)
+void user_notify(rt_uint8_t event, rt_uint8_t mode, void *data)
 {
-    Delta_Wakeup_Flag = 0;
-    Button_Wakeup_Flag=0;
-    LOG_I("Goto Stop Mode With RTC Now\r\n");
-    BeforSleep();
-    Low_Power_Flag = 1;
-    __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
-    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-    LcdRst();
-    if(Button_Wakeup_Flag)
+    if (event == RT_PM_ENTER_SLEEP)
     {
-        SystemClock_Config();
-        Button_Wakeup_Flag = 0;
-        AfterWake();
-        LCD_BL_HIGH();
-        LCD_Refresh();
-        ScreenTimerRefresh();
-        Low_Power_Flag = 0;
-        LOG_D("Button Wake Up Now\r\n");
-        return;
-    }
-    if(Delta_Wakeup_Flag)
-    {
-        SystemClock_Config();
         Delta_Wakeup_Flag = 0;
-        AfterWake();
-        LCD_Refresh();
-        ScreenTimerRefresh();
-        Low_Power_Flag = 0;
-        LOG_D("Delta Wake Up Now\r\n");
-        return;
+        Button_Wakeup_Flag=0;
+        LOG_D("Go to Sleep\r\n");
+        BeforeSleep();
     }
-}
-void LowPowerTimerCallback(void *parameter)
-{
-    EnterLowPower();
-}
-void LowPowerTimerStart(void)
-{
-    if(LowPowerTimer != RT_NULL)
+    else
     {
-        rt_timer_start(LowPowerTimer);
-    }
-}
-void LowPowerTimerInit(void)
-{
-    if(LowPowerTimer == RT_NULL)
-    {
-        LowPowerTimer = rt_timer_create("LowPowerTimer", LowPowerTimerCallback, RT_NULL, 300, RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
-    }
-}
-void LowPowerTimerStop(void)
-{
-    if(LowPowerTimer == RT_NULL)
-    {
-        rt_timer_stop(LowPowerTimer);
+        //ADC
+        ADC_DMA_Init();
+        if(Button_Wakeup_Flag)
+        {
+            Button_Wakeup_Flag = 0;
+            LCD_Restart(1);
+            LOG_D("Button Wake Up Now\r\n");
+        }
+        else if(Delta_Wakeup_Flag)
+        {
+            Delta_Wakeup_Flag = 0;
+            LCD_Restart(0);
+            LOG_D("Delta Wake Up Now\r\n");
+        }
     }
 }
 void Low_Init(void)
 {
+    rt_pm_notify_set(user_notify, RT_NULL);
     SreenTimerInit();
-    LowPowerTimerInit();
+    ScreenTimerRefresh();
+    rt_pm_request(PM_SLEEP_MODE_DEEP);
+    rt_pm_release(PM_SLEEP_MODE_NONE);
 }

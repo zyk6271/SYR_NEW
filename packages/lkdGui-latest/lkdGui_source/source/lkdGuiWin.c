@@ -50,7 +50,16 @@ int8_t GuiWinAdd(lkdWin *pWindow)
 	winManage.pWin ++;
 	return 0;
 }
-
+/**
+  *@brief  ��Ӵ���
+  *@param  pWindow ����ָ��
+  *@retval 0 �ɹ� -1 ʧ��
+  */
+int8_t GuiWinRefresh(lkdWin *pWindow)
+{
+    GuiWinDraw(pWindow);
+    return 0;
+}
 /**
   *@brief  ִ�ж��㴰��
   *@param  None

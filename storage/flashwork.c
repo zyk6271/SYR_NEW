@@ -19,7 +19,7 @@
 #include "easyflash.h"
 
 #define DBG_TAG "FLASH"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 rt_spi_flash_device_t fm25q16;
@@ -49,8 +49,10 @@ const char *Key_list[] =
     "BAT_State",                          //19
     "TDS_State",                          //20
     "TDS_CND",                            //21
-    "Time_Range"                          //22
-    "WiFi"                                //23
+    "Time_Range",                         //22
+    "Telemetry_Timeout",                  //23
+    "Telemetry_Period",                   //24
+    "AP_Enable",                          //25
 };
 void Set_Default(void)
 {
@@ -63,12 +65,12 @@ void Set_Default(void)
     Flash_Set(15,1);
     Flash_Set(21,11);
     Flash_Set(22,0);
-    Flash_Set(23,0);
+    Flash_Set(23,30);
+    Flash_Set(24,12);
+    Flash_Set(25,1);
 }
-int Flash_Init(void)
+void Flash_Init(void)
 {
-    rt_err_t status;
-    extern rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name);
     rt_pin_mode(FLASH_EN, 0);
     rt_pin_write(FLASH_EN, 1);
     rt_hw_spi_device_attach("spi2", "spi20", GPIOB, GPIO_PIN_12);
@@ -76,33 +78,22 @@ int Flash_Init(void)
     if (RT_NULL == fm25q16)
     {
         LOG_E("sfud fail\r\n");
-        return RT_ERROR;
     };
-    status = fal_init();
-    if (status == 0)
-    {
-        LOG_E("fal_init fail\r\n");
-        return RT_ERROR;
-    };
-    status = easyflash_init();
-    if (status != EF_NO_ERR)
-    {
-        LOG_E("easyflash_init fail\r\n");
-        return RT_ERROR;
-    };
+    fal_init();
+    easyflash_init();
     if(Flash_Get(0)==0)
     {
         Set_Default();
         Flash_Set(0,1);
     }
-    LOG_I("Storage Init Success\r\n");
-    return RT_EOK;
+    Flash2Mem();
 }
 uint32_t Flash_Get(uint8_t id)
 {
+    rt_pm_module_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
     uint8_t read_len = 0;
     uint32_t read_value = 0;
-    memset(read_value_temp,0,64);
+    rt_memset(read_value_temp,0,64);
     read_len = ef_get_env_blob(Key_list[id], read_value_temp, 64, NULL);
     if(read_len>0)
     {
@@ -113,21 +104,23 @@ uint32_t Flash_Get(uint8_t id)
         read_value = 0;
     }
     LOG_D("Reading Key %s value %ld \r\n", Key_list[id], read_value);//输出
+    rt_pm_module_release(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
     return read_value;
 }
 void Flash_Set(uint8_t id,uint32_t value)
 {
-    char *Temp_ValueBuf = rt_malloc(64);
-    char *Temp_KeyBuf = rt_malloc(64);
-    sprintf(Temp_ValueBuf,"%ld", value);
-    sprintf(Temp_KeyBuf,"%s", Key_list[id]);
-    ef_set_env(Temp_KeyBuf,Temp_ValueBuf);
-    LOG_D("Writing %s to key %s \r\n", Temp_ValueBuf,Temp_KeyBuf);
-    rt_free(Temp_ValueBuf);
-    rt_free(Temp_KeyBuf);
+    rt_pm_module_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
+    char Set_ValueBuf[64]={0};
+    char Set_KeyBuf[64]={0};
+    rt_sprintf(Set_ValueBuf,"%ld", value);
+    rt_sprintf(Set_KeyBuf,"%s", Key_list[id]);
+    ef_set_env(Set_KeyBuf,Set_ValueBuf);
+    LOG_D("Writing %s to key %s \r\n", Set_ValueBuf,Set_KeyBuf);
+    rt_pm_module_release(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
 }
 void Flash_Clear(void)
 {
+    rt_pm_module_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
     ef_env_set_default();
     LOG_D("Flash Set Clear");
     rt_thread_mdelay(1000);

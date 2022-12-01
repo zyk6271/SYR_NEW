@@ -23,7 +23,7 @@ uint32_t adc_value[3];
 uint32_t BAT_Voltage = 0;
 uint32_t DC_Voltage = 0;
 uint32_t Moto_Current = 0;
-rt_thread_t adc_work = RT_NULL;
+rt_timer_t Adc_Timer = RT_NULL;
 
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
@@ -117,13 +117,15 @@ static void MX_DMA_Init(void)
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
   HAL_NVIC_DisableIRQ(DMA1_Channel1_IRQn);
 }
-void ADC_Pin_Init(void)
+void ADC_DMA_Init(void)
 {
     __HAL_RCC_ADC_CLK_ENABLE();
     __HAL_RCC_DMA1_CLK_ENABLE();
+    rt_timer_start(Adc_Timer);
 }
-void ADC_Pin_DeInit(void)
+void ADC_DMA_DeInit(void)
 {
+    rt_timer_stop(Adc_Timer);
     __HAL_RCC_ADC_CLK_DISABLE();
     __HAL_RCC_DMA1_CLK_DISABLE();
 }
@@ -137,27 +139,22 @@ void ADC1_IRQHandler(void)
     Moto_Current_Detect();
   /* USER CODE END ADC1_IRQn 1 */
 }
-void ADC_Work_Callback(void *parameter)
+void ADC_Timer_Callback(void *parameter)
 {
-    LOG_D("ADC_Work Init Success\r\n");
-    while(1)
-    {
-        DC_Voltage = adc_value[0];
-        BAT_Voltage = adc_value[1];
-        Moto_Current = adc_value[2];
-        //LOG_I("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
-        //LOG_W("Moto_Current is %d\r\n",Moto_Current);
-        rt_thread_mdelay(50);
-    }
+    DC_Voltage = adc_value[0];
+    BAT_Voltage = adc_value[1];
+    Moto_Current = adc_value[2];
+    //LOG_I("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
+    //LOG_W("Moto_Current is %d\r\n",Moto_Current);
 }
 void ADC_Init(void)
 {
     MX_DMA_Init();
     MX_ADC1_Init();
-    adc_work = rt_thread_create("adc_work", ADC_Work_Callback, RT_NULL, 1024, 15, 10);
-    if(adc_work != RT_NULL)
+    Adc_Timer = rt_timer_create("adc_work", ADC_Timer_Callback, RT_NULL, 500, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
+    if(Adc_Timer != RT_NULL)
     {
-        rt_thread_startup(adc_work);
+        rt_timer_start(Adc_Timer);
     }
 }
 void Enable_MotoINT(void)
@@ -172,16 +169,15 @@ void Disable_MotoINT(void)
 }
 uint8_t Get_DC_Level(void)
 {
-    uint32_t value;
-    value  = DC_Voltage;
-    LOG_D("DC Value is %ld\r\n",value);
-    if(value>2800)return 1;
-    else return 0;
+    return DC_Voltage>2800?1:0;
+}
+uint32_t Get_DC_Value(void)
+{
+    LOG_D("DC Value is %ld\r\n",DC_Voltage);
+    return DC_Voltage;
 }
 uint32_t Get_Bat_Value(void)
 {
-    uint32_t value;
-    value  = BAT_Voltage;
-    LOG_D("BAT Value is %ld\r\n",value);
-    return value;
+    LOG_D("BAT Value is %ld\r\n",BAT_Voltage);
+    return BAT_Voltage;
 }

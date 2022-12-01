@@ -197,7 +197,7 @@ struct sector_cache_node {
 };
 typedef struct sector_cache_node *sector_cache_node_t;
 
-static void gc_collect(void);
+void gc_collect(void);
 
 /* ENV start address in flash */
 static uint32_t env_start_addr = 0;
@@ -507,7 +507,7 @@ static uint32_t get_next_env_addr(sector_meta_data_t sector, env_node_obj_t pre_
             addr = find_next_env_addr(addr, sector->addr + SECTOR_SIZE - SECTOR_HDR_DATA_SIZE);
 
             if (addr > sector->addr + SECTOR_SIZE || pre_env->len == 0) {
-                //TODO ÉÈÇøÁ¬ÐøÄ£Ê½
+                //TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
                 return FAILED_ADDR;
             }
         } else {
@@ -542,7 +542,7 @@ static EfErrCode read_env(env_node_obj_t env)
         env->crc_is_ok = false;
         return EF_READ_ERR;
     } else if (env->len > SECTOR_SIZE - SECTOR_HDR_DATA_SIZE && env->len < ENV_AREA_SIZE) {
-        //TODO ÉÈÇøÁ¬ÐøÄ£Ê½£¬»òÕßÐ´Èë³¤¶ÈÃ»ÓÐÐ´ÈëÍêÕû
+        //TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ë³¤ï¿½ï¿½Ã»ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         EF_ASSERT(0);
     }
 
@@ -1252,7 +1252,7 @@ static bool do_gc(sector_meta_data_t sector, void *arg1, void *arg2)
  * 1. alloc an ENV when the flash not has enough space
  * 2. write an ENV then the flash not has enough space
  */
-static void gc_collect(void)
+void gc_collect(void)
 {
     struct sector_meta_data sector;
     size_t empty_sec = 0;
@@ -1724,7 +1724,7 @@ static bool check_and_recovery_env_cb(env_node_obj_t env, void *arg1, void *arg2
     } else if (env->status == ENV_PRE_WRITE) {
         uint8_t status_table[ENV_STATUS_TABLE_SIZE];
         /* the ENV has not write finish, change the status to error */
-        //TODO »æÖÆÒì³£´¦ÀíµÄ×´Ì¬×°»»Í¼
+        //TODO ï¿½ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬×°ï¿½ï¿½Í¼
         write_status(env->addr.start, status_table, ENV_STATUS_NUM, ENV_ERR_HDR);
         return true;
     }

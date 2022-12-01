@@ -17,7 +17,7 @@
 #define IDLE_THREAD_STACK_SIZE 1024
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 2048
+#define RT_TIMER_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
 
@@ -57,7 +57,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_STACK_SIZE 1024
 #define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
@@ -73,7 +73,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_THREAD_STACK_SIZE 1024
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
@@ -88,10 +88,13 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
-#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_V1
+#define RT_SERIAL_RB_BUFSZ 2048
 #define RT_USING_PIN
+#define RT_USING_PM
+#define PM_TICKLESS_THRESHOLD_TIME 1
+#define PM_ENABLE_DEBUG
 #define RT_USING_SPI
 #define RT_USING_SFUD
 #define RT_SFUD_USING_FLASH_INFO_TABLE
@@ -133,6 +136,7 @@
 
 /* Utilities */
 
+#define RT_USING_RYM
 /* end of Utilities */
 /* end of RT-Thread Components */
 
@@ -163,10 +167,28 @@
 
 /* language packages */
 
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+/* end of JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+/* XML: Extensible Markup Language */
+
+/* end of XML: Extensible Markup Language */
 /* end of language packages */
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+/* end of LVGL: powerful and easy-to-use embedded GUI library */
+
+/* u8g2: a monochrome graphic library */
+
+/* end of u8g2: a monochrome graphic library */
+
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+/* end of PainterEngine: A cross-platform graphics application framework written in C language */
 /* end of multimedia packages */
 
 /* tools packages */
@@ -177,12 +199,28 @@
 #define PKG_EASYFLASH_WRITE_GRAN_1BIT
 #define PKG_EASYFLASH_WRITE_GRAN 1
 #define PKG_EASYFLASH_START_ADDR 0
+#define PKG_EASYFLASH_DEBUG
 #define PKG_USING_EASYFLASH_V410
 #define PKG_EASYFLASH_VER_NUM 0x40100
 /* end of tools packages */
 
 /* system packages */
 
+/* enhanced kernel services */
+
+/* end of enhanced kernel services */
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+/* end of acceleration: Assembly language or algorithmic acceleration packages */
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+/* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
+/* end of Micrium: Micrium software products porting for RT-Thread */
 #define PKG_USING_FAL
 #define FAL_DEBUG 0
 #define FAL_PART_HAS_TABLE_CFG
@@ -203,10 +241,6 @@
 #define SYSWATCH_WDT_NAME "wdt"
 #define SYSWATCH_WDT_TIMEOUT 5
 #define PKG_USING_SYSWATCH_LATEST_VERSION
-
-/* Micrium: Micrium software products porting for RT-Thread */
-
-/* end of Micrium: Micrium software products porting for RT-Thread */
 /* end of system packages */
 
 /* peripheral libraries and drivers */
@@ -220,11 +254,17 @@
 #define PKG_USING_BUTTON_V101
 #define PKG_USING_LKDGUI
 #define PKG_USING_LKDGUI_LATEST_VERSION
+
+/* Kendryte SDK */
+
+/* end of Kendryte SDK */
 #define PKG_USING_AGILE_LED
 #define PKG_AGILE_LED_DEBUG
+#define PKG_AGILE_LED_USING_THREAD_AUTO_INIT
 #define PKG_AGILE_LED_THREAD_STACK_SIZE 256
 #define PKG_AGILE_LED_THREAD_PRIORITY 28
 #define PKG_USING_AGILE_LED_LATEST_VERSION
+#define PKG_AGILE_LED_VER_NUM 0x99999
 /* end of peripheral libraries and drivers */
 
 /* AI packages */
@@ -233,15 +273,38 @@
 
 /* miscellaneous packages */
 
+/* project laboratory */
+
+/* end of project laboratory */
 
 /* samples: kernel and components samples */
 
 /* end of samples: kernel and components samples */
 
-/* games: games run on RT-Thread console */
+/* entertainment: terminal games and other interesting software packages */
 
-/* end of games: games run on RT-Thread console */
+/* end of entertainment: terminal games and other interesting software packages */
 /* end of miscellaneous packages */
+
+/* Arduino libraries */
+
+
+/* Sensor libraries */
+
+/* end of Sensor libraries */
+
+/* Display libraries */
+
+/* end of Display libraries */
+
+/* Timing libraries */
+
+/* end of Timing libraries */
+
+/* Project libraries */
+
+/* end of Project libraries */
+/* end of Arduino libraries */
 /* end of RT-Thread online packages */
 
 /* samples: kernel and components samples */

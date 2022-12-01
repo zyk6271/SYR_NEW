@@ -138,5 +138,3 @@ uint8_t GetFontASCII_5_7(uint8_t code1, uint8_t *pBuff)
 
 	return 0;
 }
-
-/* END */

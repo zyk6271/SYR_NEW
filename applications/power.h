@@ -11,6 +11,7 @@
 #define APPLICATIONS_POWER_H_
 
 uint8_t Get_Bat_Level(void);
+uint8_t Power_State_Get(void);
 void Power_Init(void);
 
 #endif /* APPLICATIONS_POWER_H_ */

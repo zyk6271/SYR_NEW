@@ -11,18 +11,18 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-uint8_t data_parsing_id = 0;
 uint32_t TDS_Value = 0;
 uint8_t TDS_Warn = 0;
 
 #define TDS_UART_NAME                   "uart2"
-#define DATA_CMD_BEGIN                   0x55       /* 结束位设置为 \r，即回车符 */
-#define ONE_DATA_MAXLEN                  11         /* 不定长数据的最大长度 */
 
 static struct rt_semaphore rx_sem;
 static rt_device_t serial;
+static struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;  /* 初始化配置参数 */
+
 rt_thread_t TDS_t = RT_NULL;
-struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;  /* 初始化配置参数 */
+
+char TdsRead[]={0x55,0x07,0x05,0x01,0x00,0x00,0x00,0x62};
 
 static rt_err_t uart_rx_ind(rt_device_t dev, rt_size_t size)
 {
@@ -47,14 +47,17 @@ static char uart_sample_get_char(void)
 void tds_data_parsing(void *parameter)
 {
     char ch;
-    char data[ONE_DATA_MAXLEN];
     while (1)
     {
         ch = uart_sample_get_char();
-        uart_receive_input(ch);
+        tds_uart_receive_input(ch);
     }
 }
-
+void TDS_Init(void)
+{
+    TDS_Uart_Init();
+    TDS_Service_Init();
+}
 void TDS_Uart_Init(void)
 {
     char uart_name[RT_NAME_MAX];
@@ -71,11 +74,12 @@ void TDS_Uart_Init(void)
     /* 初始化信号量 */
     rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
     /* 串口参数配置 */
-    config.baud_rate = BAUD_RATE_9600;        //修改波特率为 9600
-    config.data_bits = DATA_BITS_8;           //数据位 8
-    config.stop_bits = STOP_BITS_1;           //停止位 1
-    config.bufsz     = 128;                   //修改缓冲区 buff size 为 128
-    config.parity    = PARITY_NONE;           //无奇偶校验位
+    config.baud_rate = BAUD_RATE_9600;
+    config.data_bits = DATA_BITS_8;
+    config.stop_bits = STOP_BITS_1;
+    config.parity    = PARITY_NONE;
+    config.bufsz     = 128;
+
     rt_device_control(serial, RT_DEVICE_CTRL_CONFIG, &config);
     /* 以中断接收及轮询发送模式打开串口设备 */
     rt_device_open(serial, RT_DEVICE_FLAG_INT_RX);
@@ -83,7 +87,7 @@ void TDS_Uart_Init(void)
     rt_device_set_rx_indicate(serial, uart_rx_ind);
 
     /* 创建 serial 线程 */
-    TDS_t = rt_thread_create("tds", tds_data_parsing, RT_NULL, 1024, 25, 10);
+    TDS_t = rt_thread_create("tds_recv_t", tds_data_parsing, RT_NULL, 512, 10, 10);
 
     /* 创建成功则启动线程 */
     if (TDS_t != RT_NULL)
@@ -112,6 +116,13 @@ void TDS_GpioDeInit(void)
     __HAL_RCC_USART3_CLK_DISABLE();
     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_3|GPIO_PIN_4);
 }
+uint32_t TDS_Get(void)
+{
+    rt_device_write(serial, 0, TdsRead, 8);
+    rt_thread_mdelay(50);
+    LOG_I("TDS_Get %d\r\n",TDS_Value);
+    return TDS_Value;
+}
 uint32_t TDS_Work(void)
 {
     uint32_t Data=0;
@@ -119,10 +130,8 @@ uint32_t TDS_Work(void)
     if(Setting_Hardness!=0)
     {
         LOG_D("Read TDS Now\r\n");
-        char TdsRead[]={0x55,0x07,0x05,0x01,0x00,0x00,0x00,0x62};
         Data = TDS_Value;
         TDS_Value = 0;
-        data_parsing_id = 0;
         rt_device_write(serial, 0, TdsRead, 8);
         return Data;
     }

@@ -13,7 +13,7 @@
 #define  GUI_LCM_XMAX	128
 #define  GUI_LCM_YMAX	64
 /* �������Ƕ������ */
-#define GUIWINMANAGE_NUM 64
+#define GUIWINMANAGE_NUM 32
 
 #endif /* __LKDGUICONFIG_H */
 

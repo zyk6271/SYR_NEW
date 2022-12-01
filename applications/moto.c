@@ -59,7 +59,7 @@ void Moto_Overload(void)
     rt_pin_write(MOTO_IN2,0);
     rt_event_send(&Moto_Event, Event_Moto_Over);
 }
-void Moto_Cycle(void)
+uint8_t Moto_Cycle(void)
 {
     RTC_Clear();
     TDS_GpioInit();
@@ -68,6 +68,7 @@ void Moto_Cycle(void)
         if(MotoWorkFlag == MOTO_STOP || MotoWorkFlag == MOTO_RESET)
         {
             ScreenTimerStop();
+            rt_pm_module_request(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
             uint32_t Setting_Backwashtime_MileSecond=0;
             Setting_Backwashtime_MileSecond = (Setting_Backwashtime-20)*1000;
             rt_timer_control(Moto_Cycle_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
@@ -77,16 +78,19 @@ void Moto_Cycle(void)
             rt_timer_start(Moto_Detect_Timer);
             Moto_Forward();
             led_select(2);
+            return RT_EOK;
         }
         else
         {
             LOG_D("Moto is Working Now");
+            return RT_EBUSY;
         }
     }
     else
     {
         LOG_D("Moto Not Work(Low Voltage)");
         Jump_EXIT();
+        return RT_ERROR;
     }
 }
 void Moto_Cycle_Timer_Callback(void *parameter)
@@ -129,6 +133,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             rt_event_send(&Moto_Event, Event_Moto_Free);
             MotoWorkFlag=MOTO_STOP;
             ScreenTimerRefresh();
+            rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
             Jump_NOMOTO();
             Moto_Reset();
         }
@@ -141,6 +146,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             rt_event_send(&Moto_Event, Event_Moto_Free);
             MotoWorkFlag = MOTO_STOP;
             ScreenTimerRefresh();
+            rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
             Jump_FINISH();
         }
         else
@@ -149,6 +155,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             MotoWorkFlag = MOTO_STOP;
             rt_event_send(&Moto_Event, Event_Moto_Free);
             ScreenTimerRefresh();
+            rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
             Jump_NOMOTO();
             Moto_Reset();
         }
@@ -183,6 +190,7 @@ void MotoLeft_Callback(void *parameter)
             }
         }
         ScreenTimerRefresh();
+        rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
         LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
     }
     else if(MotoWorkFlag == MOTO_STOP)
@@ -254,6 +262,7 @@ void Moto_Callback(void *parameter)
             switch(e)
             {
             case Event_Moto_Free:
+                wifi_ras_update();
                 rt_pin_write(MOTO_IN1,0);
                 rt_pin_write(MOTO_IN2,0);
                 Disable_MotoINT();
@@ -264,6 +273,7 @@ void Moto_Callback(void *parameter)
                 MotoWorkFlag = MOTO_FORWARD;
                 if(rt_pin_read(MOTO_RIGHT)==1 || rt_pin_read(MOTO_LEFT)==0)
                 {
+                    wifi_ras_update();
                     rt_pin_write(MOTO_IN1,0);
                     rt_pin_write(MOTO_IN2,1);
                     rt_thread_mdelay(500);
@@ -297,6 +307,7 @@ void Moto_Callback(void *parameter)
                 Disable_MotoINT();
                 MotoWorkFlag = MOTO_STOP;
                 ScreenTimerRefresh();
+                rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
                 LOG_D("Moto Event Overload\r\n");
                 Jump_STALLING();
                 Moto_Reset();
@@ -331,4 +342,3 @@ void Moto_Init(void)
         rt_thread_startup(Moto_t);
     }
 }
-MSH_CMD_EXPORT(Moto_Init,Moto_Init);

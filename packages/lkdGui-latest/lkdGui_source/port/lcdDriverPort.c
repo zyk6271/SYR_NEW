@@ -18,7 +18,7 @@ void GuiUpdateDisplayAll(void)
         }
     }
 }
-MSH_CMD_EXPORT(GuiUpdateDisplayAll,GuiUpdateDisplayAll);
+
 void GuiRangeUpdateDisplay(lkdCoord beginx, lkdCoord beginy,lkdCoord endx, lkdCoord endy)
 {
 

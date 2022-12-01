@@ -17,7 +17,6 @@
 #include "low.h"
 #include "lcd_display.h"
 #include "led.h"
-#include "delta.h"
 #include "power.h"
 #include "rtc.h"
 
@@ -27,20 +26,19 @@
 
 int main(void)
 {
+    product_version_print();
     Flash_Init();
-    Flash2Mem();
     ADC_Init();
     Led_Init();
     Moto_Init();
-    TDS_Uart_Init();
-    TDS_Service_Init();
+    TDS_Init();
     Power_Init();
     LCD_Init();
-    Low_Init();
     RTC_Init();
-    Delta_Init();
     Button_Init();
-    WiFiInit();
+    WiFi_Init();
+    Telemetry_Init();
+    Low_Init();
     while (1)
     {
         rt_thread_mdelay(1000);
