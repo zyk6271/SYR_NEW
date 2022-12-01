@@ -1071,6 +1071,12 @@
   <group>
     <name>Drivers</name>
     <group>
+      <name>CMSIS</name>
+      <file>
+        <name>$PROJ_DIR$/../Src/system_stm32l4xx.c</name>
+      </file>
+    </group>
+    <group>
       <name>STM32L4xx_HAL_Driver</name>
       <file>
         <name>$PROJ_DIR$/../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_adc.c</name>
@@ -1127,6 +1133,9 @@
         <name>$PROJ_DIR$/../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_iwdg.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$/../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_lptim.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$/../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rtc.c</name>
       </file>
       <file>
@@ -1149,12 +1158,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$/../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart_ex.c</name>
-      </file>
-    </group>
-    <group>
-      <name>CMSIS</name>
-      <file>
-        <name>$PROJ_DIR$/../Src/system_stm32l4xx.c</name>
       </file>
     </group>
   </group>

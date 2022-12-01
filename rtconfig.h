@@ -57,7 +57,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_STACK_SIZE 1024
 #define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
@@ -88,10 +88,13 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
-#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_V1
+#define RT_SERIAL_RB_BUFSZ 2048
 #define RT_USING_PIN
+#define RT_USING_PM
+#define PM_TICKLESS_THRESHOLD_TIME 1
+#define PM_ENABLE_DEBUG
 #define RT_USING_SPI
 #define RT_USING_SFUD
 #define RT_SFUD_USING_FLASH_INFO_TABLE
@@ -133,6 +136,7 @@
 
 /* Utilities */
 
+#define RT_USING_RYM
 /* end of Utilities */
 /* end of RT-Thread Components */
 
@@ -195,6 +199,7 @@
 #define PKG_EASYFLASH_WRITE_GRAN_1BIT
 #define PKG_EASYFLASH_WRITE_GRAN 1
 #define PKG_EASYFLASH_START_ADDR 0
+#define PKG_EASYFLASH_DEBUG
 #define PKG_USING_EASYFLASH_V410
 #define PKG_EASYFLASH_VER_NUM 0x40100
 /* end of tools packages */
@@ -249,6 +254,10 @@
 #define PKG_USING_BUTTON_V101
 #define PKG_USING_LKDGUI
 #define PKG_USING_LKDGUI_LATEST_VERSION
+
+/* Kendryte SDK */
+
+/* end of Kendryte SDK */
 #define PKG_USING_AGILE_LED
 #define PKG_AGILE_LED_DEBUG
 #define PKG_AGILE_LED_USING_THREAD_AUTO_INIT
@@ -276,6 +285,26 @@
 
 /* end of entertainment: terminal games and other interesting software packages */
 /* end of miscellaneous packages */
+
+/* Arduino libraries */
+
+
+/* Sensor libraries */
+
+/* end of Sensor libraries */
+
+/* Display libraries */
+
+/* end of Display libraries */
+
+/* Timing libraries */
+
+/* end of Timing libraries */
+
+/* Project libraries */
+
+/* end of Project libraries */
+/* end of Arduino libraries */
 /* end of RT-Thread online packages */
 
 /* samples: kernel and components samples */

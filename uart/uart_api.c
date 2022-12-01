@@ -2,284 +2,333 @@
 #include "uart_api.h"
 #include "uart_core.h"
 
-void rst_set_cb(uint32_t value)
+void rst_set_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_frame(RST_SET_CMD,MCU_TX_VER,0);
     rt_hw_cpu_reset();
 }
-void def_set_cb(uint32_t value)
+void def_set_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_frame(DEF_SET_CMD,MCU_TX_VER,0);
     Flash_Clear();
 }
-void ras_set_cb(uint32_t value)
+void ras_set_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RAS_SET_CMD,syr_moto_set());
 }
-void ras_get_cb(void)
+void ras_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RAS_GET_CMD, syr_moto_get());
 }
-void wifi_ras_update(void)
+void wifi_ras_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RAS_PUT_CMD, syr_moto_get());
 }
-void cnd_get_cb(void)
+void cnd_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(CND_GET_CMD, TDS_Get());
 }
-void wifi_cnd_update(uint32_t value)
+void wifi_cnd_update(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(CND_PUT_CMD, value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(CND_PUT_CMD, update_value);
 }
-void net_get_cb(void)
+void net_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(NET_GET_CMD, Get_DC_Value());
 }
-void bat_get_cb(void)
+void bat_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(BAT_GET_CMD, Get_Bat_Value());
 }
-void ala_get_cb(void)
+void ala_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(ALA_GET_CMD, syr_remain_auto_time_get());
 }
-void ala_set_cb(uint32_t value)
+void ala_set_cb(const unsigned char value[], unsigned short length)
 {
-    uint8_t ret = syr_remain_auto_time_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    uint8_t ret = syr_remain_auto_time_set(update_value);
     if(ret==RT_EOK)
     {
-        wifi_uart_write_command_value(ALA_SET_CMD,value);
+        wifi_uart_write_command_value(ALA_SET_CMD,update_value);
     }
     else
     {
         wifi_uart_write_command_value(ALA_SET_CMD,0);
     }
 }
-void alr_get_cb(void)
+void alr_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(ALR_GET_CMD, syr_remain_remind_time_get());
 }
-void alr_set_cb(uint32_t value)
+void alr_set_cb(const unsigned char value[], unsigned short length)
 {
-    uint8_t ret = syr_remain_remind_time_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    uint8_t ret = syr_remain_remind_time_set(update_value);
     if(ret==RT_EOK)
     {
-        wifi_uart_write_command_value(ALR_SET_CMD,value);
+        wifi_uart_write_command_value(ALR_SET_CMD,update_value);
     }
     else
     {
         wifi_uart_write_command_value(ALR_SET_CMD,0);
     }
 }
-void rse_set_cb(uint32_t value)
+void rse_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(RSE_SET_CMD,value);
-    syr_remind_time_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(RSE_SET_CMD,update_value);
+    syr_remind_time_set(update_value);
 }
-void rse_get_cb(void)
+void rse_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RSE_GET_CMD, syr_remind_time_get());
 }
-void wifi_rse_update(void)
+void wifi_rse_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RSE_PUT_CMD, syr_remind_time_get());
 }
-void rsa_set_cb(uint32_t value)
+void rsa_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(RSA_SET_CMD,value);
-    syr_auto_time_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(RSA_SET_CMD,update_value);
+    syr_auto_time_set(update_value);
 }
-void rsa_get_cb(void)
+void rsa_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RSA_GET_CMD, syr_auto_time_get());
 }
-void wifi_rsa_update(void)
+void wifi_rsa_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RSA_PUT_CMD, syr_auto_time_get());
 }
-void rsi_set_cb(uint32_t value)
+void rsi_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(RSI_SET_CMD,value);
-    syr_range_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(RSI_SET_CMD,update_value);
+    syr_range_set(update_value);
 }
-void rsi_get_cb(void)
+void rsi_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RSI_GET_CMD,syr_range_get());
 }
-void wifi_rsi_update(void)
+void wifi_rsi_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RSI_PUT_CMD, syr_range_get());
 }
-void rsd_set_cb(uint32_t value)
+void rsd_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(RSD_SET_CMD,value);
-    syr_backwashtime_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(RSD_SET_CMD,update_value);
+    syr_backwashtime_set(update_value);
 }
-void rsd_get_cb(void)
+void rsd_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RSD_GET_CMD,syr_backwashtime_get());
 }
-void wifi_rsd_update(void)
+void wifi_rsd_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RSD_PUT_CMD, syr_backwashtime_get());
 }
-void cnf_set_cb(uint32_t value)
+void cnf_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(CNF_SET_CMD,value);
-    syr_tdscalib_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(CNF_SET_CMD,update_value);
+    syr_tdscalib_set(update_value);
 }
-void cnf_get_cb(void)
+void cnf_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(CNF_GET_CMD,syr_tdscalib_get());
 }
-void wifi_cnf_update(void)
+void wifi_cnf_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(CNF_PUT_CMD, syr_tdscalib_get());
 }
-void cnl_set_cb(uint32_t value)
+void cnl_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(CNL_SET_CMD,value);
-    syr_tdslimit_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(CNL_SET_CMD,update_value);
+    syr_tdslimit_set(update_value);
 }
-void cnl_get_cb(void)
+void cnl_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(CNL_GET_CMD,syr_tdslimit_get());
 }
-void wifi_cnl_update(void)
+void wifi_cnl_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(CNL_PUT_CMD, syr_tdslimit_get());
 }
-void sse_set_cb(uint32_t value)
+void sse_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(SSE_SET_CMD,value);
-    syr_switch_remind_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(SSE_SET_CMD,update_value);
+    syr_switch_remind_set(update_value);
 }
-void sse_get_cb(void)
+void sse_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(SSE_GET_CMD,syr_switch_remind_get());
 }
-void wifi_sse_update(void)
+void wifi_sse_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(SSE_PUT_CMD, syr_switch_remind_get());
 }
-void ssa_set_cb(uint32_t value)
+void ssa_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(SSA_SET_CMD,value);
-    syr_switch_auto_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(SSA_SET_CMD,update_value);
+    syr_switch_auto_set(update_value);
 }
-void ssa_get_cb(void)
+void ssa_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(SSA_GET_CMD,syr_switch_auto_get());
 }
-void wifi_ssa_update(void)
+void wifi_ssa_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(SSA_PUT_CMD, syr_switch_auto_get());
 }
-void ssd_set_cb(uint32_t value)
+void ssd_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(SSD_SET_CMD,value);
-    syr_switch_delta_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(SSD_SET_CMD,update_value);
+    syr_switch_delta_set(update_value);
 }
-void ssd_get_cb(void)
+void ssd_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(SSD_GET_CMD,syr_switch_delta_get());
 }
-void wifi_ssd_update(void)
+void wifi_ssd_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(SSD_PUT_CMD, syr_switch_delta_get());
 }
-void lng_set_cb(uint32_t value)
+void lng_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(LNG_SET_CMD,value);
-    syr_language_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(LNG_SET_CMD,update_value);
+    syr_language_set(update_value);
 }
-void lng_get_cb(void)
+void lng_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(LNG_GET_CMD,syr_language_get());
 }
-void wifi_lng_update(void)
+void wifi_lng_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(LNG_PUT_CMD, syr_language_get());
 }
-void sup_get_cb(void)
+void sup_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(SUP_GET_CMD, Get_DC_Level());
 }
-void wifi_sup_update(void)
+void wifi_sup_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(SUP_PUT_CMD, Get_DC_Level());
 }
-void ver_get_cb(void)
+void com_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(VER_GET_CMD,syr_ver_get());
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(COM_SET_CMD,update_value);
+    syr_count_manual_set(update_value);
 }
-void srn_get_cb(void)
-{
-    wifi_uart_write_command_value(SRN_GET_CMD,syr_srn_get());
-}
-void com_set_cb(uint32_t value)
-{
-    wifi_uart_write_command_value(COM_SET_CMD,value);
-    syr_count_manual_set(value);
-}
-void com_get_cb(void)
+void com_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COM_GET_CMD,syr_count_manual_get());
 }
-void wifi_com_update(void)
+void wifi_com_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COM_PUT_CMD, syr_count_manual_get());
 }
-void coa_set_cb(uint32_t value)
+void coa_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(COA_SET_CMD,value);
-    syr_count_auto_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(COA_SET_CMD,update_value);
+    syr_count_auto_set(update_value);
 }
-void coa_get_cb(void)
+void coa_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COA_GET_CMD,syr_count_auto_get());
 }
-void wifi_coa_update(void)
+void wifi_coa_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COA_PUT_CMD, syr_count_auto_get());
 }
-void cod_set_cb(uint32_t value)
+void cod_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(COD_SET_CMD,value);
-    syr_count_delta_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(COD_SET_CMD,update_value);
+    syr_count_delta_set(update_value);
 }
-void cod_get_cb(void)
+void cod_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COD_GET_CMD,syr_count_delta_get());
 }
-void wifi_cod_update(void)
+void wifi_cod_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COD_PUT_CMD, syr_count_delta_get());
 }
-void coe_set_cb(uint32_t value)
+void coe_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(COE_SET_CMD,value);
-    syr_count_error_set(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(COE_SET_CMD,update_value);
+    syr_count_error_set(update_value);
 }
-void coe_get_cb(void)
+void coe_get_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COE_GET_CMD,syr_count_error_get());
 }
-void wifi_coe_update(void)
+void wifi_coe_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COE_PUT_CMD, syr_count_error_get());
 }
-void wst_set_cb(uint32_t value)
+extern uint8_t wifi_ota_update_flag;
+
+void wst_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(WST_SET_CMD,value);
-    wifi_led(value);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(WST_SET_CMD,update_value);
+    wifi_led(update_value);
+    if(wifi_ota_update_flag==1 && update_value == 3)
+    {
+        wifi_ota_request(2);
+        wifi_ota_update_flag = 0;
+    }
 }
-void wifi_factory(void)
+void rcp_set_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(WFA_SET_CMD,0);
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(RCP_SET_CMD,update_value);
+    syr_telemetry_period_set(update_value);
 }
-void wifi_status_get(void)
+void rcp_get_cb(const unsigned char value[], unsigned short length)
 {
-    wifi_uart_write_command_value(WST_GET_CMD,0);
+    wifi_uart_write_command_value(RCP_GET_CMD,syr_telemetry_period_get());
+}
+void emr_set_cb(const unsigned char value[], unsigned short length)
+{
+    unsigned char update_value;
+    update_value = mcu_get_dp_download_value(value,length);
+    wifi_uart_write_command_value(EMR_SET_CMD,update_value);
+    syr_telemetry_timeout_set(update_value);
+}
+void emr_get_cb(const unsigned char value[], unsigned short length)
+{
+    wifi_uart_write_command_value(EMR_GET_CMD,syr_telemetry_timeout_get());
 }

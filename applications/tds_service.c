@@ -195,7 +195,7 @@ void tds_service_callback(void *parameter)
 }
 void TDS_Service_Init(void)
 {
-    tds_sevice_t = rt_thread_create("tds-service", tds_service_callback, RT_NULL, 1024, 10, 10);
+    tds_sevice_t = rt_thread_create("tds-service", tds_service_callback, RT_NULL, 1024, 11, 10);
     if(tds_sevice_t!=RT_NULL)
     {
         rt_thread_startup(tds_sevice_t);

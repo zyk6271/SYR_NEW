@@ -17,7 +17,6 @@
 #include "low.h"
 #include "lcd_display.h"
 #include "led.h"
-#include "delta.h"
 #include "power.h"
 #include "rtc.h"
 
@@ -25,11 +24,9 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-uint32_t MCU_Version = 18;
-uint32_t SN = 111110000;
-
 int main(void)
 {
+    product_version_print();
     Flash_Init();
     ADC_Init();
     Led_Init();
@@ -37,11 +34,11 @@ int main(void)
     TDS_Init();
     Power_Init();
     LCD_Init();
-    Low_Init();
     RTC_Init();
-    Delta_Init();
     Button_Init();
     WiFi_Init();
+    Telemetry_Init();
+    Low_Init();
     while (1)
     {
         rt_thread_mdelay(1000);

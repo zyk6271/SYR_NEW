@@ -18,6 +18,7 @@ static agile_led_t *LED_G = RT_NULL;
 static agile_led_t *LED_B = RT_NULL;
 
 static uint8_t led_state  = 0;
+uint8_t wifi_status;
 
 void Led_Init(void)
 {
@@ -84,24 +85,21 @@ void Led_GpioDeInit(void)
 }
 void wifi_led(uint8_t type)
 {
+    wifi_status = type;
     switch(type)
     {
     case 0://熄灭全部
         agile_led_stop(LED_B);
         break;
-    case 1://AP模式
-        agile_led_set_light_mode(LED_B, "1000,1000", -1);
-        agile_led_start(LED_B);
-        break;
-    case 2://尝试连接wifi
+    case 1://尝试连接wifi
         agile_led_set_light_mode(LED_B, "150,200,150,500", -1);
         agile_led_start(LED_B);
         break;
-    case 3://尝试连接azure
+    case 2://尝试连接azure
         agile_led_set_light_mode(LED_B, "150,150", -1);
         agile_led_start(LED_B);
         break;
-    case 4://连接成功
+    case 3://连接成功
         agile_led_set_light_mode(LED_B, "200,0", -1);
         agile_led_start(LED_B);
         break;

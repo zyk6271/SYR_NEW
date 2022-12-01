@@ -24,15 +24,13 @@ extern uint8_t Automatic_Week;
 extern uint8_t Automatic_Day;
 extern uint8_t Automatic_Enable;
 extern uint8_t LCD_Flag;
-extern uint8_t RTC_Wakeup_Flag;
-extern uint8_t Low_Power_Flag;
+
 extern uint8_t screen_reload;
 
-uint8_t RTC_Event_Flag = 0;
 uint32_t RTC_Reminder_Time = 0;
 uint32_t RTC_Automatic_Time = 0;
 
-void RTC_Timer_Entry(void)
+void RTC_Counter_Increase(void)
 {
     if(Reminder_Enable)
     {
@@ -68,22 +66,15 @@ void RTC_Check_Callback(void *parameter)
         if(rt_sem_take(RTC_Check_Sem, 0) == RT_EOK)
         {
             LOG_D("RTC Check For Two Timers\r\n");
-            RTC_Event_Flag = 0;
             if(Reminder_Enable)
             {
                 if(RTC_Reminder_Time >= Reminder_Week*7*24+Reminder_Day*24)
                 {
                     RTC_Reminder_Time = 0;
-                    RTC_Event_Flag = 1;
                     Flash_Set(16,0);
                     LOG_D("Reminder_Enable\r\n");
                     screen_reload = 0;
-                    if(Low_Power_Flag)
-                    {
-                        LcdInit();
-                        LCD_Refresh();
-                    }
-                    ScreenTimerRefresh();
+                    LCD_Restart(0);
                     JumptoReminder();
                 }
                 else
@@ -96,16 +87,10 @@ void RTC_Check_Callback(void *parameter)
                 if(RTC_Automatic_Time >= Automatic_Week*7*24+Automatic_Day*24 )
                 {
                     RTC_Automatic_Time = 0;
-                    RTC_Event_Flag = 1;
                     Flash_Set(17,0);
                     screen_reload = 0;
                     LOG_D("Automatic_Enable\r\n");
-                    if(Low_Power_Flag)
-                    {
-                        LcdInit();
-                        LCD_Refresh();
-                        ScreenTimerRefresh();
-                    }
+                    LCD_Restart(0);
                     JumptoAutomatic();
                 }
                 else
@@ -113,11 +98,7 @@ void RTC_Check_Callback(void *parameter)
                     Flash_Set(17,RTC_Automatic_Time);
                 }
             }
-            if(RTC_Event_Flag == 0 && Low_Power_Flag==1)
-            {
-                LOG_D("EnterLowPower\r\n");
-                EnterLowPower();
-            }
+            rt_pm_module_release(PM_RTC_ID, PM_SLEEP_MODE_NONE);
         }
         rt_thread_mdelay(10);
     }
@@ -125,7 +106,7 @@ void RTC_Check_Callback(void *parameter)
 void RTC_Check_Init(void)
 {
     RTC_Check_Sem = rt_sem_create("RTC_Check_Sem", 0, RT_IPC_FLAG_FIFO);
-    RTC_Check_Thread = rt_thread_create("RTC_Check", RTC_Check_Callback, RT_NULL, 2048, 10, 10);
+    RTC_Check_Thread = rt_thread_create("RTC_Check", RTC_Check_Callback, RT_NULL, 1024, 10, 10);
     if(RTC_Check_Thread!=RT_NULL)rt_thread_startup(RTC_Check_Thread);
 }
 
@@ -183,7 +164,7 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *RtcHandle)
     sTime.StoreOperation = RTC_STOREOPERATION_RESET;
     HAL_RTC_SetTime(RtcHandle, &sTime, RTC_FORMAT_BIN);
 
-    RTC_Timer_Entry();
+    RTC_Counter_Increase();
     RTC_Check();
 }
 void RTC_Init(void)
@@ -213,11 +194,6 @@ void RTC_Init(void)
 }
 void RTC_Alarm_IRQHandler(void)
 {
-    if(Low_Power_Flag)
-    {
-        SystemClock_Config();
-        AfterWake();
-        LOG_I("RTC Wake Up\r\n");
-    }
     HAL_RTC_AlarmIRQHandler(&RtcHandle);
+    rt_pm_module_request(PM_RTC_ID, PM_SLEEP_MODE_NONE);
 }

@@ -5,7 +5,6 @@
 #include "button.h"
 #include "Flashwork.h"
 #include "moto.h"
-#include "delta.h"
 #include "12864.h"
 
 #define DBG_TAG "DeviceInfo"
@@ -160,6 +159,21 @@ void K2_LongFree_Release(void *parameter)
     ScreenTimerRefresh();
     LOG_D("Enter Key is Long Free\r\n");
 }
+extern uint8_t Deltapress_Enable;
+extern uint32_t Counter_Deltapress;
+void Delta_Release(void *parameter)
+{
+    LOG_D("Detected Water Flow\r\n");
+    if(Deltapress_Enable)
+    {
+        if(Get_MotoValid())
+        {
+            Flash_Set(10,++Counter_Deltapress);
+            wifi_cod_update();
+            JumptoDelta();
+        }
+    }
+}
 uint8_t Read_K0_Level(void)
 {
   return rt_pin_read(K0);
@@ -172,6 +186,10 @@ uint8_t Read_K2_Level(void)
 {
   return rt_pin_read(K2);
 }
+uint8_t Read_Delta_Level(void)
+{
+  return rt_pin_read(WATER_FLOW);
+}
 void Key_Init(void)
 {
     rt_pin_mode(K0, PIN_MODE_INPUT);
@@ -179,6 +197,7 @@ void Key_Init(void)
     rt_pin_mode(K2, PIN_MODE_INPUT);
     rt_pin_mode(MOTO_LEFT, PIN_MODE_INPUT);
     rt_pin_mode(MOTO_RIGHT, PIN_MODE_INPUT);
+    rt_pin_mode(WATER_FLOW, PIN_MODE_INPUT);
 }
 void button_task_entry(void *parameter)
 {
@@ -187,9 +206,11 @@ void button_task_entry(void *parameter)
     Button_t Key0;
     Button_t Key1;
     Button_t Key2;
+    Button_t Delta;
     Button_Create("Key0",&Key0,Read_K0_Level,0);
     Button_Create("Key1",&Key1,Read_K1_Level,0);
     Button_Create("Key2",&Key2,Read_K2_Level,0);
+    Button_Create("Delta",&Delta,Read_Delta_Level,0);
     Button_Attach(&Key0,BUTTON_DOWM,K0_Sem_Release);
     Button_Attach(&Key0,BUTTON_LONG,K0_LongSem_Release);
     Button_Attach(&Key0,BUTTON_LONG_FREE,K0_LongFree_Release);
@@ -199,6 +220,7 @@ void button_task_entry(void *parameter)
     Button_Attach(&Key2,BUTTON_DOWM,K2_Sem_Release);
     Button_Attach(&Key2,BUTTON_LONG,K2_LongSem_Release);
     Button_Attach(&Key2,BUTTON_LONG_FREE,K2_LongFree_Release);
+    Button_Attach(&Delta,BUTTON_DOWM,Delta_Release);
     while(1)
     {
         Button_Process();
@@ -207,6 +229,6 @@ void button_task_entry(void *parameter)
 }
 void Button_Init(void)
 {
-    button_task=rt_thread_create("button_task",button_task_entry,RT_NULL,1024,5,20);
+    button_task=rt_thread_create("button_task",button_task_entry,RT_NULL,1536,5,20);
     if(button_task!=RT_NULL)rt_thread_startup(button_task);
 }

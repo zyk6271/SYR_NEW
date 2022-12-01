@@ -129,15 +129,6 @@ void GuiButton(lkdButton *pButton)
 	if(pButton->wide < 6 || pButton->high < 6 || pButton->high - pFont->dhigh - 3 < 0){
 		return;
 	}
-//	if(pButton->flag == BUTTON_UP){//��ѡ��
-//		GuiFillRect(pButton->x,pButton->y,endx,endy, backcolor);
-//		GuiRect(pButton->x,pButton->y,endx - 1,endy - 1, forecolor);
-//		lkdCoord ty;
-//		ty = pButton->y + (pButton->high - pFont->dhigh - 3)/2 + 3;
-//		GuiRowText(pButton->x + 2,ty,pButton->wide - 3,FONT_LEFT,pButton->name);
-//		GuiRLine(endx,pButton->y + 1,endy,forecolor);
-//		GuiHLine(pButton->x + 1,endy,endx,forecolor);
-//	}
     if(pButton->flag == BUTTON_UP)
     {
         GuiFillRect(pButton->x,pButton->y+2,endx,endy-2, backcolor);
@@ -145,12 +136,6 @@ void GuiButton(lkdButton *pButton)
         else GuiRowText(pButton->x + 4,pButton->y+4,pButton->wide - 3,FONT_LEFT,pButton->name);
 	}
 	else{
-		//GuiFillRect(pButton->x,pButton->y,endx,endy, backcolor);
-		//GuiRect(pButton->x,pButton->y,endx,endy, forecolor);
-		//lkdCoord ty;
-		//ty = pButton->y + (pButton->high - pFont->dhigh - 3)/2 + 1;
-		//GuiRect(pButton->x ,pButton->y ,endx ,endy , forecolor);
-		//GuiFillRect(pButton->x+1 ,pButton->y+1 ,endx-1 ,endy-1 ,backcolor);
 		GuiFillRect(pButton->x ,pButton->y+2 ,endx ,endy-2 ,forecolor);
 		GuiExchangeColor();
 		if(pButton->linesize)GuiRowTextWithLine(pButton->x+4 ,pButton->y+4,pButton->wide-3 ,pButton->linesize,FONT_LEFT,pButton->name);

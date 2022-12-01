@@ -59,7 +59,6 @@ void Moto_Overload(void)
     rt_pin_write(MOTO_IN2,0);
     rt_event_send(&Moto_Event, Event_Moto_Over);
 }
-MSH_CMD_EXPORT(Moto_Overload,Moto_Overload);
 uint8_t Moto_Cycle(void)
 {
     RTC_Clear();
@@ -69,6 +68,7 @@ uint8_t Moto_Cycle(void)
         if(MotoWorkFlag == MOTO_STOP || MotoWorkFlag == MOTO_RESET)
         {
             ScreenTimerStop();
+            rt_pm_module_request(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
             uint32_t Setting_Backwashtime_MileSecond=0;
             Setting_Backwashtime_MileSecond = (Setting_Backwashtime-20)*1000;
             rt_timer_control(Moto_Cycle_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
@@ -133,6 +133,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             rt_event_send(&Moto_Event, Event_Moto_Free);
             MotoWorkFlag=MOTO_STOP;
             ScreenTimerRefresh();
+            rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
             Jump_NOMOTO();
             Moto_Reset();
         }
@@ -145,6 +146,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             rt_event_send(&Moto_Event, Event_Moto_Free);
             MotoWorkFlag = MOTO_STOP;
             ScreenTimerRefresh();
+            rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
             Jump_FINISH();
         }
         else
@@ -153,6 +155,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             MotoWorkFlag = MOTO_STOP;
             rt_event_send(&Moto_Event, Event_Moto_Free);
             ScreenTimerRefresh();
+            rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
             Jump_NOMOTO();
             Moto_Reset();
         }
@@ -187,6 +190,7 @@ void MotoLeft_Callback(void *parameter)
             }
         }
         ScreenTimerRefresh();
+        rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
         LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
     }
     else if(MotoWorkFlag == MOTO_STOP)
@@ -303,6 +307,7 @@ void Moto_Callback(void *parameter)
                 Disable_MotoINT();
                 MotoWorkFlag = MOTO_STOP;
                 ScreenTimerRefresh();
+                rt_pm_module_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
                 LOG_D("Moto Event Overload\r\n");
                 Jump_STALLING();
                 Moto_Reset();

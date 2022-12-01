@@ -74,11 +74,12 @@ void TDS_Uart_Init(void)
     /* 初始化信号量 */
     rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
     /* 串口参数配置 */
-    config.baud_rate = BAUD_RATE_9600;        //修改波特率为 9600
-    config.data_bits = DATA_BITS_8;           //数据位 8
-    config.stop_bits = STOP_BITS_1;           //停止位 1
-    config.bufsz     = 128;                   //修改缓冲区 buff size 为 128
-    config.parity    = PARITY_NONE;           //无奇偶校验位
+    config.baud_rate = BAUD_RATE_9600;
+    config.data_bits = DATA_BITS_8;
+    config.stop_bits = STOP_BITS_1;
+    config.parity    = PARITY_NONE;
+    config.bufsz     = 128;
+
     rt_device_control(serial, RT_DEVICE_CTRL_CONFIG, &config);
     /* 以中断接收及轮询发送模式打开串口设备 */
     rt_device_open(serial, RT_DEVICE_FLAG_INT_RX);
@@ -86,7 +87,7 @@ void TDS_Uart_Init(void)
     rt_device_set_rx_indicate(serial, uart_rx_ind);
 
     /* 创建 serial 线程 */
-    TDS_t = rt_thread_create("tds", tds_data_parsing, RT_NULL, 1024, 25, 10);
+    TDS_t = rt_thread_create("tds_recv_t", tds_data_parsing, RT_NULL, 512, 10, 10);
 
     /* 创建成功则启动线程 */
     if (TDS_t != RT_NULL)

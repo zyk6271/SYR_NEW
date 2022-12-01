@@ -68,13 +68,13 @@ void wifi_uart_init(void)
     config.baud_rate = BAUD_RATE_115200;
     config.data_bits = DATA_BITS_8;
     config.stop_bits = STOP_BITS_1;
-    config.bufsz     = 128;
     config.parity    = PARITY_NONE;
+    config.bufsz     = 1024;
     rt_device_control(serial, RT_DEVICE_CTRL_CONFIG, &config);
     rt_device_open(serial, RT_DEVICE_FLAG_INT_RX);
     rt_device_set_rx_indicate(serial, uart_rx_ind);
 
-    wifi_recv_t = rt_thread_create("serial", (void (*)(void *parameter))data_parsing, RT_NULL, 1024, 25, 10);
+    wifi_recv_t = rt_thread_create("wifi_recv_t", (void (*)(void *parameter))data_parsing, RT_NULL, 512, 7, 10);
     if (wifi_recv_t != RT_NULL)
     {
         rt_thread_startup(wifi_recv_t);
@@ -82,11 +82,10 @@ void wifi_uart_init(void)
 }
 void wifi_service_callback(void *parameter)
 {
-    wifi_status_get();
     while(1)
     {
         wifi_uart_service();
-        rt_thread_mdelay(10);
+        rt_thread_mdelay(5);
     }
 }
 void wifi_service_init(void)

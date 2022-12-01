@@ -23,8 +23,6 @@ uint32_t NowBatVol;
 uint32_t PastBatVol;
 uint8_t LowVoltageFlag;
 
-extern uint8_t Low_Power_Flag;
-extern uint8_t RTC_Wakeup_Flag;
 extern uint32_t BAT_Voltage;
 extern uint32_t DC_Voltage;
 
@@ -43,21 +41,42 @@ void PowerSet(uint8_t Flag)
         wifi_sup_update();
     }
 }
+uint8_t Power_State_Get(void)
+{
+    return NowDcVol;
+}
+void Power_State_Change(uint8_t state)
+{
+    if(NowDcVol != state)
+    {
+        NowDcVol = state;
+        if(state)
+        {
+            rt_system_power_manager_pause();
+        }
+        else
+        {
+            ScreenTimerRefresh();
+            rt_system_power_manager_resume();
+        }
+        LOG_I("Power_State_Change to State:%d\r\n",NowDcVol);
+    }
+}
 void PowerCallback(void *parameter)
 {
     LOG_D("Power Init OK\r\n");
-    rt_thread_mdelay(1000);
+    rt_thread_mdelay(2000);
     LowVoltageFlag = Flash_Get(19);
-    NowDcVol = Get_DC_Level();
-    if(NowDcVol)
+    if(Get_DC_Level())
     {
+        Power_State_Change(1);
         PowerSet(0);
     }
     while(1)
     {
-        if(Get_DC_Level() == 0 && Low_Power_Flag==0)
+        if(Get_DC_Level() == 0)
         {
-            NowDcVol = 0;
+            Power_State_Change(0);
             PastBatVol = NowBatVol;
             NowBatVol = BAT_Voltage;
             if(LowVoltageFlag)
@@ -88,11 +107,11 @@ void PowerCallback(void *parameter)
                 }
             }
         }
-        else if(Get_DC_Level())
+        else
         {
             if(NowDcVol == 0)
             {
-                NowDcVol = 1;
+                Power_State_Change(1);
                 if(LowVoltageFlag)
                 {
                     Refresh_Bat();
@@ -105,6 +124,6 @@ void PowerCallback(void *parameter)
 }
 void Power_Init(void)
 {
-    power_t = rt_thread_create("power", PowerCallback, RT_NULL, 2048, 12, 10);
+    power_t = rt_thread_create("power", PowerCallback, RT_NULL, 1024, 12, 10);
     if(power_t!=RT_NULL)rt_thread_startup(power_t);
 }

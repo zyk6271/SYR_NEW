@@ -158,10 +158,21 @@ void OpenLcdDisplayNoBL(void)
         default:break;
     }
 }
-void LcdDeinit(void)
+void LCD_Restart(uint8_t backlight)
 {
-    rt_pin_mode(LCD_EN, PIN_MODE_OUTPUT);
-    rt_pin_write(LCD_EN,0);
+    ScreenTimerRefresh();
+    switch(LCD_Flag)
+    {
+    case 3:
+        LcdRst();
+        if(backlight)
+        {
+            LCD_BL_HIGH();
+        }
+        LCD_Refresh();
+    break;
+    default:break;
+    }
 }
 void CloseLcdVcc(void)
 {

@@ -8,9 +8,12 @@
  * 2022-05-09     Rick       the first version
  */
 #include "rtthread.h"
+#include "flashwork.h"
+#include "lcd_display.h"
+#include "uart_core.h"
 
 #define DBG_TAG "SYR_API"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 extern uint32_t MCU_Version;
@@ -32,7 +35,6 @@ extern uint32_t Setting_Hardness;
 extern uint16_t Setting_Backwashtime;
 extern uint8_t Setting_Language;
 extern uint8_t TDS_CND_Value;
-extern uint8_t WiFi_Enable;
 extern uint32_t RTC_Reminder_Time;
 extern uint32_t RTC_Automatic_Time;
 uint8_t syr_moto_get(void)
@@ -68,7 +70,7 @@ void syr_tdslimit_set(uint16_t value)
 {
     Setting_Hardness = value;
     LOG_D("syr_tdslimit_set %d\r\n",value);
-    Flash_Set(14,Setting_Hardness);
+    Flash_Set(13,Setting_Hardness);
 }
 uint16_t syr_tdscalib_get(void)
 {
@@ -210,16 +212,6 @@ void syr_language_set(uint8_t value)
     Flash_Set(15,Setting_Language);
     Refresh_Language(value);
 }
-uint32_t syr_ver_get(void)
-{
-    LOG_D("syr_ver_get %d\r\n",MCU_Version);
-    return MCU_Version;
-}
-uint32_t syr_srn_get(void)
-{
-    LOG_D("syr_srn_get %d\r\n",SN);
-    return SN;
-}
 uint8_t syr_count_manual_get(void)
 {
     LOG_D("syr_count_manual_get %d\r\n",Counter_Manual);
@@ -263,4 +255,39 @@ void syr_count_error_set(uint8_t value)
     Counter_Error = value;
     LOG_D("syr_count_error_set %d\r\n",Counter_Error);
     Flash_Set(11,Counter_Error);
+}
+extern uint32_t Telemetry_Period;
+void syr_telemetry_period_set(uint32_t value)
+{
+    Telemetry_Period = value;
+    LOG_D("syr_telemetry_period_set %d\r\n",value);
+    telemetry_timer_set(value);
+    Flash_Set(24,value);
+}
+uint32_t syr_telemetry_period_get(void)
+{
+    LOG_D("syr_telemetry_period_get %d\r\n",Telemetry_Period);
+    return Telemetry_Period;
+}
+extern uint32_t Telemetry_Timeout;
+void syr_telemetry_timeout_set(uint32_t value)
+{
+    Telemetry_Timeout = value;
+    LOG_D("syr_telemetry_timeout_set %d\r\n",value);
+    Flash_Set(23,value);
+}
+uint32_t syr_telemetry_timeout_get(void)
+{
+    LOG_D("syr_telemetry_timeout_get %d\r\n",Telemetry_Timeout);
+    return Telemetry_Timeout;
+}
+void syr_wifi_ap_enable_set(uint8_t value)
+{
+    extern uint8_t WIFI_AP_Enable;
+    LOG_D("syr_wifi_ap_enable_set %d\r\n",value);
+    WIFI_AP_Enable = value;
+    Flash_Set(25, value);
+    unsigned short send_len = 0;
+    send_len = set_wifi_uart_byte(send_len,WIFI_AP_Enable);
+    wifi_uart_write_frame(WIFI_AP_ENABLE_CMD, MCU_TX_VER, send_len);
 }
