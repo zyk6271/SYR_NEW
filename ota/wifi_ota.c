@@ -33,6 +33,7 @@ void wifi_ota_begin(rt_uint32_t file_size)
 {
     update_file_total_size = file_size;
     LOG_I("wifi_ota_begin file_size:%d\n", update_file_total_size);
+    update_file_cur_size = 0;
 
     /* Get download partition information and erase download partition data */
     if ((dl_part = fal_partition_find(recv_partition)) == RT_NULL)
@@ -91,13 +92,11 @@ void wifi_ota_request(uint8_t value)
     wifi_uart_write_frame(UPDATE_CONTROL_CMD, MCU_TX_VER, send_len);
     wifi_ota_timer_refresh();
 }
-void ota_test(void)
+void ota_start(void)
 {
-    unsigned short send_len = 0;
-    send_len = set_wifi_uart_byte(send_len,1);
-    wifi_uart_write_frame(UPDATE_CONTROL_CMD, MCU_TX_VER, send_len);
+    wifi_ota_request(1);
 }
-MSH_CMD_EXPORT(ota_test,ota_test);
+MSH_CMD_EXPORT(ota_start,ota_start);
 void OTA_Timeout_Timer_Callback(void* parameter)
 {
     extern uint16_t ota_status;
@@ -107,7 +106,7 @@ void wifi_ota_timer_refresh(void)
 {
     if(OTA_Timeout_Timer == RT_NULL)
     {
-        OTA_Timeout_Timer = rt_timer_create("OTA_Timeout_Timer", OTA_Timeout_Timer_Callback, RT_NULL, 60000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
+        OTA_Timeout_Timer = rt_timer_create("OTA_Timeout_Timer", OTA_Timeout_Timer_Callback, RT_NULL, 120000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
     }
     rt_timer_start(OTA_Timeout_Timer);
 }
@@ -115,7 +114,7 @@ void wifi_ota_timer_stop(void)
 {
     if(OTA_Timeout_Timer == RT_NULL)
     {
-        OTA_Timeout_Timer = rt_timer_create("OTA_Timeout_Timer", OTA_Timeout_Timer_Callback, RT_NULL, 60000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
+        OTA_Timeout_Timer = rt_timer_create("OTA_Timeout_Timer", OTA_Timeout_Timer_Callback, RT_NULL, 120000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
     }
     rt_timer_stop(OTA_Timeout_Timer);
 }

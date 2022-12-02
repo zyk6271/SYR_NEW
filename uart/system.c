@@ -68,7 +68,6 @@ void product_info_update(void)
 
 void update_control_parse(uint16_t value)
 {
-    //LOG_I("update_control_parse : %d\r\n",value);
     ota_status = value;
 }
 /**

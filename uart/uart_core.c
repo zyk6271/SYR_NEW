@@ -568,7 +568,7 @@ void data_handle(unsigned short offset)
         break;
         case UPDATE_START_CMD:                                //升级开始
             //升级包单包大小
-            firm_size = 1024;
+            firm_size = 512;
 
             //升级文件大小
             firm_length = wifi_data_process_buf[offset + DATA_START];
