@@ -66,6 +66,17 @@ void product_info_update(void)
     rt_free(out);
 }
 
+
+void wifi_status_change(uint8_t state)
+{
+    extern uint8_t wifi_ota_update_flag;
+    wifi_led(state);
+    if(wifi_ota_update_flag==1 && state == 3)
+    {
+        wifi_ota_request(2);
+        wifi_ota_update_flag = 0;
+    }
+}
 void update_control_parse(uint16_t value)
 {
     ota_status = value;
@@ -129,11 +140,10 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
         case COD_GET_CMD:cod_get_cb(value,length);break;//Delta计数器获取
         case COE_SET_CMD:coe_set_cb(value,length);break;//Error计数器清空
         case COE_GET_CMD:coe_get_cb(value,length);break;//Error计数器获取
-        case WST_SET_CMD:wst_set_cb(value,length);break;//WIFI状态获取
-        case EMR_SET_CMD:emr_set_cb(value,length);break;//WIFI状态获取
-        case EMR_GET_CMD:emr_get_cb(value,length);break;//WIFI状态获取
-        case RCP_SET_CMD:rcp_set_cb(value,length);break;//WIFI状态获取
-        case RCP_GET_CMD:rcp_get_cb(value,length);break;//WIFI状态获取
+        case EMR_SET_CMD:emr_set_cb(value,length);break;//遥测超时获取
+        case EMR_GET_CMD:emr_get_cb(value,length);break;//遥测超时获取
+        case RCP_SET_CMD:rcp_set_cb(value,length);break;//遥测周期获取
+        case RCP_GET_CMD:rcp_get_cb(value,length);break;//遥测周期获取
         default:break;
     }
     return ret;

@@ -123,6 +123,6 @@ void Flash_Clear(void)
     rt_pm_module_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
     ef_env_set_default();
     LOG_D("Flash Set Clear");
-    rt_thread_mdelay(1000);
+    rt_thread_mdelay(3000);
     rt_hw_cpu_reset();
 }

@@ -296,20 +296,6 @@ void wifi_coe_update(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(COE_PUT_CMD, syr_count_error_get());
 }
-extern uint8_t wifi_ota_update_flag;
-
-void wst_set_cb(const unsigned char value[], unsigned short length)
-{
-    unsigned char update_value;
-    update_value = mcu_get_dp_download_value(value,length);
-    wifi_uart_write_command_value(WST_SET_CMD,update_value);
-    wifi_led(update_value);
-    if(wifi_ota_update_flag==1 && update_value == 3)
-    {
-        wifi_ota_request(2);
-        wifi_ota_update_flag = 0;
-    }
-}
 void rcp_set_cb(const unsigned char value[], unsigned short length)
 {
     unsigned char update_value;

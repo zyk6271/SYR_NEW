@@ -15,6 +15,8 @@ static volatile unsigned char *queue_out = NULL;
 
 unsigned short firm_size;                                  //升级包一包的大小
 
+volatile unsigned char stop_update_flag;                                                 //停止一切数据上报
+
 const DOWNLOAD_CMD_S download_cmd[] =
 {
     {RST_SET_CMD, DP_TYPE_VALUE},
@@ -214,6 +216,9 @@ unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value)
 {
     unsigned short send_len = 0;
 
+    if(stop_update_flag == ENABLE)
+        return SUCCESS;
+
     send_len = set_wifi_uart_byte(send_len,dpid);
     send_len = set_wifi_uart_byte(send_len,DP_TYPE_VALUE);
     //
@@ -242,6 +247,9 @@ unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value)
 unsigned char mcu_dp_string_update(unsigned char dpid,const unsigned char value[],unsigned short len)
 {
     unsigned short send_len = 0;
+
+    if(stop_update_flag == ENABLE)
+        return SUCCESS;
 
     //
     send_len = set_wifi_uart_byte(send_len,dpid);
@@ -380,6 +388,8 @@ void wifi_protocol_init(void)
     //#error " 请在main函数中添加wifi_protocol_init()完成wifi协议初始化,并删除该行"
     queue_in = (unsigned char *)wifi_uart_rx_buf;
     queue_out = (unsigned char *)wifi_uart_rx_buf;
+
+    stop_update_flag = DISABLE;
 }
 /**
  * @brief  wifi串口数据处理服务
@@ -544,6 +554,9 @@ void data_handle(unsigned short offset)
     switch(cmd_type) {
         case PRODUCT_INFO_CMD:                                //产品信息
             product_info_update();
+        case WIFI_STATE_CMD:                                  //wifi联网状态
+            wifi_uart_write_frame(WIFI_STATE_CMD, MCU_TX_VER, 0);
+            wifi_status_change(wifi_data_process_buf[offset + DATA_START]);
         case DATA_ISSUED_CMD:                                 //命令下发
             total_len = (wifi_data_process_buf[offset + LENGTH_HIGH] << 8) | wifi_data_process_buf[offset + LENGTH_LOW];
 
@@ -556,11 +569,7 @@ void data_handle(unsigned short offset)
             }
         break;
         case UPDATE_CONTROL_CMD:                                //升级开始
-            total_len = (wifi_data_process_buf[offset + LENGTH_HIGH] << 8) | wifi_data_process_buf[offset + LENGTH_LOW];
-            if(total_len == 2)
-            {
-                update_control_parse(wifi_data_process_buf[offset + DATA_START]<<8 | wifi_data_process_buf[offset + DATA_START + 1]);
-            }
+            update_control_parse(wifi_data_process_buf[offset + DATA_START]<<8 | wifi_data_process_buf[offset + DATA_START + 1]);
         break;
         case TELEMETRY_CONTROL_CMD:                           //遥测控制
             total_len = (wifi_data_process_buf[offset + LENGTH_HIGH] << 8) | wifi_data_process_buf[offset + LENGTH_LOW];
@@ -586,6 +595,8 @@ void data_handle(unsigned short offset)
         case UPDATE_TRANS_CMD:                                //升级传输
             if(firm_update_flag == UPDATE_START_CMD) {
 
+            //停止一切数据上报
+            stop_update_flag = ENABLE;
             //一包数据总长度
             total_len = (wifi_data_process_buf[offset + LENGTH_HIGH] << 8) | wifi_data_process_buf[offset + LENGTH_LOW];
 
@@ -618,14 +629,12 @@ void data_handle(unsigned short offset)
             if(ret == SUCCESS) {
                 wifi_uart_write_frame(UPDATE_TRANS_CMD, MCU_TX_VER, 0);
             }
+            //恢复一切数据上报
+            stop_update_flag = DISABLE;
         }
         break;
         case UPDATE_PROGRSS_CMD:                                //网关升级进度
-            total_len = (wifi_data_process_buf[offset + LENGTH_HIGH] << 8) | wifi_data_process_buf[offset + LENGTH_LOW];
-            if(total_len == 1)
-            {
-                wifi_progress_update(wifi_data_process_buf[offset + DATA_START]);
-            }
+            wifi_progress_update(wifi_data_process_buf[offset + DATA_START]);
         break;
     }
 }
