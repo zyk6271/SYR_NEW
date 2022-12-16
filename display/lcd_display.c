@@ -657,12 +657,12 @@ void Flash2Mem(void)
     }
     if(Telemetry_Period==0)
     {
-        Telemetry_Period = 12*60*60*1000;
+        Telemetry_Period = 12;
         Flash_Set(24,Telemetry_Period);
     }
     if(Telemetry_Timeout==0)
     {
-        Telemetry_Timeout = 30*1000;
+        Telemetry_Timeout = 30;
         Flash_Set(23,Telemetry_Timeout);
     }
 }

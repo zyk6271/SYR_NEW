@@ -17,6 +17,7 @@
 #include "flashwork.h"
 #include "fal.h"
 #include "easyflash.h"
+#include "sfud.h"
 
 #define DBG_TAG "FLASH"
 #define DBG_LVL DBG_INFO
@@ -80,7 +81,12 @@ void Flash_Init(void)
         LOG_E("sfud fail\r\n");
     };
     fal_init();
-    easyflash_init();
+    if(easyflash_init() != EF_NO_ERR)
+    {
+        static sfud_flash_t sfud_dev = NULL;
+        sfud_dev = rt_sfud_flash_find_by_dev_name(FAL_USING_NOR_FLASH_DEV_NAME);
+        sfud_erase(sfud_dev,0,1048576);
+    }
     if(Flash_Get(0)==0)
     {
         Set_Default();
