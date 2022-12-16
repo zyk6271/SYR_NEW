@@ -229,8 +229,6 @@ void BeforeSleep(void)
 }
 void AfterWake(void)
 {
-    //ADC
-    ADC_DMA_Init();
     //WIFI
     WiFi_Pin_Init();
     //RGB
@@ -259,8 +257,8 @@ void user_notify(rt_uint8_t event, rt_uint8_t mode, void *data)
     }
     else
     {
-        /* IO & DEVICE Re Init  */
-        AfterWake();
+        //ADC
+        ADC_DMA_Init();
         if(Button_Wakeup_Flag)
         {
             Button_Wakeup_Flag = 0;

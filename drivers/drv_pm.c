@@ -58,6 +58,8 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
         HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
         /* ReConfig System Main Clock  */
         SystemClock_Config();
+        /* IO & DEVICE Re Init  */
+        AfterWake();
         break;
 
     case PM_SLEEP_MODE_STANDBY:

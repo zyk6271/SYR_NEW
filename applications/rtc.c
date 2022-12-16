@@ -63,14 +63,8 @@ void RTC_Check_Callback(void *parameter)
 {
     while(1)
     {
-        if(rt_sem_trytake(RTC_Check_Sem) == RT_EOK)
+        if(rt_sem_take(RTC_Check_Sem, 0) == RT_EOK)
         {
-            static uint8_t flag=0;
-            if(flag == 0)
-            {
-                flag = 1;
-                gc_collect();
-            }
             LOG_D("RTC Check For Two Timers\r\n");
             if(Reminder_Enable)
             {
