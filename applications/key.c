@@ -229,6 +229,6 @@ void button_task_entry(void *parameter)
 }
 void Button_Init(void)
 {
-    button_task=rt_thread_create("button_task",button_task_entry,RT_NULL,1536,5,20);
+    button_task=rt_thread_create("button_task",button_task_entry,RT_NULL,2048,5,20);
     if(button_task!=RT_NULL)rt_thread_startup(button_task);
 }

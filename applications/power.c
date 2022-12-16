@@ -27,10 +27,15 @@ extern uint32_t BAT_Voltage;
 extern uint32_t DC_Voltage;
 
 rt_thread_t power_t = RT_NULL;
+rt_sem_t power_check_sem = RT_NULL;
 
 uint8_t Get_Bat_Level(void)
 {
     return LowVoltageFlag;
+}
+void Power_Check(void)
+{
+    rt_sem_release(power_check_sem);
 }
 void PowerSet(uint8_t Flag)
 {
@@ -65,65 +70,64 @@ void Power_State_Change(uint8_t state)
 void PowerCallback(void *parameter)
 {
     LOG_D("Power Init OK\r\n");
-    rt_thread_mdelay(2000);
     LowVoltageFlag = Flash_Get(19);
-    if(Get_DC_Level())
-    {
-        Power_State_Change(1);
-        PowerSet(0);
-    }
     while(1)
     {
-        if(Get_DC_Level() == 0)
+        if(rt_sem_trytake(power_check_sem) == RT_EOK)
         {
-            Power_State_Change(0);
-            PastBatVol = NowBatVol;
-            NowBatVol = BAT_Voltage;
-            if(LowVoltageFlag)
+            rt_sem_control(power_check_sem, RT_IPC_CMD_RESET, RT_NULL);
+            if(Get_DC_Level() == 0)
             {
-                if(NowBatVol>PastBatVol && NowBatVol>100 + PastBatVol)
+                Power_State_Change(0);
+                PastBatVol = NowBatVol;
+                NowBatVol = BAT_Voltage;
+                if(LowVoltageFlag)
                 {
-                    if(NowBatVol>3100)//5.2
+                    if(NowBatVol>PastBatVol && NowBatVol>100 + PastBatVol)
                     {
-                        PowerSet(0);
-                        LOG_D("BatteryOK\r\n");
-                        Refresh_Bat();
+                        if(NowBatVol>3100)//5.2
+                        {
+                            PowerSet(0);
+                            LOG_D("BatteryOK\r\n");
+                            Refresh_Bat();
+                        }
+                        else if(NowBatVol<=3100)//4.8
+                        {
+                            PowerSet(1);
+                            LOG_D("New Battery is too low\r\n");
+                            JumpToBatteryNew();
+                        }
                     }
-                    else if(NowBatVol<=3100)//4.8
+                }
+                else
+                {
+                    if(NowBatVol<=2860)//4.8
                     {
                         PowerSet(1);
-                        LOG_D("New Battery is too low\r\n");
-                        JumpToBatteryNew();
+                        LOG_D("BatteryLow in Normal\r\n");
+                        JumpToBatteryEmpty();
                     }
                 }
             }
             else
             {
-                if(NowBatVol<=2860)//4.8
+                if(NowDcVol == 0)
                 {
-                    PowerSet(1);
-                    LOG_D("BatteryLow in Normal\r\n");
-                    JumpToBatteryEmpty();
+                    Power_State_Change(1);
+                    if(LowVoltageFlag)
+                    {
+                        Refresh_Bat();
+                        PowerSet(0);
+                    }
                 }
             }
         }
-        else
-        {
-            if(NowDcVol == 0)
-            {
-                Power_State_Change(1);
-                if(LowVoltageFlag)
-                {
-                    Refresh_Bat();
-                    PowerSet(0);
-                }
-            }
-        }
-        rt_thread_mdelay(500);
+        rt_thread_mdelay(10);
     }
 }
 void Power_Init(void)
 {
-    power_t = rt_thread_create("power", PowerCallback, RT_NULL, 1024, 12, 10);
+    power_check_sem = rt_sem_create("power_check_sem", 0, RT_IPC_FLAG_FIFO);
+    power_t = rt_thread_create("power", PowerCallback, RT_NULL, 2048, 12, 10);
     if(power_t!=RT_NULL)rt_thread_startup(power_t);
 }

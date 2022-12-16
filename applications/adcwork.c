@@ -144,6 +144,7 @@ void ADC_Timer_Callback(void *parameter)
     DC_Voltage = adc_value[0];
     BAT_Voltage = adc_value[1];
     Moto_Current = adc_value[2];
+    Power_Check();
     //LOG_I("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
     //LOG_W("Moto_Current is %d\r\n",Moto_Current);
 }
@@ -151,7 +152,7 @@ void ADC_Init(void)
 {
     MX_DMA_Init();
     MX_ADC1_Init();
-    Adc_Timer = rt_timer_create("adc_work", ADC_Timer_Callback, RT_NULL, 500, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
+    Adc_Timer = rt_timer_create("adc_work", ADC_Timer_Callback, RT_NULL, 2000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
     if(Adc_Timer != RT_NULL)
     {
         rt_timer_start(Adc_Timer);

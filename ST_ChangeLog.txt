@@ -12,3 +12,10 @@
 8.Add RCP and EMR Command
 9.Add LPTIM for EMR
 10.Add tickless mode
+
+0.0.21	2022.12.16
+1.修复了休眠唤醒后的ADC采样问题
+2.修复了休眠唤醒后的低电量弹窗不消失的问题
+3.修复了休眠的启动顺序
+4.修改了了adc的定时器周期
+5.修复了涉及Flash写入的线程堆栈过小导致写入Flash时触发GC堆栈溢出的问题

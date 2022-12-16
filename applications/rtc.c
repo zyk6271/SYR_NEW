@@ -63,8 +63,14 @@ void RTC_Check_Callback(void *parameter)
 {
     while(1)
     {
-        if(rt_sem_take(RTC_Check_Sem, 0) == RT_EOK)
+        if(rt_sem_trytake(RTC_Check_Sem) == RT_EOK)
         {
+            static uint8_t flag=0;
+            if(flag == 0)
+            {
+                flag = 1;
+                gc_collect();
+            }
             LOG_D("RTC Check For Two Timers\r\n");
             if(Reminder_Enable)
             {
@@ -106,7 +112,7 @@ void RTC_Check_Callback(void *parameter)
 void RTC_Check_Init(void)
 {
     RTC_Check_Sem = rt_sem_create("RTC_Check_Sem", 0, RT_IPC_FLAG_FIFO);
-    RTC_Check_Thread = rt_thread_create("RTC_Check", RTC_Check_Callback, RT_NULL, 1024, 10, 10);
+    RTC_Check_Thread = rt_thread_create("RTC_Check", RTC_Check_Callback, RT_NULL, 2048, 10, 10);
     if(RTC_Check_Thread!=RT_NULL)rt_thread_startup(RTC_Check_Thread);
 }
 

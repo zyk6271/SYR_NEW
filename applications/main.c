@@ -28,11 +28,11 @@ int main(void)
 {
     product_version_print();
     Flash_Init();
+    Power_Init();
     ADC_Init();
     Led_Init();
     Moto_Init();
     TDS_Init();
-    Power_Init();
     LCD_Init();
     RTC_Init();
     Button_Init();

@@ -5050,7 +5050,6 @@ static void UserMain26WinFun(void *param)
     if(FirstFlag[26] == 0)
     {
         FirstFlag[26] = 1;
-        screen_reload=0;
 
         if(Setting_Language)
         {
@@ -5093,7 +5092,6 @@ static void UserMain26WinFun(void *param)
             GuiClearScreen(0);
             GuiWinDeleteTop();
             FirstFlag[26]=0;
-            screen_reload=1;
         }
     }
 }
@@ -5102,7 +5100,6 @@ static void UserMain27WinFun(void *param)
     if(FirstFlag[27] == 0)
     {
         FirstFlag[27] = 1;
-        screen_reload=0;
 
         GuiRowText(13,20,115,0,"Abnormal Voltage");
         GuiRowText(20,35,110,0,"Renew Battery");
@@ -5137,7 +5134,6 @@ static void UserMain27WinFun(void *param)
             GuiClearScreen(0);
             GuiWinDeleteTop();
             FirstFlag[27]=0;
-            screen_reload=1;
         }
     }
 }
