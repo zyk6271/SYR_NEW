@@ -80,7 +80,7 @@ enum pm_module_id {
     PM_RTC_ID,
     PM_PERIOD_ID,
     PM_STORAGE_ID,
-    PM_PMC_ID,
+    PM_DC_ID,
     PM_TASK_ID,
     PM_SPI_ID,
     PM_I2C_ID,

@@ -2,11 +2,10 @@
 #define __MOTOCONTROL_H__
 #endif
 
-#define Event_Moto_Free             (1 << 0)
-#define Event_Moto_Forward          (1 << 1)
-#define Event_Moto_Back             (1 << 2)
-#define Event_Moto_Over             (1 << 3)
-#define Event_Moto_TDS              (1 << 4)
+#define MOTO_STOP       1<<0
+#define MOTO_FORWARD    1<<1
+#define MOTO_BACK       1<<2
+#define MOTO_RESET      1<<3
 
 uint8_t Get_MotoValid(void);
 void Moto_Init(void);

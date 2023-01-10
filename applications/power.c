@@ -23,19 +23,19 @@ uint32_t NowBatVol;
 uint32_t PastBatVol;
 uint8_t LowVoltageFlag;
 
-extern uint32_t BAT_Voltage;
-extern uint32_t DC_Voltage;
+rt_timer_t Power_timer = RT_NULL;
 
-rt_thread_t power_t = RT_NULL;
-rt_sem_t power_check_sem = RT_NULL;
-
-uint8_t Get_Bat_Level(void)
+uint8_t Get_LowVoltageFlag(void)
 {
     return LowVoltageFlag;
 }
-void Power_Check(void)
+void Power_Check_Start(void)
 {
-    rt_sem_release(power_check_sem);
+    rt_timer_start(Power_timer);
+}
+void Power_Check_Stop(void)
+{
+    rt_timer_stop(Power_timer);
 }
 void PowerSet(uint8_t Flag)
 {
@@ -57,77 +57,67 @@ void Power_State_Change(uint8_t state)
         NowDcVol = state;
         if(state)
         {
-            rt_system_power_manager_pause();
+            rt_pm_sleep_request(PM_DC_ID,PM_SLEEP_MODE_NONE);
         }
         else
         {
             ScreenTimerRefresh();
-            rt_system_power_manager_resume();
+            rt_pm_sleep_release(PM_DC_ID,PM_SLEEP_MODE_NONE);
         }
         LOG_I("Power_State_Change to State:%d\r\n",NowDcVol);
     }
 }
 void PowerCallback(void *parameter)
 {
-    LOG_D("Power Init OK\r\n");
-    LowVoltageFlag = Flash_Get(19);
-    while(1)
+    uint8_t DC_level = Get_DC_Level();
+    Power_State_Change(DC_level);
+    if(DC_level == 0)
     {
-        if(rt_sem_trytake(power_check_sem) == RT_EOK)
+        PastBatVol = NowBatVol;
+        NowBatVol = Get_Bat_Value();
+        if(LowVoltageFlag)
         {
-            rt_sem_control(power_check_sem, RT_IPC_CMD_RESET, RT_NULL);
-            if(Get_DC_Level() == 0)
+            if(NowBatVol>PastBatVol && NowBatVol>100 + PastBatVol)
             {
-                Power_State_Change(0);
-                PastBatVol = NowBatVol;
-                NowBatVol = BAT_Voltage;
-                if(LowVoltageFlag)
+                if(NowBatVol>3100)//5.2
                 {
-                    if(NowBatVol>PastBatVol && NowBatVol>100 + PastBatVol)
-                    {
-                        if(NowBatVol>3100)//5.2
-                        {
-                            PowerSet(0);
-                            LOG_D("BatteryOK\r\n");
-                            Refresh_Bat();
-                        }
-                        else if(NowBatVol<=3100)//4.8
-                        {
-                            PowerSet(1);
-                            LOG_D("New Battery is too low\r\n");
-                            JumpToBatteryNew();
-                        }
-                    }
+                    PowerSet(0);
+                    LOG_D("BatteryOK\r\n");
+                    Refresh_Bat();
                 }
-                else
+                else if(NowBatVol<=3100)//4.8
                 {
-                    if(NowBatVol<=2860)//4.8
-                    {
-                        PowerSet(1);
-                        LOG_D("BatteryLow in Normal\r\n");
-                        JumpToBatteryEmpty();
-                    }
-                }
-            }
-            else
-            {
-                if(NowDcVol == 0)
-                {
-                    Power_State_Change(1);
-                    if(LowVoltageFlag)
-                    {
-                        Refresh_Bat();
-                        PowerSet(0);
-                    }
+                    PowerSet(1);
+                    LOG_D("New Battery is too low\r\n");
+                    JumpToBatteryNew();
                 }
             }
         }
-        rt_thread_mdelay(10);
+        else
+        {
+            if(NowBatVol<=2860)//4.8
+            {
+                PowerSet(1);
+                LOG_D("BatteryLow in Normal\r\n");
+                JumpToBatteryEmpty();
+            }
+        }
+    }
+    else
+    {
+        if(NowDcVol == 0)
+        {
+            if(LowVoltageFlag)
+            {
+                Refresh_Bat();
+                PowerSet(0);
+            }
+        }
     }
 }
 void Power_Init(void)
 {
-    power_check_sem = rt_sem_create("power_check_sem", 0, RT_IPC_FLAG_FIFO);
-    power_t = rt_thread_create("power", PowerCallback, RT_NULL, 2048, 12, 10);
-    if(power_t!=RT_NULL)rt_thread_startup(power_t);
+    LowVoltageFlag = Flash_Get(19);
+    Power_timer = rt_timer_create("Power_timer", PowerCallback, RT_NULL, 3000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
+    rt_timer_start(Power_timer);
 }

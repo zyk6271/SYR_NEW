@@ -96,7 +96,6 @@ void Flash_Init(void)
 }
 uint32_t Flash_Get(uint8_t id)
 {
-    rt_pm_module_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
     uint8_t read_len = 0;
     uint32_t read_value = 0;
     rt_memset(read_value_temp,0,64);
@@ -110,25 +109,25 @@ uint32_t Flash_Get(uint8_t id)
         read_value = 0;
     }
     LOG_D("Reading Key %s value %ld \r\n", Key_list[id], read_value);//输出
-    rt_pm_module_release(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
     return read_value;
 }
 void Flash_Set(uint8_t id,uint32_t value)
 {
-    rt_pm_module_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
+    rt_pm_sleep_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
     char Set_ValueBuf[64]={0};
     char Set_KeyBuf[64]={0};
     rt_sprintf(Set_ValueBuf,"%ld", value);
     rt_sprintf(Set_KeyBuf,"%s", Key_list[id]);
     ef_set_env(Set_KeyBuf,Set_ValueBuf);
     LOG_D("Writing %s to key %s \r\n", Set_ValueBuf,Set_KeyBuf);
-    rt_pm_module_release(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
+    rt_pm_sleep_release(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
 }
 void Flash_Clear(void)
 {
-    rt_pm_module_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
+    rt_pm_sleep_request(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
     ef_env_set_default();
-    LOG_D("Flash Set Clear");
+    LOG_I("Flash Clear");
     rt_thread_mdelay(3000);
     rt_hw_cpu_reset();
+    rt_pm_sleep_release(PM_STORAGE_ID,PM_SLEEP_MODE_NONE);
 }

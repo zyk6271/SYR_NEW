@@ -98,7 +98,7 @@ void RTC_Check_Callback(void *parameter)
                     Flash_Set(17,RTC_Automatic_Time);
                 }
             }
-            rt_pm_module_release(PM_RTC_ID, PM_SLEEP_MODE_NONE);
+            rt_pm_sleep_release(PM_RTC_ID, PM_SLEEP_MODE_NONE);
         }
         rt_thread_mdelay(10);
     }
@@ -195,5 +195,5 @@ void RTC_Init(void)
 void RTC_Alarm_IRQHandler(void)
 {
     HAL_RTC_AlarmIRQHandler(&RtcHandle);
-    rt_pm_module_request(PM_RTC_ID, PM_SLEEP_MODE_NONE);
+    rt_pm_sleep_request(PM_RTC_ID, PM_SLEEP_MODE_NONE);
 }

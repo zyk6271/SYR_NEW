@@ -27,6 +27,9 @@ uint8_t K0_Long_Sem_Counter=0;
 uint8_t K1_Long_Sem_Counter=0;
 uint8_t K2_Long_Sem_Counter=0;
 
+extern uint8_t Deltapress_Enable;
+extern uint32_t Counter_Deltapress;
+
 void Light_BackLight(void)
 {
 	rt_pin_mode(LCD_BL, PIN_MODE_OUTPUT);
@@ -159,11 +162,9 @@ void K2_LongFree_Release(void *parameter)
     ScreenTimerRefresh();
     LOG_D("Enter Key is Long Free\r\n");
 }
-extern uint8_t Deltapress_Enable;
-extern uint32_t Counter_Deltapress;
 void Delta_Release(void *parameter)
 {
-    LOG_D("Detected Water Flow\r\n");
+    LOG_I("Detected Water Flow\r\n");
     if(Deltapress_Enable)
     {
         if(Get_MotoValid())

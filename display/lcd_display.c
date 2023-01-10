@@ -703,36 +703,24 @@ void LcdtoReminder(void)
         GuiClear();
         GuiWinAdd(&userMain25Win);
     }
-    else
-    {
-        FirstFlag[25]=0;
-    }
 }
 void LcdtoBackwash(void)
 {
     if(FirstFlag[3]==0)
     {
-        GuiClear();
-        Moto_Cycle();
-        GuiWinAdd(&userMain3Win);
-    }
-    else
-    {
-        FirstFlag[3]=0;
+        if(Moto_Cycle() == RT_EOK)
+        {
+            GuiClear();
+            GuiWinAdd(&userMain3Win);
+        }
     }
 }
 void Jump_TDS(void)
 {
-    Counter_Error++;
-    Flash_Set(11,Counter_Error);
-    wifi_coe_update();
     rt_event_send(&lcd_jump_event, TDS);
 }
 void Jump_STALLING(void)
 {
-    Counter_Error++;
-    Flash_Set(11,Counter_Error);
-    wifi_coe_update();
     rt_event_send(&lcd_jump_event, STALLING);
 }
 void Jump_FINISH(void)
@@ -741,9 +729,6 @@ void Jump_FINISH(void)
 }
 void Jump_NOMOTO(void)
 {
-    Counter_Error++;
-    Flash_Set(11,Counter_Error);
-    wifi_coe_update();
     rt_event_send(&lcd_jump_event, NOMOTO);
 }
 void Jump_EXIT(void)
@@ -800,17 +785,17 @@ void JumptoMainWin(void)
 }
 void GuiClear(void)
 {
-    memset(FirstFlag,0,sizeof(FirstFlag));
-    memset(tButton,0,sizeof(tButton));
-    memset(tScroll,0,sizeof(tScroll));
+    rt_memset(FirstFlag,0,sizeof(FirstFlag));
+    rt_memset(tButton,0,sizeof(tButton));
+    rt_memset(tScroll,0,sizeof(tScroll));
     GuiClearScreen(0);
     GuiUpdateDisplayAll();
 }
 void Refresh_Display(void)
 {
-    memset(FirstFlag,0,sizeof(FirstFlag));
-    memset(tButton,0,sizeof(tButton));
-    memset(tScroll,0,sizeof(tScroll));
+    rt_memset(FirstFlag,0,sizeof(FirstFlag));
+    rt_memset(tButton,0,sizeof(tButton));
+    rt_memset(tScroll,0,sizeof(tScroll));
     GuiWinRefresh(GuiGetTopWin());
 }
 void lcd_task_entry(void *parameter)
@@ -1101,11 +1086,11 @@ static void UserMain1WinFun(void *param)
     {
         if(LowVoltageFlag==1)
         {
-         tButton[4].name = LowSelect;
+            tButton[4].name = LowSelect;
         }
         else if(LowVoltageFlag==0)
         {
-         tButton[4].name = SingleSelect;
+            tButton[4].name = SingleSelect;
         }
         GuiButton(&tButton[4]);
         K0_Status = rt_sem_take(K0_Sem, 0);
@@ -1151,27 +1136,27 @@ static void UserMain1WinFun(void *param)
         {
             switch(NowButtonId)
             {
-                case 3:
-                    Win1PageID = 1;
-                    FirstFlag[1]  = 0;
-                    NowButtonId++;
-                    break;
-                case 4:
-                    NowButtonId++;
-                    Win1PageID = 0;
-                    FirstFlag[1]  = 0;
-                    break;
-                default:
-                    tButton[NowButtonId].flag=0;
-                    GuiButton(&tButton[NowButtonId]);
-                    NowButtonId++;
-                    tButton[NowButtonId].flag=1;
-                    GuiButton(&tButton[NowButtonId]);
-                    break;
+            case 3:
+                Win1PageID = 1;
+                FirstFlag[1]  = 0;
+                NowButtonId++;
+                break;
+            case 4:
+                NowButtonId++;
+                Win1PageID = 0;
+                FirstFlag[1]  = 0;
+                break;
+            default:
+                tButton[NowButtonId].flag=0;
+                GuiButton(&tButton[NowButtonId]);
+                NowButtonId++;
+                tButton[NowButtonId].flag=1;
+                GuiButton(&tButton[NowButtonId]);
+                break;
             }
-                tScroll[0].lump = NowButtonId;/* 进度快控制 */
-                GuiVScroll(&tScroll[0]);/* 垂直进度条 */
-                GuiUpdateDisplayAll();
+            tScroll[0].lump = NowButtonId;/* 进度快控制 */
+            GuiVScroll(&tScroll[0]);/* 垂直进度条 */
+            GuiUpdateDisplayAll();
         }
         if(K2_Status==RT_EOK)
         {
@@ -1292,9 +1277,7 @@ static void UserMain2WinFun(void *param)
                         Flash_Set(8,Counter_Manual);
                         wifi_com_update();
                         RTC_Reset();
-                        GuiClear();
-                        Moto_Cycle();
-                        GuiWinAdd(&userMain3Win);
+                        LcdtoBackwash();
                    }
                    else
                    {
@@ -1313,6 +1296,7 @@ static void UserMain3WinFun(void *param)
         FirstFlag[3] = 1;
         moto_done = 0;
         screen_reload=1;
+        rt_event_control(&lcd_jump_event,RT_IPC_CMD_RESET,RT_NULL);
         GuiClearScreen(0);
         if(Setting_Language)
         {
@@ -1356,6 +1340,9 @@ static void UserMain3WinFun(void *param)
                   GuiRowText(0,49,125,0,"is recommended");
                   GuiRowText(106,56,30,0,"OK");
                 }
+                Counter_Error++;
+                Flash_Set(11,Counter_Error);
+                wifi_coe_update();
                 led_select(1);
                 break;
             case STALLING:
@@ -1374,6 +1361,9 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(15,30,127,0,"Motor Stalling");
                     GuiRowText(106,56,30,0,"OK");
                 }
+                Counter_Error++;
+                Flash_Set(11,Counter_Error);
+                wifi_coe_update();
                 led_select(1);
                 break;
             case FINISH:
@@ -1409,6 +1399,9 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(40,30,127,0,"No Motor");
                     GuiRowText(106,56,30,0,"OK");
                 }
+                Counter_Error++;
+                Flash_Set(11,Counter_Error);
+                wifi_coe_update();
                 led_select(1);
                 break;
             case EXIT:
@@ -2416,14 +2409,6 @@ static void UserMain6WinFun(void *param)
             if(Deltapress_Enable != Deltapress_Enable_Temp)
             {
                 Deltapress_Enable=Deltapress_Enable_Temp;
-//                if(Deltapress_Enable)
-//                {
-//                    Delta_Open();
-//                }
-//                else
-//                {
-//                    Delta_Close();
-//                }
                 Flash_Set(7,Deltapress_Enable_Temp);
                 wifi_ssd_update();
             }

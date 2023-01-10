@@ -35,7 +35,7 @@ void telemetry_timer_callback(void *parameter)
 {
     LCD_Restart(0);
     LOG_D("Telemetry Wake Up Now\r\n");
-    rt_pm_module_request(PM_PERIOD_ID, PM_SLEEP_MODE_NONE);
+    rt_pm_sleep_request(PM_PERIOD_ID, PM_SLEEP_MODE_NONE);
     rt_sem_release(telemetry_detect_sem);
 }
 void telemetry_test(void)
@@ -62,7 +62,7 @@ void telemetry_thread_callback(void *parameter)
         {
             LOG_W("Telemetry Recv Timeout\r\n");
         }
-        rt_pm_module_release(PM_PERIOD_ID,PM_SLEEP_MODE_NONE);
+        rt_pm_sleep_release(PM_PERIOD_ID,PM_SLEEP_MODE_NONE);
     }
 }
 void Telemetry_Init(void)

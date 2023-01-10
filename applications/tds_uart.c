@@ -12,7 +12,7 @@
 #include <rtdbg.h>
 
 uint32_t TDS_Value = 0;
-uint8_t TDS_Warn = 0;
+uint32_t TDS_Warn = 0;
 
 #define TDS_UART_NAME                   "uart2"
 
@@ -46,15 +46,15 @@ static char uart_sample_get_char(void)
 }
 void tds_data_parsing(void *parameter)
 {
-    char ch;
     while (1)
     {
-        ch = uart_sample_get_char();
+        char ch = uart_sample_get_char();
         tds_uart_receive_input(ch);
     }
 }
 void TDS_Init(void)
 {
+    TDS_GpioInit();
     TDS_Uart_Init();
     TDS_Service_Init();
 }
@@ -119,37 +119,32 @@ void TDS_GpioDeInit(void)
 uint32_t TDS_Get(void)
 {
     rt_device_write(serial, 0, TdsRead, 8);
-    rt_thread_mdelay(50);
     LOG_I("TDS_Get %d\r\n",TDS_Value);
     return TDS_Value;
 }
 uint32_t TDS_Work(void)
 {
-    uint32_t Data=0;
     extern uint32_t Setting_Hardness;
     if(Setting_Hardness!=0)
     {
         LOG_D("Read TDS Now\r\n");
-        Data = TDS_Value;
-        TDS_Value = 0;
         rt_device_write(serial, 0, TdsRead, 8);
-        return Data;
+        return TDS_Value;
     }
     else {
         LOG_D("TDS is OFF\r\n");
         return 0;
     }
 }
-MSH_CMD_EXPORT(TDS_Work,TDS_Work);
 uint32_t GetTDS(void)
 {
     return TDS_Value;
 }
-void TDS_WarnSet(uint8_t value)
-{
-    TDS_Warn = value;
-}
-uint8_t TDS_WarnGet(void)
+uint8_t GetTDSWarn(void)
 {
     return TDS_Warn;
+}
+void SetTDSWarn(uint8_t value)
+{
+     TDS_Warn = value;
 }

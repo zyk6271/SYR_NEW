@@ -63,7 +63,6 @@ static rt_uint8_t _pm_default_deepsleep = RT_PM_DEFAULT_DEEPSLEEP_MODE;
 
 static struct rt_pm_notify _pm_notify;
 static rt_uint8_t _pm_init_flag = 0;
-static rt_uint8_t _pm_pause_flag = 0;
 
 RT_WEAK rt_uint32_t rt_pm_enter_critical(rt_uint8_t sleep_mode)
 {
@@ -464,15 +463,6 @@ static void _pm_change_sleep_mode(struct rt_pm *pm)
         }
     }
 }
-void rt_system_power_manager_resume(void)
-{
-    _pm_pause_flag = 0;
-}
-
-void rt_system_power_manager_pause(void)
-{
-    _pm_pause_flag = 1;
-}
 /**
  * This function will enter corresponding power mode.
  */
@@ -480,12 +470,6 @@ void rt_system_power_manager(void)
 {
     if (_pm_init_flag == 0)
         return;
-
-    if (_pm_pause_flag == 1)
-        return;
-//    /* CPU frequency scaling according to the runing mode settings */
-//    _pm_frequency_scaling(&_pm);
-
     /* Low Power Mode Processing */
     _pm_change_sleep_mode(&_pm);
 }

@@ -16,7 +16,7 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-uint8_t MCU_VER[10] = {"0.0.21"};
+uint8_t MCU_VER[10] = {"0.0.22"};
 uint8_t Product_SRN[10] = {"A0000001"};
 
 uint16_t ota_status;

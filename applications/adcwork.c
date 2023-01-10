@@ -20,10 +20,8 @@
 #include <rtdbg.h>
 
 uint32_t adc_value[3];
-uint32_t BAT_Voltage = 0;
-uint32_t DC_Voltage = 0;
-uint32_t Moto_Current = 0;
-rt_timer_t Adc_Timer = RT_NULL;
+
+rt_timer_t Moto_overload_delay_timer = RT_NULL;
 
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
@@ -121,11 +119,9 @@ void ADC_DMA_Init(void)
 {
     __HAL_RCC_ADC_CLK_ENABLE();
     __HAL_RCC_DMA1_CLK_ENABLE();
-    rt_timer_start(Adc_Timer);
 }
 void ADC_DMA_DeInit(void)
 {
-    rt_timer_stop(Adc_Timer);
     __HAL_RCC_ADC_CLK_DISABLE();
     __HAL_RCC_DMA1_CLK_DISABLE();
 }
@@ -139,46 +135,53 @@ void ADC1_IRQHandler(void)
     Moto_Current_Detect();
   /* USER CODE END ADC1_IRQn 1 */
 }
-void ADC_Timer_Callback(void *parameter)
+uint32_t Get_Moto_Current(void)
 {
-    DC_Voltage = adc_value[0];
-    BAT_Voltage = adc_value[1];
-    Moto_Current = adc_value[2];
-    Power_Check();
-    //LOG_I("DC_Voltage is %d,BAT_Voltage is %d,Moto_Current is %d\r\n",DC_Voltage,BAT_Voltage,Moto_Current);
-    //LOG_W("Moto_Current is %d\r\n",Moto_Current);
+    return adc_value[2];
+}
+uint32_t Get_BAT_Voltage(void)
+{
+    return adc_value[1];
+}
+uint32_t Get_DC_Voltage(void)
+{
+    return adc_value[0];
+}
+void Enable_MotoINT(void)
+{
+    rt_timer_start(Moto_overload_delay_timer);
+}
+void Disable_MotoINT(void)
+{
+    rt_timer_stop(Moto_overload_delay_timer);
+    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
+    LL_ADC_DisableIT_AWD1(hadc1.Instance);
+}
+void Moto_overload_delay_timer_callback(void *parameter)
+{
+    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
+    LL_ADC_EnableIT_AWD1(hadc1.Instance);
 }
 void ADC_Init(void)
 {
     MX_DMA_Init();
     MX_ADC1_Init();
-    Adc_Timer = rt_timer_create("adc_work", ADC_Timer_Callback, RT_NULL, 2000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
-    if(Adc_Timer != RT_NULL)
-    {
-        rt_timer_start(Adc_Timer);
-    }
-}
-void Enable_MotoINT(void)
-{
-    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
-    LL_ADC_EnableIT_AWD1(hadc1.Instance);
-}
-void Disable_MotoINT(void)
-{
-    LL_ADC_ClearFlag_AWD1(hadc1.Instance);
-    LL_ADC_DisableIT_AWD1(hadc1.Instance);
+    Moto_overload_delay_timer = rt_timer_create("Moto_overload_delay_timer",Moto_overload_delay_timer_callback,RT_NULL,500,RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
 }
 uint8_t Get_DC_Level(void)
 {
-    return DC_Voltage>2800?1:0;
+    uint32_t value = Get_DC_Voltage();
+    return value>2800?1:0;
 }
 uint32_t Get_DC_Value(void)
 {
-    LOG_D("DC Value is %ld\r\n",DC_Voltage);
-    return DC_Voltage;
+    uint32_t value = Get_DC_Voltage();
+    LOG_D("DC Value is %ld\r\n",value);
+    return value;
 }
 uint32_t Get_Bat_Value(void)
 {
-    LOG_D("BAT Value is %ld\r\n",BAT_Voltage);
-    return BAT_Voltage;
+    uint32_t value = Get_BAT_Voltage();
+    LOG_D("BAT Value is %ld\r\n",value);
+    return value;
 }

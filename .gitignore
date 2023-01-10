@@ -37,3 +37,4 @@ DebugConfig/
 RTE/
 settings/
 *.uvguix*
+Debug/rtthread.bin

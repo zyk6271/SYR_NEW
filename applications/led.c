@@ -35,29 +35,27 @@ void Led_Init(void)
         LED_B = agile_led_create(LED_B_PIN, PIN_LOW, "200,200", -1);
     }
 }
-void led_select(uint8_t type)//red:1,green:2,blue:3
+void led_select(uint8_t type)//red:1,green:2
 {
     led_state = type;
     switch(type)
     {
-    case 0:
+    case 0://全关
         agile_led_stop(LED_R);
         agile_led_stop(LED_G);
         break;
-    case 1:
+    case 1://红灯闪烁
         agile_led_stop(LED_G);
         agile_led_set_light_mode(LED_R, "500,500", -1);
         agile_led_start(LED_R);
         break;
-    case 2:
-        agile_led_stop(LED_R);
-        agile_led_set_light_mode(LED_G, "100,0", -1);
-        agile_led_start(LED_G);
-        break;
-    case 3:
+    case 2://绿灯常亮
         agile_led_stop(LED_R);
         agile_led_stop(LED_G);
-        agile_led_set_light_mode(LED_B, "100,0", -1);
+        agile_led_on(LED_G);
+        break;
+    case 3://绿灯熄灭
+        agile_led_off(LED_G);
         break;
     }
 }

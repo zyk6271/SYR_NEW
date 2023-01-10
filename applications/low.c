@@ -226,6 +226,8 @@ void BeforeSleep(void)
     NoneDeInit();
     //IRQ_Bund
     IRQ_Bund();
+    //Power timer stop
+    Power_Check_Stop();
 }
 void AfterWake(void)
 {
@@ -245,6 +247,8 @@ void AfterWake(void)
     DebugInit();
     //IRQ_DeBund
     IRQ_DeBund();
+    //ADC
+    ADC_DMA_Init();
 }
 void user_notify(rt_uint8_t event, rt_uint8_t mode, void *data)
 {
@@ -257,8 +261,7 @@ void user_notify(rt_uint8_t event, rt_uint8_t mode, void *data)
     }
     else
     {
-        //ADC
-        ADC_DMA_Init();
+        Power_Check_Start();
         if(Button_Wakeup_Flag)
         {
             Button_Wakeup_Flag = 0;
