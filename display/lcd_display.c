@@ -737,7 +737,7 @@ void Jump_EXIT(void)
 }
 void JumptoReminder(void)
 {
-    LCD_BL_HIGH();
+    OpenLcdDisplayNoBL();
     LcdtoReminder();
 }
 void JumptoAutomatic(void)
@@ -751,6 +751,9 @@ void JumptoAutomatic(void)
 void JumptoDelta(void)
 {
     OpenLcdDisplayNoBL();
+    Counter_Deltapress++;
+    Flash_Set(10,Counter_Deltapress);
+    wifi_cod_update();
     LcdtoBackwash();
 }
 uint8_t JumpToBatteryEmpty_Flag = 0;
@@ -5547,6 +5550,8 @@ static void UserMain31WinFun(void *param)
     if(FirstFlag[31] == 0)
     {
         FirstFlag[31] = 1;
+        Moto_Pause();//暂停电机工作
+        rt_pm_sleep_request(PM_OTA_ID,PM_SLEEP_MODE_NONE);
 
         now_status = 0;
 
@@ -5605,6 +5610,7 @@ static void UserMain31WinFun(void *param)
                     if(wifi_status == 3)
                     {
                         wifi_ota_request(1);
+                        wifi_ota_timer_refresh();
                     }
                     else
                     {
@@ -5668,9 +5674,10 @@ static void UserMain31WinFun(void *param)
             if((now_status & (Murata_Downloading|Murata_Download_Done|Murata_No_Upadate|ST_Downloading)) == 0)
             {
                 GuiClearScreen(0);
-                ScreenTimerRefresh();
                 GuiWinDeleteTop();
                 FirstFlag[31]=0;
+                Moto_Resume();//恢复电机工作
+                rt_pm_sleep_release(PM_OTA_ID,PM_SLEEP_MODE_NONE);
             }
         }
     }

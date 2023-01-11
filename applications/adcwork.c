@@ -171,6 +171,7 @@ void ADC_Init(void)
 uint8_t Get_DC_Level(void)
 {
     uint32_t value = Get_DC_Voltage();
+    LOG_D("Get_DC_Voltage is %ld\r\n",value);
     return value>2800?1:0;
 }
 uint32_t Get_DC_Value(void)

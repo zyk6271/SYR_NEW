@@ -92,11 +92,6 @@ void wifi_ota_request(uint8_t value)
     wifi_uart_write_frame(UPDATE_CONTROL_CMD, MCU_TX_VER, send_len);
     wifi_ota_timer_refresh();
 }
-void ota_start(void)
-{
-    wifi_ota_request(1);
-}
-MSH_CMD_EXPORT(ota_start,ota_start);
 void OTA_Timeout_Timer_Callback(void* parameter)
 {
     extern uint16_t ota_status;

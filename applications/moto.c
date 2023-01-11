@@ -20,14 +20,34 @@ rt_timer_t Moto_Cycle_Timer = RT_NULL;
 rt_timer_t Moto_Detect_Timer = RT_NULL;
 rt_timer_t Moto_Current_Timer = RT_NULL;
 
+uint8_t MotoWorkStatus = 0;
 uint8_t MotoWorkFlag = MOTO_STOP;
 
 extern uint16_t Setting_Backwashtime;
 extern uint32_t Setting_Hardness;
 
+void Moto_Pause(void)
+{
+    MotoWorkStatus = 1;
+    LOG_D("Moto is Pause\r\n");
+}
+MSH_CMD_EXPORT(Moto_Pause,Moto_Pause);
+void Moto_Resume(void)
+{
+    MotoWorkStatus = 0;
+    LOG_D("Moto is Resume\r\n");
+}
+MSH_CMD_EXPORT(Moto_Resume,Moto_Resume);
 uint8_t Get_MotoValid(void)
 {
-    if(MotoWorkFlag == MOTO_STOP)return 1;else return 0;
+    if(MotoWorkFlag == MOTO_STOP)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 void Moto_Run(uint8_t state)
 {
@@ -56,6 +76,14 @@ void Moto_Run(uint8_t state)
             LOG_I("Moto State is already Forward\r\n");
             rt_timer_start(Moto_Cycle_Timer);
         }
+        break;
+    case MOTO_WAITBACK:
+        MotoWorkFlag = MOTO_WAITBACK;
+        rt_pin_write(MOTO_IN1,0);
+        rt_pin_write(MOTO_IN2,0);
+        Disable_MotoINT();
+        rt_timer_stop(Moto_Detect_Timer);
+        LOG_I("Moto is MOTO_WAITBACK\r\n");
         break;
     case MOTO_BACK:
         MotoWorkFlag = MOTO_BACK;
@@ -89,7 +117,19 @@ uint8_t Moto_Cycle(void)
     RTC_Clear();
     if(Get_LowVoltageFlag())
     {
-        LOG_D("Moto Not Work(Low Voltage)");
+        LOG_W("Moto Not Work(Low Voltage)");
+        Jump_EXIT();
+        return RT_ERROR;
+    }
+    if(MotoWorkStatus)
+    {
+        LOG_W("Moto Not Work(Pause)");
+        Jump_EXIT();
+        return RT_ERROR;
+    }
+    if(MotoWorkFlag != MOTO_STOP && MotoWorkFlag != MOTO_RESET)
+    {
+        LOG_W("Moto Not Work(Working now)");
         Jump_EXIT();
         return RT_ERROR;
     }
@@ -203,7 +243,7 @@ void MotoRight_Callback(void *parameter)
 {
     if(MotoWorkFlag == MOTO_FORWARD)
     {
-        Moto_Run(MOTO_STOP);
+        Moto_Run(MOTO_WAITBACK);
         TDS_Work();
         rt_timer_start(Moto_Cycle_Timer);
     }

@@ -18,10 +18,10 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-uint32_t NowDcVol;
-uint32_t NowBatVol;
-uint32_t PastBatVol;
-uint8_t LowVoltageFlag;
+uint8_t Now_DC_level = 0;
+uint8_t LowVoltageFlag = 0;
+uint32_t Now_BAT_Voltage = 0;
+uint32_t Past_BAT_Voltage = 0;
 
 rt_timer_t Power_timer = RT_NULL;
 
@@ -48,13 +48,13 @@ void PowerSet(uint8_t Flag)
 }
 uint8_t Power_State_Get(void)
 {
-    return NowDcVol;
+    return Now_DC_level;
 }
 void Power_State_Change(uint8_t state)
 {
-    if(NowDcVol != state)
+    if(Now_DC_level != state)
     {
-        NowDcVol = state;
+        Now_DC_level = state;
         if(state)
         {
             rt_pm_sleep_request(PM_DC_ID,PM_SLEEP_MODE_NONE);
@@ -64,28 +64,28 @@ void Power_State_Change(uint8_t state)
             ScreenTimerRefresh();
             rt_pm_sleep_release(PM_DC_ID,PM_SLEEP_MODE_NONE);
         }
-        LOG_I("Power_State_Change to State:%d\r\n",NowDcVol);
+        LOG_I("Power_State_Change to State:%d\r\n",Now_DC_level);
     }
 }
+
 void PowerCallback(void *parameter)
 {
-    uint8_t DC_level = Get_DC_Level();
-    Power_State_Change(DC_level);
-    if(DC_level == 0)
+    if(Get_DC_Level() == 0)//No DC
     {
-        PastBatVol = NowBatVol;
-        NowBatVol = Get_Bat_Value();
+        Power_State_Change(0);
+        Past_BAT_Voltage = Now_BAT_Voltage;
+        Now_BAT_Voltage = Get_Bat_Value();
         if(LowVoltageFlag)
         {
-            if(NowBatVol>PastBatVol && NowBatVol>100 + PastBatVol)
+            if(Now_BAT_Voltage>Past_BAT_Voltage && Now_BAT_Voltage>100 + Past_BAT_Voltage)
             {
-                if(NowBatVol>3100)//5.2
+                if(Now_BAT_Voltage>3100)//5.2
                 {
                     PowerSet(0);
                     LOG_D("BatteryOK\r\n");
                     Refresh_Bat();
                 }
-                else if(NowBatVol<=3100)//4.8
+                else if(Now_BAT_Voltage<=3100)//4.8
                 {
                     PowerSet(1);
                     LOG_D("New Battery is too low\r\n");
@@ -95,7 +95,7 @@ void PowerCallback(void *parameter)
         }
         else
         {
-            if(NowBatVol<=2860)//4.8
+            if(Now_BAT_Voltage<=2860)//4.8
             {
                 PowerSet(1);
                 LOG_D("BatteryLow in Normal\r\n");
@@ -105,8 +105,9 @@ void PowerCallback(void *parameter)
     }
     else
     {
-        if(NowDcVol == 0)
+        if(Now_DC_level == 0)//DC input ok is low battery
         {
+            Power_State_Change(1);
             if(LowVoltageFlag)
             {
                 Refresh_Bat();
@@ -118,6 +119,6 @@ void PowerCallback(void *parameter)
 void Power_Init(void)
 {
     LowVoltageFlag = Flash_Get(19);
-    Power_timer = rt_timer_create("Power_timer", PowerCallback, RT_NULL, 3000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
+    Power_timer = rt_timer_create("Power_timer", PowerCallback, RT_NULL, 2000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
     rt_timer_start(Power_timer);
 }

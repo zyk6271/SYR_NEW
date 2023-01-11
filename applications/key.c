@@ -167,12 +167,7 @@ void Delta_Release(void *parameter)
     LOG_I("Detected Water Flow\r\n");
     if(Deltapress_Enable)
     {
-        if(Get_MotoValid())
-        {
-            Flash_Set(10,++Counter_Deltapress);
-            wifi_cod_update();
-            JumptoDelta();
-        }
+        JumptoDelta();
     }
 }
 uint8_t Read_K0_Level(void)

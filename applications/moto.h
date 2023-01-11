@@ -4,8 +4,9 @@
 
 #define MOTO_STOP       1<<0
 #define MOTO_FORWARD    1<<1
-#define MOTO_BACK       1<<2
-#define MOTO_RESET      1<<3
+#define MOTO_WAITBACK   1<<2
+#define MOTO_BACK       1<<3
+#define MOTO_RESET      1<<4
 
 uint8_t Get_MotoValid(void);
 void Moto_Init(void);
