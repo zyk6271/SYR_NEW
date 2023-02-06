@@ -75,7 +75,7 @@ void MX_ADC1_Init(void)
     */
     sConfig.Channel = ADC_CHANNEL_2;
     sConfig.Rank = ADC_REGULAR_RANK_1;
-    sConfig.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
+    sConfig.SamplingTime = ADC_SAMPLETIME_47CYCLES_5;
     sConfig.SingleDiff = ADC_SINGLE_ENDED;
     sConfig.OffsetNumber = ADC_OFFSET_NONE;
     sConfig.Offset = 0;
@@ -172,7 +172,7 @@ uint8_t Get_DC_Level(void)
 {
     uint32_t value = Get_DC_Voltage();
     LOG_D("Get_DC_Voltage is %ld\r\n",value);
-    return value>2800?1:0;
+    return value>2500?1:0;
 }
 uint32_t Get_DC_Value(void)
 {

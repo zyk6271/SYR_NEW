@@ -18,6 +18,8 @@ static agile_led_t *LED_G = RT_NULL;
 static agile_led_t *LED_B = RT_NULL;
 
 static uint8_t led_state  = 0;
+extern uint8_t WIFI_AP_Enable;
+
 uint8_t wifi_status;
 
 void Led_Init(void)
@@ -69,6 +71,7 @@ void Led_GpioInit(void)
     agile_led_resume(LED_G);
     agile_led_resume(LED_B);
 }
+
 void Led_GpioDeInit(void)
 {
     agile_led_pause(LED_R);
@@ -84,41 +87,34 @@ void Led_GpioDeInit(void)
 
 void wifi_led(uint8_t type)
 {
+    wifi_status = type;
     switch(type)
     {
     case 0://熄灭全部
-        wifi_status = type;
         agile_led_stop(LED_B);
         break;
-    case 1://尝试连接wifi
-        wifi_status = type;
-        agile_led_set_light_mode(LED_B, "150,200,150,500", -1);
-        agile_led_start(LED_B);
-        break;
-    case 2://尝试连接azure
-        wifi_status = type;
-        agile_led_set_light_mode(LED_B, "150,150", -1);
-        agile_led_start(LED_B);
-        break;
-    case 3://连接成功
-        wifi_status = type;
-        agile_led_set_light_mode(LED_B, "200,0", -1);
-        agile_led_start(LED_B);
-        break;
-    case 4://AP关
-        if(wifi_status == 5)
+    case 1://AP模式
+        if(WIFI_AP_Enable)
         {
-            wifi_status = 4;
-            agile_led_stop(LED_B);
-        }
-        break;
-    case 5://AP开
-        if(wifi_status == 0 || wifi_status == 4)
-        {
-            wifi_status = 5;
             agile_led_set_light_mode(LED_B, "1000,1000", -1);
             agile_led_start(LED_B);
         }
+        else
+        {
+            agile_led_stop(LED_B);
+        }
+        break;
+    case 2://连接路由器
+        agile_led_set_light_mode(LED_B, "150,200,150,500", -1);
+        agile_led_start(LED_B);
+        break;
+    case 3://连接微软云
+        agile_led_set_light_mode(LED_B, "150,150", -1);
+        agile_led_start(LED_B);
+        break;
+    case 4://连接成功
+        agile_led_set_light_mode(LED_B, "200,0", -1);
+        agile_led_start(LED_B);
         break;
     default:
         break;

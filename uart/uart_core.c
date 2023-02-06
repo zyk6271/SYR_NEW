@@ -19,8 +19,6 @@ volatile unsigned char stop_update_flag;                                        
 
 const DOWNLOAD_CMD_S download_cmd[] =
 {
-    {RST_SET_CMD, DP_TYPE_VALUE},
-    {DEF_SET_CMD, DP_TYPE_VALUE},
     {RAS_SET_CMD, DP_TYPE_VALUE},
     {RAS_GET_CMD, DP_TYPE_VALUE},
     {RAS_PUT_CMD, DP_TYPE_VALUE},
@@ -78,8 +76,6 @@ const DOWNLOAD_CMD_S download_cmd[] =
     {COE_GET_CMD, DP_TYPE_VALUE},
     {COE_PUT_CMD, DP_TYPE_VALUE},
     {CND_PUT_CMD, DP_TYPE_VALUE},
-    {WST_GET_CMD, DP_TYPE_VALUE},
-    {WST_SET_CMD, DP_TYPE_VALUE},
     {EMR_SET_CMD, DP_TYPE_VALUE},
     {EMR_GET_CMD, DP_TYPE_VALUE},
     {RCP_SET_CMD, DP_TYPE_VALUE},
@@ -552,6 +548,10 @@ void data_handle(unsigned short offset)
     unsigned char cmd_type = wifi_data_process_buf[offset + FRAME_TYPE];
 
     switch(cmd_type) {
+        case DEVICE_REBOOT_CMD:                                //产品信息
+            device_reboot();
+        case FACTORY_SET_CMD:                                //产品信息
+            device_factory_set();
         case PRODUCT_INFO_CMD:                                //产品信息
             product_info_update();
         case WIFI_STATE_CMD:                                  //wifi联网状态

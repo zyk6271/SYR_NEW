@@ -16,11 +16,10 @@
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
+uint8_t WIFI_AP_Enable;
+uint16_t ota_status;
 uint8_t MCU_VER[10] = {"0.0.22"};
 uint8_t Product_SRN[10] = {"A0000001"};
-
-uint16_t ota_status;
-uint8_t WIFI_AP_Enable;
 
 void product_version_print(void)
 {
@@ -71,7 +70,7 @@ void wifi_status_change(uint8_t state)
 {
     extern uint8_t wifi_ota_update_flag;
     wifi_led(state);
-    if(wifi_ota_update_flag==1 && state == 3)
+    if(wifi_ota_update_flag==1 && state == 4)
     {
         wifi_ota_request(2);
         wifi_ota_update_flag = 0;
@@ -100,8 +99,6 @@ unsigned char dp_download_handle(unsigned char dpid,const unsigned char value[],
     ****************************************************************/
     unsigned char ret = 0;
     switch(dpid) {
-        case RST_SET_CMD:rst_set_cb(value,length);break;//复位
-        case DEF_SET_CMD:def_set_cb(value,length);break;//出厂设置
         case RAS_SET_CMD:ras_set_cb(value,length);break;//冲洗开始
         case RAS_GET_CMD:ras_get_cb(value,length);break;//冲洗查询
         case CND_GET_CMD:cnd_get_cb(value,length);break;//TDS获取
@@ -195,4 +192,14 @@ void telemetry_upload(void)
     rt_free(out);
 }
 
-MSH_CMD_EXPORT(telemetry_upload,telemetry_upload);
+void device_reboot(void)
+{
+    LOG_I("device_reboot");
+    rt_hw_cpu_reset();
+}
+void device_factory_set(void)
+{
+    LOG_I("device_factory_set");
+    wifi_uart_write_frame(FACTORY_SET_CMD,MCU_TX_VER,0);
+    Flash_Clear();
+}

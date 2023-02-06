@@ -31,13 +31,11 @@ void Moto_Pause(void)
     MotoWorkStatus = 1;
     LOG_D("Moto is Pause\r\n");
 }
-MSH_CMD_EXPORT(Moto_Pause,Moto_Pause);
 void Moto_Resume(void)
 {
     MotoWorkStatus = 0;
     LOG_D("Moto is Resume\r\n");
 }
-MSH_CMD_EXPORT(Moto_Resume,Moto_Resume);
 uint8_t Get_MotoValid(void)
 {
     if(MotoWorkFlag == MOTO_STOP)
@@ -188,7 +186,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
     {
         if(rt_pin_read(MOTO_RIGHT)==1)
         {
-            LOG_D("No Moto,Start to Free\r\n");
+            LOG_W("No Moto,Start to Free\r\n");
             led_select(3);
             Moto_Run(MOTO_RESET);
             Jump_NOMOTO();
@@ -198,7 +196,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
     {
         if(rt_pin_read(MOTO_LEFT)==1)
         {
-            LOG_D("No Moto,Start to Free\r\n");
+            LOG_W("No Moto,Start to Free\r\n");
             led_select(3);
             Moto_Run(MOTO_RESET);
             Jump_NOMOTO();
@@ -230,7 +228,7 @@ void MotoLeft_Callback(void *parameter)
             SetTDSWarn(0);
             Jump_FINISH();
         }
-        LOG_D("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
+        LOG_I("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
         ScreenTimerRefresh();
         rt_pm_sleep_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
     }

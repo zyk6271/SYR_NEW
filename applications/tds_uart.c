@@ -8,7 +8,7 @@
 #include "string.h"
 
 #define DBG_TAG "TDS_UART"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 uint32_t TDS_Value = 0;

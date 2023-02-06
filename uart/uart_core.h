@@ -111,7 +111,7 @@
 #define         GET_WIFI_STATUS_CMD             0x16                            //获取wifi状态
 #define         FACTORY_SET_CMD                 0x17                            //恢复出厂设置
 #define         INFORM_DEV_DEV_DEL_CMD          0x18                            //报告移除状态
-#define         LOCAL_SUBDEV_DEL_CMD            0x19                            //本地删除子设备
+#define         DEVICE_REBOOT_CMD               0x19                            //重启设备
 #define         WIFI_AP_ENABLE_CMD              0x1a                            //本地允许/关闭添加子设备
 #define         TELEMETRY_CONTROL_CMD           0x1b                            //数据遥测控制
 #define         UPDATE_CONTROL_CMD              0x1c                            //网关升级控制
@@ -121,8 +121,6 @@
 //=============================================================================
 //数据帧类型
 //=============================================================================
-#define         RST_SET_CMD                  0x01
-#define         DEF_SET_CMD                  0x02
 #define         RAS_SET_CMD                  0x03
 #define         RAS_GET_CMD                  0x04
 #define         RAS_PUT_CMD                  0x05
@@ -180,12 +178,10 @@
 #define         COE_GET_CMD                  0x39
 #define         COE_PUT_CMD                  0x3A
 #define         CND_PUT_CMD                  0x3B
-#define         WST_GET_CMD                  0x3C
-#define         WST_SET_CMD                  0x3D
-#define         EMR_SET_CMD                  0x3E
-#define         EMR_GET_CMD                  0x3F
-#define         RCP_SET_CMD                  0x40
-#define         RCP_GET_CMD                  0x41
+#define         EMR_SET_CMD                  0x3C
+#define         EMR_GET_CMD                  0x3D
+#define         RCP_SET_CMD                  0x3E
+#define         RCP_GET_CMD                  0x3F
 
 typedef struct {
     unsigned char dp_id;                    //dp序号

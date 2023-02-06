@@ -4607,7 +4607,7 @@ static void UserMain19WinFun(void *param)
                    }
                    else
                    {
-                       Flash_Clear();
+                       device_factory_set();
                        GuiClearScreen(0);
                        GuiWinDeleteTop();
                        FirstFlag[19]=0;
@@ -5607,7 +5607,7 @@ static void UserMain31WinFun(void *param)
                 case OTA_Searching:
                     ScreenTimerStop();
                     GuiRowText(25,28,115,0,"Searching...");
-                    if(wifi_status == 3)
+                    if(wifi_status == 4)
                     {
                         wifi_ota_request(1);
                         wifi_ota_timer_refresh();

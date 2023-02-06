@@ -2,16 +2,6 @@
 #include "uart_api.h"
 #include "uart_core.h"
 
-void rst_set_cb(const unsigned char value[], unsigned short length)
-{
-    wifi_uart_write_frame(RST_SET_CMD,MCU_TX_VER,0);
-    rt_hw_cpu_reset();
-}
-void def_set_cb(const unsigned char value[], unsigned short length)
-{
-    wifi_uart_write_frame(DEF_SET_CMD,MCU_TX_VER,0);
-    Flash_Clear();
-}
 void ras_set_cb(const unsigned char value[], unsigned short length)
 {
     wifi_uart_write_command_value(RAS_SET_CMD,syr_moto_set());

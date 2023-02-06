@@ -38,12 +38,6 @@ void telemetry_timer_callback(void *parameter)
     rt_pm_sleep_request(PM_PERIOD_ID, PM_SLEEP_MODE_NONE);
     rt_sem_release(telemetry_detect_sem);
 }
-void telemetry_test(void)
-{
-    rt_sem_release(telemetry_detect_sem);
-    LOG_D("Telemetry Test\r\n");
-}
-MSH_CMD_EXPORT(telemetry_test,telemetry_test);
 void telemetry_thread_callback(void *parameter)
 {
     while(1)
@@ -69,7 +63,7 @@ void Telemetry_Init(void)
 {
     telemetry_detect_sem = rt_sem_create("telemetry_detect_sem", 0, RT_IPC_FLAG_FIFO);
     telemetry_recv_sem = rt_sem_create("telemetry_recv_sem", 0, RT_IPC_FLAG_FIFO);
-    telemetry_thread = rt_thread_create("telemetry_t", telemetry_thread_callback, RT_NULL, 1024, 10, 10);
+    telemetry_thread = rt_thread_create("telemetry_t", telemetry_thread_callback, RT_NULL, 2048, 10, 10);
     if(telemetry_thread != RT_NULL)
     {
         rt_thread_startup(telemetry_thread);
