@@ -3,6 +3,7 @@
 #endif
 
 struct rt_event lcd_jump_event;
+#define BACK (1 << 0)
 #define TDS (1 << 1)
 #define STALLING (1 << 2)
 #define FINISH (1 << 3)

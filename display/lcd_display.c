@@ -715,6 +715,10 @@ void LcdtoBackwash(void)
         }
     }
 }
+void Jump_BACK(void)
+{
+    rt_event_send(&lcd_jump_event, BACK);
+}
 void Jump_TDS(void)
 {
     rt_event_send(&lcd_jump_event, TDS);
@@ -1319,10 +1323,13 @@ static void UserMain3WinFun(void *param)
     }
      else
      {
-        if(rt_event_recv(&lcd_jump_event, (TDS|STALLING|FINISH|NOMOTO|EXIT),RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,RT_WAITING_NO, &e) == RT_EOK)
+        if(rt_event_recv(&lcd_jump_event, (BACK|TDS|STALLING|FINISH|NOMOTO|EXIT),RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,RT_WAITING_NO, &e) == RT_EOK)
         {
             switch(e)
             {
+            case BACK:
+                GuiRowText(25,40,85,0,"<--<--<--<--");
+                break;
             case TDS:
                 screen_reload=0;
                 GuiClearScreen(0);
@@ -1347,6 +1354,7 @@ static void UserMain3WinFun(void *param)
                 Flash_Set(11,Counter_Error);
                 wifi_coe_update();
                 led_select(1);
+                moto_done = 1;
                 break;
             case STALLING:
                 screen_reload=0;
@@ -1368,6 +1376,7 @@ static void UserMain3WinFun(void *param)
                 Flash_Set(11,Counter_Error);
                 wifi_coe_update();
                 led_select(1);
+                moto_done = 1;
                 break;
             case FINISH:
                 screen_reload=1;
@@ -1385,6 +1394,7 @@ static void UserMain3WinFun(void *param)
                     GuiRowText(106,56,30,0,"OK");
                 }
                 DoneJump();
+                moto_done = 1;
                 break;
             case NOMOTO:
                 screen_reload=0;
@@ -1406,6 +1416,7 @@ static void UserMain3WinFun(void *param)
                 Flash_Set(11,Counter_Error);
                 wifi_coe_update();
                 led_select(1);
+                moto_done = 1;
                 break;
             case EXIT:
                 screen_reload=1;
@@ -1416,10 +1427,10 @@ static void UserMain3WinFun(void *param)
                 GuiWinInit();
                 GuiWinAdd(&userMain1Win);
                 led_select(0);
+                moto_done = 1;
                 break;
             }
             GuiUpdateDisplayAll();
-            moto_done = 1;
         }
         K0_Status = rt_sem_take(K0_Sem, 0);
         K1_Status = rt_sem_take(K1_Sem, 0);

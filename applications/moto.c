@@ -241,6 +241,7 @@ void MotoRight_Callback(void *parameter)
 {
     if(MotoWorkFlag == MOTO_FORWARD)
     {
+        Jump_BACK();
         Moto_Run(MOTO_WAITBACK);
         TDS_Work();
         rt_timer_start(Moto_Cycle_Timer);
