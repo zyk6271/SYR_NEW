@@ -20,7 +20,7 @@ void cnd_get_cb(const unsigned char value[], unsigned short length)
 }
 void wifi_cnd_update(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(CND_PUT_CMD, update_value);
 }
@@ -38,7 +38,7 @@ void ala_get_cb(const unsigned char value[], unsigned short length)
 }
 void ala_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     uint8_t ret = syr_remain_auto_time_set(update_value);
     if(ret==RT_EOK)
@@ -56,7 +56,7 @@ void alr_get_cb(const unsigned char value[], unsigned short length)
 }
 void alr_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     uint8_t ret = syr_remain_remind_time_set(update_value);
     if(ret==RT_EOK)
@@ -70,7 +70,7 @@ void alr_set_cb(const unsigned char value[], unsigned short length)
 }
 void rse_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(RSE_SET_CMD,update_value);
     syr_remind_time_set(update_value);
@@ -85,7 +85,7 @@ void wifi_rse_update(const unsigned char value[], unsigned short length)
 }
 void rsa_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(RSA_SET_CMD,update_value);
     syr_auto_time_set(update_value);
@@ -100,7 +100,7 @@ void wifi_rsa_update(const unsigned char value[], unsigned short length)
 }
 void rsi_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(RSI_SET_CMD,update_value);
     syr_range_set(update_value);
@@ -115,7 +115,7 @@ void wifi_rsi_update(const unsigned char value[], unsigned short length)
 }
 void rsd_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(RSD_SET_CMD,update_value);
     syr_backwashtime_set(update_value);
@@ -130,7 +130,7 @@ void wifi_rsd_update(const unsigned char value[], unsigned short length)
 }
 void cnf_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(CNF_SET_CMD,update_value);
     syr_tdscalib_set(update_value);
@@ -145,7 +145,7 @@ void wifi_cnf_update(const unsigned char value[], unsigned short length)
 }
 void cnl_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(CNL_SET_CMD,update_value);
     syr_tdslimit_set(update_value);
@@ -160,7 +160,7 @@ void wifi_cnl_update(const unsigned char value[], unsigned short length)
 }
 void sse_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(SSE_SET_CMD,update_value);
     syr_switch_remind_set(update_value);
@@ -175,7 +175,7 @@ void wifi_sse_update(const unsigned char value[], unsigned short length)
 }
 void ssa_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(SSA_SET_CMD,update_value);
     syr_switch_auto_set(update_value);
@@ -190,7 +190,7 @@ void wifi_ssa_update(const unsigned char value[], unsigned short length)
 }
 void ssd_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(SSD_SET_CMD,update_value);
     syr_switch_delta_set(update_value);
@@ -205,7 +205,7 @@ void wifi_ssd_update(const unsigned char value[], unsigned short length)
 }
 void lng_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(LNG_SET_CMD,update_value);
     syr_language_set(update_value);
@@ -228,7 +228,7 @@ void wifi_sup_update(const unsigned char value[], unsigned short length)
 }
 void com_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(COM_SET_CMD,update_value);
     syr_count_manual_set(update_value);
@@ -243,7 +243,7 @@ void wifi_com_update(const unsigned char value[], unsigned short length)
 }
 void coa_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(COA_SET_CMD,update_value);
     syr_count_auto_set(update_value);
@@ -258,7 +258,7 @@ void wifi_coa_update(const unsigned char value[], unsigned short length)
 }
 void cod_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(COD_SET_CMD,update_value);
     syr_count_delta_set(update_value);
@@ -273,7 +273,7 @@ void wifi_cod_update(const unsigned char value[], unsigned short length)
 }
 void coe_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(COE_SET_CMD,update_value);
     syr_count_error_set(update_value);
@@ -288,7 +288,7 @@ void wifi_coe_update(const unsigned char value[], unsigned short length)
 }
 void rcp_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(RCP_SET_CMD,update_value);
     syr_telemetry_period_set(update_value);
@@ -299,7 +299,7 @@ void rcp_get_cb(const unsigned char value[], unsigned short length)
 }
 void emr_set_cb(const unsigned char value[], unsigned short length)
 {
-    unsigned char update_value;
+    unsigned int update_value;
     update_value = mcu_get_dp_download_value(value,length);
     wifi_uart_write_command_value(EMR_SET_CMD,update_value);
     syr_telemetry_timeout_set(update_value);
