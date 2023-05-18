@@ -16,13 +16,13 @@
 #define LED_B_PIN                   20
 
 //LCD
-#define LCD_RST                     19
-#define LCD_RS                      50
-#define LCD_CLK                     44
-#define LCD_SDA                     43
-#define LCD_BL                      42
-#define LCD_EN                      15
-#define LCD_NSS                     23
+#define LCD_RST_PIN                 19
+#define LCD_DC_PIN                  50
+#define LCD_SCK_PIN                 44
+#define LCD_SDA_PIN                 43
+#define LCD_BK_PIN                  42
+#define LCD_PWR_PIN                 15
+#define LCD_NSS_PIN                 23
 
 //Key
 #define K0                          26

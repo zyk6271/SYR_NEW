@@ -35,9 +35,9 @@ typedef struct{
     uint16_t wide;
     uint16_t hight;
     uint8_t   *title;   // ���������ָ��(NULLΪ����ʾ)
-    void(*WindowFunction)(void *param); // ���ڶ�Ӧ�ķ������
+    void(*WindowFunction)(void *param);
+    void(*InputFunction)(void *param);
     void * param;       //����
-    uint8_t firstflag;
 }lkdWin;
 
 /* lkd���ڹ��� */

@@ -122,6 +122,9 @@ void GuiButton(lkdButton *pButton)
 	lkdFont *pFont;
 	lkdColour forecolor,backcolor;
 
+    GuiSetForecolor(1);
+    GuiSetbackcolor(0);
+
 	pFont = GetCurrentFont();
 	forecolor = GuiGetForecolor();
 	backcolor=  GuiGetbackcolor();
@@ -132,15 +135,18 @@ void GuiButton(lkdButton *pButton)
     if(pButton->flag == BUTTON_UP)
     {
         GuiFillRect(pButton->x,pButton->y+2,endx,endy-2, backcolor);
-        if(pButton->linesize>0)GuiRowTextWithLine(pButton->x + 4,pButton->y+4,pButton->wide - 3,pButton->linesize,FONT_LEFT,pButton->name);
-        else GuiRowText(pButton->x + 4,pButton->y+4,pButton->wide - 3,FONT_LEFT,pButton->name);
+        if(pButton->linesize>0)GuiRowTextWithLine(pButton->x + 4,pButton->y+4,pButton->wide - 3,pButton->linesize,FONT_MID,pButton->name);
+        else GuiRowText(pButton->x + 4,pButton->y+4,pButton->wide - 3,FONT_MID,pButton->name);
 	}
-	else{
+	else
+	{
 		GuiFillRect(pButton->x ,pButton->y+2 ,endx ,endy-2 ,forecolor);
-		GuiExchangeColor();
-		if(pButton->linesize)GuiRowTextWithLine(pButton->x+4 ,pButton->y+4,pButton->wide-3 ,pButton->linesize,FONT_LEFT,pButton->name);
-		else GuiRowText(pButton->x+4 ,pButton->y+4,pButton->wide-3 ,FONT_LEFT,pButton->name);
-		GuiExchangeColor();
+        GuiSetForecolor(0);
+        GuiSetbackcolor(1);
+		if(pButton->linesize)GuiRowTextWithLine(pButton->x+4 ,pButton->y+4,pButton->wide-3 ,pButton->linesize,FONT_MID,pButton->name);
+		else GuiRowText(pButton->x+4 ,pButton->y+4,pButton->wide-3 ,FONT_MID,pButton->name);
+        GuiSetForecolor(1);
+        GuiSetbackcolor(0);
 	}
 }
 

@@ -3,15 +3,15 @@
   * @author  guoweilkd
   * @version V0.0.0
   * @date    2018/06/05
-  * @brief  lkdGui²Ëµ¥¹ÜÀí
+  * @brief  lkdGuiï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½
   */
 
 #include "lkdGui.h"
 
 /**
-  *@brief  ²Ëµ¥ÐÖµÜ½Úµã²åÈë
-  *@param  bNode Ç°Ò»¸öÐÖµÜ½Úµã
-  *@param  pNode Òª²åÈëµÄ½Úµã
+  *@brief  ï¿½Ëµï¿½ï¿½ÖµÜ½Úµï¿½ï¿½ï¿½ï¿½
+  *@param  bNode Ç°Ò»ï¿½ï¿½ï¿½ÖµÜ½Úµï¿½
+  *@param  pNode Òªï¿½ï¿½ï¿½ï¿½Ä½Úµï¿½
   *@retval None
   */
 void GuiMenuBroNodeInsert(lkdMenuNode *bNode, lkdMenuNode *pNode)
@@ -23,9 +23,9 @@ void GuiMenuBroNodeInsert(lkdMenuNode *bNode, lkdMenuNode *pNode)
 }
 
 /**
-  *@brief  ²Ëµ¥×Ó½Úµã²åÈë
-  *@param  fNode ¸¸½Úµã
-  *@param  pNode Òª²åÈëµÄ½Úµã
+  *@brief  ï¿½Ëµï¿½ï¿½Ó½Úµï¿½ï¿½ï¿½ï¿½
+  *@param  fNode ï¿½ï¿½ï¿½Úµï¿½
+  *@param  pNode Òªï¿½ï¿½ï¿½ï¿½Ä½Úµï¿½
   *@retval None
   */
 void GuiMenuSonNodeInsert(lkdMenuNode *fNode, lkdMenuNode *pNode)
@@ -37,10 +37,10 @@ void GuiMenuSonNodeInsert(lkdMenuNode *fNode, lkdMenuNode *pNode)
 }
 
 /**
-  *@brief  ²Ëµ¥½ÚµãÉ¾³ý
+  *@brief  ï¿½Ëµï¿½ï¿½Úµï¿½É¾ï¿½ï¿½
   *@param  pMenu
-  *@param  node ÒªÉ¾³ýµÄ½ÚµãID
-  *@retval 0 É¾³ý³É¹¦ 1 fbNodeºÍthisNodeÃ»ÓÐ¹ØÏµ
+  *@param  node ÒªÉ¾ï¿½ï¿½ï¿½Ä½Úµï¿½ID
+  *@retval 0 É¾ï¿½ï¿½ï¿½É¹ï¿½ 1 fbNodeï¿½ï¿½thisNodeÃ»ï¿½Ð¹ï¿½Ïµ
   */
 uint8_t GuiMenuNodeDelete(lkdMenuNode *fbNode, lkdMenuNode *thisNode)
 {
@@ -57,9 +57,9 @@ uint8_t GuiMenuNodeDelete(lkdMenuNode *fbNode, lkdMenuNode *thisNode)
 }
 
 /**
-  *@brief  »ñÈ¡ÐÖµÜ½ÚµãÊý
-  *@param  pbeginNode ÆðÊ¼½Úµã
-  *@retval ½ÚµãÊý
+  *@brief  ï¿½ï¿½È¡ï¿½ÖµÜ½Úµï¿½ï¿½ï¿½
+  *@param  pbeginNode ï¿½ï¿½Ê¼ï¿½Úµï¿½
+  *@retval ï¿½Úµï¿½ï¿½ï¿½
   */
 static uint8_t GetbNodesNum(const lkdMenuNode *pbeginNode)
 {
@@ -72,9 +72,9 @@ static uint8_t GetbNodesNum(const lkdMenuNode *pbeginNode)
 }
 
 /**
-  *@brief  »ñÈ¡µ±Ç°½ÚµãµÄÖ¸Õë
-  *@param  pM ²Ëµ¥¾ä±ú
-  *@retval NULL Ã»ÕÒµ½ lkdMenuNode µ±Ç°½ÚµãµÄÖ¸Õë
+  *@brief  ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½Úµï¿½ï¿½Ö¸ï¿½ï¿½
+  *@param  pM ï¿½Ëµï¿½ï¿½ï¿½ï¿½
+  *@retval NULL Ã»ï¿½Òµï¿½ lkdMenuNode ï¿½ï¿½Ç°ï¿½Úµï¿½ï¿½Ö¸ï¿½ï¿½
   */
 lkdMenuNode *GetpNodeFromIndex(lkdMenu *pM)
 {
@@ -90,11 +90,11 @@ lkdMenuNode *GetpNodeFromIndex(lkdMenu *pM)
 	return NULL;
 }
 /**
-  *@brief  »ñÈ¡Ñ¡ÖÐ½ÚµãµÄ»æÖÆy×ø±ê
+  *@brief  ï¿½ï¿½È¡Ñ¡ï¿½Ð½Úµï¿½Ä»ï¿½ï¿½ï¿½yï¿½ï¿½ï¿½ï¿½
   *@param  pM
-  *@param  index Ë÷Òý
-  *@param  cy y¿ªÊ¼»æÖÆ×ø±ê
-  *@retval y×ø±ê
+  *@param  index ï¿½ï¿½ï¿½ï¿½
+  *@param  cy yï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  *@retval yï¿½ï¿½ï¿½ï¿½
   */
 static lkdCoord GetCheckedNodeDrawy(lkdMenu *pM, uint8_t index, lkdCoord cy)
 {
@@ -109,11 +109,11 @@ static lkdCoord GetCheckedNodeDrawy(lkdMenu *pM, uint8_t index, lkdCoord cy)
 }
 
 /**
-  *@brief  »ñÈ¡Ó¦¸Ã»æÖÆµÄ½ÚµãÊýÄ¿£¬²¢ÐÞ¸Ä»æÖÆ×ø±ê²Î¿¼
-  *@param  pM ²Ëµ¥¾ä±ú
-  *@param  pDraw »æÖÆ½Úµã¿ªÊ¼´¦
-  *@param  drawy ¿ªÊ¼»æÖÆ×ø±ê²Î¿¼
-  *@retval »æÖÆ½ÚµãÊý
+  *@brief  ï¿½ï¿½È¡Ó¦ï¿½Ã»ï¿½ï¿½ÆµÄ½Úµï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸Ä»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½
+  *@param  pM ï¿½Ëµï¿½ï¿½ï¿½ï¿½
+  *@param  pDraw ï¿½ï¿½ï¿½Æ½Úµã¿ªÊ¼ï¿½ï¿½
+  *@param  drawy ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½
+  *@retval ï¿½ï¿½ï¿½Æ½Úµï¿½ï¿½ï¿½
   */
 static uint8_t GetDrawNodes(const lkdMenu *pM,const lkdMenuNode *pDraw,lkdCoord *drawy)
 {
@@ -121,10 +121,10 @@ static uint8_t GetDrawNodes(const lkdMenu *pM,const lkdMenuNode *pDraw,lkdCoord 
 	int16_t ty = *drawy;
 	nodeNum = GetbNodesNum(pDraw);
 	DrawNodeNum = (pM->hight - 1 - (*drawy - pM->y)) / pM->Itemshigh;
-	if(DrawNodeNum >= nodeNum){//¿É»æÖÆµÄ½Úµã¶àÓà×Ü½Úµã
+	if(DrawNodeNum >= nodeNum){//ï¿½É»ï¿½ï¿½ÆµÄ½Úµï¿½ï¿½ï¿½ï¿½ï¿½Ü½Úµï¿½
 		return nodeNum;
 	}
-	/* ¿É»æÖÆµÄ½ÚµãÐ¡ÓÚ×Ü½Úµã */
+	/* ï¿½É»ï¿½ï¿½ÆµÄ½Úµï¿½Ð¡ï¿½ï¿½ï¿½Ü½Úµï¿½ */
 	while(1){
 		DrawNodeNum ++;
 		ty -= pM->Itemshigh;
@@ -146,18 +146,18 @@ static uint8_t GetDrawNodesNum(const lkdMenu *pM,const lkdMenuNode *pDraw,lkdCoo
 	uint8_t nodeNum,DrawNodeNum;
 	nodeNum = GetbNodesNum(pDraw);
 	DrawNodeNum = (pM->hight - 1 - (drawy - pM->y)) / pM->Itemshigh;
-	if(DrawNodeNum >= nodeNum){//¿É»æÖÆµÄ½Úµã¶àÓà×Ü½Úµã
+	if(DrawNodeNum >= nodeNum){//ï¿½É»ï¿½ï¿½ÆµÄ½Úµï¿½ï¿½ï¿½ï¿½ï¿½Ü½Úµï¿½
 		DrawNodeNum = nodeNum;
 	}
 	return DrawNodeNum;
 }
 /**
-  *@brief  »æÖÆµÄ½Úµã
-  *@param  pM ²Ëµ¥¾ä±ú
-  *@param  pthisNode »æÖÆ½Úµã¿ªÊ¼´¦
-  *@param  beginy ¿ªÊ¼»æÖÆ×ø±ê
-  *@param  index Ë÷Òý
-  *@param  cNum ¿É»æÖÆ½ÚµãÊý
+  *@brief  ï¿½ï¿½ï¿½ÆµÄ½Úµï¿½
+  *@param  pM ï¿½Ëµï¿½ï¿½ï¿½ï¿½
+  *@param  pthisNode ï¿½ï¿½ï¿½Æ½Úµã¿ªÊ¼ï¿½ï¿½
+  *@param  beginy ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  *@param  index ï¿½ï¿½ï¿½ï¿½
+  *@param  cNum ï¿½É»ï¿½ï¿½Æ½Úµï¿½ï¿½ï¿½
   *@retval None
   */
 static void DrawNodes(lkdMenu *pM,lkdMenuNode *pthisNode,lkdCoord x,\
@@ -166,10 +166,13 @@ static void DrawNodes(lkdMenu *pM,lkdMenuNode *pthisNode,lkdCoord x,\
 	uint8_t indexOffset = 0;
 	lkdColour forecolor,backcolor; 
 
+    GuiSetForecolor(1);
+    GuiSetbackcolor(0);
+
 	forecolor = GuiGetForecolor();
 	backcolor=  GuiGetbackcolor();
 
-	/* È·¶¨´ÓÄÄ¸ö½Úµã¿ªÊ¼»­ */
+	/* È·ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½Úµã¿ªÊ¼ï¿½ï¿½ */
 	if(cNum <= index){
 		indexOffset = index - cNum + 1;
 		for(uint8_t i = 0; i < indexOffset; i ++){
@@ -181,12 +184,14 @@ static void DrawNodes(lkdMenu *pM,lkdMenuNode *pthisNode,lkdCoord x,\
 		if(indexOffset + i == index){
 			GuiFillRect(x + 1,beginy + 1 + i*pM->Itemshigh,\
 				x + pM->ItemsWide - 1, beginy + (i+1)*pM->Itemshigh - 1, forecolor);
-			GuiExchangeColor();
+	        GuiSetForecolor(0);
+	        GuiSetbackcolor(1);
 			GuiRowText(x + 2,beginy + 2 + i*pM->Itemshigh,pM->ItemsWide - 3,FONT_LEFT,pthisNode->name);
 			if(pthisNode->pSon != NULL){
 				GuiRowText(x + pM->ItemsWide - 8,beginy + 2 + i*pM->Itemshigh,6,FONT_LEFT,">");
 			}
-			GuiExchangeColor();
+	        GuiSetForecolor(1);
+	        GuiSetbackcolor(0);
 		}
 		else{
 			GuiRowText(x + 2,beginy + 2 + i*pM->Itemshigh,pM->ItemsWide - 3,FONT_LEFT,pthisNode->name);
@@ -209,7 +214,7 @@ static void DrawNodes(lkdMenu *pM,lkdMenuNode *pthisNode,lkdCoord x,\
 }
 
 /**
-  *@brief  »­²Ëµ¥
+  *@brief  ï¿½ï¿½ï¿½Ëµï¿½
   *@param  pM
   *@retval None
   */
@@ -220,10 +225,10 @@ static void DrawMenu(lkdMenu *pM)
 
 	backcolor = GuiGetbackcolor();
 
-	/* ²Ëµ¥·¶Î§¿ÉÏÔÊ¾µÄ¼¶Êý */
+	/* ï¿½Ëµï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ä¼ï¿½ï¿½ï¿½ */
 	tCount = pM->wide / pM->ItemsWide;
 	if(tCount - pM->count >= 0){
-		/* ¸ù¾ÝÉÏÒ»¼¶¼ÆËã±¾¼¶±äÁ¿ÐÅÏ¢ */
+		/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ã±¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ */
 		pM->cy = GetCheckedNodeDrawy(pM,pM->stack[pM->count - 1].index,\
 			pM->stack[pM->count - 1].cy);
 		pM->cNum = GetDrawNodes(pM, pM->pDraw, &pM->cy);
@@ -234,14 +239,14 @@ static void DrawMenu(lkdMenu *pM)
 		uint8_t index,cNum;
 		int16_t cy;
 		GuiFillRect(pM->x, pM->y, pM->x + pM->wide - 1, pM->y + pM->hight - 1, backcolor);
-		for(uint8_t i = 1; i < tCount; i++){/* ²¹È«ÉÏ¼¶²Ëµ¥ */
+		for(uint8_t i = 1; i < tCount; i++){/* ï¿½ï¿½È«ï¿½Ï¼ï¿½ï¿½Ëµï¿½ */
 			index = pM->stack[pM->count - tCount + i].index;
 			cy = pM->stack[pM->count - tCount + i].cy;
 			cNum = GetDrawNodesNum(pM,pM->stack[pM->count - tCount + i].pNode,cy);
 			DrawNodes(pM, pM->stack[pM->count - tCount + i].pNode,\
 				(i-1)*pM->ItemsWide + pM->x, cy, index, cNum);
 		}
-		/* »­×îÐÂ²Ëµ¥ */
+		/* ï¿½ï¿½ï¿½ï¿½ï¿½Â²Ëµï¿½ */
 		pM->cy = GetCheckedNodeDrawy(pM,pM->stack[pM->count - 1].index,pM->stack[pM->count - 1].cy);
 		pM->cNum = GetDrawNodes(pM, pM->pDraw, &pM->cy);
 		pM->cx = (tCount - 1)*pM->ItemsWide + pM->x;
@@ -250,7 +255,7 @@ static void DrawMenu(lkdMenu *pM)
 }
 
 /**
-  *@brief  »­²Ëµ¥
+  *@brief  ï¿½ï¿½ï¿½Ëµï¿½
   *@param  pM
   *@retval None
   */
@@ -261,7 +266,7 @@ static void DrawAllMenu(lkdMenu *pM)
 
 	backcolor = GuiGetbackcolor();
 
-	/* ²Ëµ¥·¶Î§¿ÉÏÔÊ¾µÄ¼¶Êý */
+	/* ï¿½Ëµï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ä¼ï¿½ï¿½ï¿½ */
 	tCount = pM->wide / pM->ItemsWide;
 	if(tCount - pM->count >= 0){
 		lkdCoord tcy;
@@ -279,14 +284,14 @@ static void DrawAllMenu(lkdMenu *pM)
 		uint8_t index,cNum;
 		int16_t cy;
 		GuiFillRect(pM->x, pM->y, pM->x + pM->wide - 1, pM->y + pM->hight - 1, backcolor);
-		for(uint8_t i = 1; i < tCount; i++){/* ²¹È«ÉÏ¼¶²Ëµ¥ */
+		for(uint8_t i = 1; i < tCount; i++){/* ï¿½ï¿½È«ï¿½Ï¼ï¿½ï¿½Ëµï¿½ */
 			index = pM->stack[pM->count - tCount + i].index;
 			cy = pM->stack[pM->count - tCount + i].cy;
 			cNum = GetDrawNodesNum(pM,pM->stack[pM->count - tCount + i].pNode,cy);
 			DrawNodes(pM, pM->stack[pM->count - tCount + i].pNode,\
 				(i-1)*pM->ItemsWide + pM->x, cy, index, cNum);
 		}
-		/* »­×îÐÂ²Ëµ¥ */
+		/* ï¿½ï¿½ï¿½ï¿½ï¿½Â²Ëµï¿½ */
 		pM->cy = GetCheckedNodeDrawy(pM,pM->stack[pM->count - 1].index,pM->stack[pM->count - 1].cy);
 		pM->cNum = GetDrawNodes(pM, pM->pDraw, &pM->cy);
 		pM->cx = (tCount - 1)*pM->ItemsWide + pM->x;
@@ -295,7 +300,7 @@ static void DrawAllMenu(lkdMenu *pM)
 }
 
 /**
-  *@brief  ÖØ»æ²Ëµ¥
+  *@brief  ï¿½Ø»ï¿½Ëµï¿½
   *@param  pM
   *@retval None
   */
@@ -306,7 +311,7 @@ static void RedrawMenu(lkdMenu *pM)
 	
 	backcolor = GuiGetbackcolor();
 
-	/* ²Ëµ¥·¶Î§¿ÉÏÔÊ¾µÄ¼¶Êý */
+	/* ï¿½Ëµï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ä¼ï¿½ï¿½ï¿½ */
 	tCount = pM->wide / pM->ItemsWide;
 	if(tCount - pM->count >= 0){
 		offset = 1;
@@ -326,20 +331,20 @@ static void RedrawMenu(lkdMenu *pM)
 }
 
 /**
-  *@brief  ²Ëµ¥½ÚµãËùÓÐ×Ó½ÚµãµÄÏÔÊ¾
+  *@brief  ï¿½Ëµï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½Úµï¿½ï¿½ï¿½ï¿½Ê¾
   *@param  pM
-  *@param  fNode ¸¸½Úµã
-  *@retval 0 ÏÔÊ¾Ìí¼Ó³É¹¦ 1 Õ»²»¹»ÓÃÁË
+  *@param  fNode ï¿½ï¿½ï¿½Úµï¿½
+  *@retval 0 ï¿½ï¿½Ê¾ï¿½ï¿½Ó³É¹ï¿½ 1 Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   */
 static uint8_t GuiMenuNodesDisplay(lkdMenu *pM,lkdMenuNode *node)
 {
-	if(pM->count < pM->stackNum){//ÅÐ¶ÏÕ»ÊÇ·ñÒç³ö
-		/* Ñ¹Õ»ÉÏÒ»¼¶½ÚµãÓÐÓÃÐÅÏ¢ */
+	if(pM->count < pM->stackNum){//ï¿½Ð¶ï¿½Õ»ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
+		/* Ñ¹Õ»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ */
 		pM->stack[pM->count].index = pM->index;
 		pM->stack[pM->count].pNode = pM->pDraw;
 		pM->stack[pM->count].cy = pM->cy;
 		
-		/* ³õÊ¼»¯´Ë¼¶½ÚµãÓÐ¹ØÐÅÏ¢ */
+		/* ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ë¼ï¿½ï¿½Úµï¿½ï¿½Ð¹ï¿½ï¿½ï¿½Ï¢ */
 		pM->count ++;
 		pM->index = 0;
 		pM->pDraw = node;
@@ -351,16 +356,16 @@ static uint8_t GuiMenuNodesDisplay(lkdMenu *pM,lkdMenuNode *node)
 }
 
 /**
-  *@brief  ²Ëµ¥µ±Ç°½ÚµãÒþ²Ø
+  *@brief  ï¿½Ëµï¿½ï¿½ï¿½Ç°ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½
   *@param  pM
-  *@retval 0 ÏÔÊ¾Ìí¼Ó³É¹¦ 1 Ã»ÓÐ¿ÉÒþ²ØµÄ
+  *@retval 0 ï¿½ï¿½Ê¾ï¿½ï¿½Ó³É¹ï¿½ 1 Ã»ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½Øµï¿½
   */
 uint8_t GuiMenuCurrentNodeHide(lkdMenu *pM)
 {
 	if(pM->count >= 1){
 		pM->count --;
 	}
-	if(pM->count < pM->stackNum){//ÅÐ¶ÏÕ»ÊÇ·ñÎª¿Õ
+	if(pM->count < pM->stackNum){//ï¿½Ð¶ï¿½Õ»ï¿½Ç·ï¿½Îªï¿½ï¿½
 		RedrawMenu(pM);
 		pM->index = pM->stack[pM->count].index;
 		pM->pDraw = pM->stack[pM->count].pNode;
@@ -373,9 +378,9 @@ uint8_t GuiMenuCurrentNodeHide(lkdMenu *pM)
 }
 
 /**
-  *@brief  ²Ëµ¥µ±Ç°½ÚµãÕ¹¿ª
+  *@brief  ï¿½Ëµï¿½ï¿½ï¿½Ç°ï¿½Úµï¿½Õ¹ï¿½ï¿½
   *@param  pM
-  *@retval 0 ³É¹¦ 1 Ê§°Ü
+  *@retval 0 ï¿½É¹ï¿½ 1 Ê§ï¿½ï¿½
   */
 uint8_t GuiMenuCurrentNodeSonUnfold(lkdMenu *pM)
 {
@@ -390,8 +395,8 @@ uint8_t GuiMenuCurrentNodeSonUnfold(lkdMenu *pM)
 }
 
 /**
-  *@brief  ÖØ»æ²Ëµ¥
-  *@param  pM ²Ëµ¥¾ä±ú
+  *@brief  ï¿½Ø»ï¿½Ëµï¿½
+  *@param  pM ï¿½Ëµï¿½ï¿½ï¿½ï¿½
   *@retval None
   */
 void GuiMenuRedrawMenu(lkdMenu *pM)
@@ -402,7 +407,7 @@ void GuiMenuRedrawMenu(lkdMenu *pM)
 	}
 }
 /**
-  *@brief  ²Ëµ¥ÏîÏòÉÏÒÆ¶¯
+  *@brief  ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
   *@param  pM
   *@retval None
   */
@@ -419,7 +424,7 @@ void GuiMenuItemUpMove(lkdMenu *pM)
 }
 
 /**
-  *@brief  ²Ëµ¥ÏîÏòÏÂÒÆ¶¯
+  *@brief  ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
   *@param  pM
   *@retval None
   */
@@ -434,8 +439,8 @@ void GuiMenuItemDownMove(lkdMenu *pM)
 }
 
 /**
-  *@brief  »ñÈ¡µ±Ç°½ÚµãID
-  *@param  pM ²Ëµ¥¾ä±ú
+  *@brief  ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½Úµï¿½ID
+  *@param  pM ï¿½Ëµï¿½ï¿½ï¿½ï¿½
   *@retval nodeId
   */
 uint16_t GuiMenuGetCurrentNodeID(lkdMenu *pM)
@@ -445,9 +450,9 @@ uint16_t GuiMenuGetCurrentNodeID(lkdMenu *pM)
 	return pNode->nodeId;
 }
 /**
-  *@brief  »ñÈ¡µ±Ç°½ÚµãÖ¸Õë
-  *@param  pM ²Ëµ¥¾ä±ú
-  *@retval ½ÚµãÖ¸Õë
+  *@brief  ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½Úµï¿½Ö¸ï¿½ï¿½
+  *@param  pM ï¿½Ëµï¿½ï¿½ï¿½ï¿½
+  *@retval ï¿½Úµï¿½Ö¸ï¿½ï¿½
   */
 lkdMenuNode *GuiMenuGetCurrentpNode(lkdMenu *pM)
 {
@@ -455,8 +460,8 @@ lkdMenuNode *GuiMenuGetCurrentpNode(lkdMenu *pM)
 }
 
 /**
-  *@brief  ²Ëµ¥³õÊ¼»¯
-  *@param  pM ²Ëµ¥¾ä±ú
+  *@brief  ï¿½Ëµï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+  *@param  pM ï¿½Ëµï¿½ï¿½ï¿½ï¿½
   *@retval NULL
   */
 void GuiMenuInit(lkdMenu *pM)

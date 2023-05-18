@@ -13,6 +13,8 @@ static volatile unsigned char wifi_uart_tx_buf[PROTOCOL_HEAD + WIFIR_UART_SEND_B
 static volatile unsigned char *queue_in = NULL;
 static volatile unsigned char *queue_out = NULL;
 
+rt_mq_t telemetry_queue;
+
 unsigned short firm_size;                                  //升级包一包的大小
 
 volatile unsigned char stop_update_flag;                                                 //停止一切数据上报
@@ -21,65 +23,57 @@ const DOWNLOAD_CMD_S download_cmd[] =
 {
     {RAS_SET_CMD, DP_TYPE_VALUE},
     {RAS_GET_CMD, DP_TYPE_VALUE},
-    {RAS_PUT_CMD, DP_TYPE_VALUE},
     {CND_GET_CMD, DP_TYPE_VALUE},
     {NET_GET_CMD, DP_TYPE_VALUE},
     {BAT_GET_CMD, DP_TYPE_VALUE},
-    {ALA_GET_CMD, DP_TYPE_VALUE},
-    {ALA_SET_CMD, DP_TYPE_VALUE},
-    {ALR_GET_CMD, DP_TYPE_VALUE},
-    {ALR_SET_CMD, DP_TYPE_VALUE},
     {RSE_SET_CMD, DP_TYPE_VALUE},
     {RSE_GET_CMD, DP_TYPE_VALUE},
-    {RSE_PUT_CMD, DP_TYPE_VALUE},
     {RSA_SET_CMD, DP_TYPE_VALUE},
     {RSA_GET_CMD, DP_TYPE_VALUE},
-    {RSA_PUT_CMD, DP_TYPE_VALUE},
     {RSI_SET_CMD, DP_TYPE_VALUE},
     {RSI_GET_CMD, DP_TYPE_VALUE},
-    {RSI_PUT_CMD, DP_TYPE_VALUE},
     {RSD_SET_CMD, DP_TYPE_VALUE},
     {RSD_GET_CMD, DP_TYPE_VALUE},
-    {RSD_PUT_CMD, DP_TYPE_VALUE},
     {CNF_SET_CMD, DP_TYPE_VALUE},
     {CNF_GET_CMD, DP_TYPE_VALUE},
-    {CNF_PUT_CMD, DP_TYPE_VALUE},
     {CNL_SET_CMD, DP_TYPE_VALUE},
     {CNL_GET_CMD, DP_TYPE_VALUE},
-    {CNL_PUT_CMD, DP_TYPE_VALUE},
     {SSE_SET_CMD, DP_TYPE_VALUE},
     {SSE_GET_CMD, DP_TYPE_VALUE},
-    {SSE_PUT_CMD, DP_TYPE_VALUE},
     {SSA_SET_CMD, DP_TYPE_VALUE},
     {SSA_GET_CMD, DP_TYPE_VALUE},
-    {SSA_PUT_CMD, DP_TYPE_VALUE},
     {SSD_SET_CMD, DP_TYPE_VALUE},
     {SSD_GET_CMD, DP_TYPE_VALUE},
-    {SSD_PUT_CMD, DP_TYPE_VALUE},
     {LNG_SET_CMD, DP_TYPE_VALUE},
     {LNG_GET_CMD, DP_TYPE_VALUE},
-    {LNG_PUT_CMD, DP_TYPE_VALUE},
     {SRN_GET_CMD, DP_TYPE_VALUE},
     {SUP_GET_CMD, DP_TYPE_VALUE},
-    {SUP_PUT_CMD, DP_TYPE_VALUE},
     {VER_GET_CMD, DP_TYPE_VALUE},
     {COM_SET_CMD, DP_TYPE_VALUE},
     {COM_GET_CMD, DP_TYPE_VALUE},
-    {COM_PUT_CMD, DP_TYPE_VALUE},
     {COA_SET_CMD, DP_TYPE_VALUE},
     {COA_GET_CMD, DP_TYPE_VALUE},
-    {COA_PUT_CMD, DP_TYPE_VALUE},
     {COD_SET_CMD, DP_TYPE_VALUE},
     {COD_GET_CMD, DP_TYPE_VALUE},
-    {COD_PUT_CMD, DP_TYPE_VALUE},
     {COE_SET_CMD, DP_TYPE_VALUE},
     {COE_GET_CMD, DP_TYPE_VALUE},
-    {COE_PUT_CMD, DP_TYPE_VALUE},
-    {CND_PUT_CMD, DP_TYPE_VALUE},
     {EMR_SET_CMD, DP_TYPE_VALUE},
     {EMR_GET_CMD, DP_TYPE_VALUE},
     {RCP_SET_CMD, DP_TYPE_VALUE},
     {RCP_GET_CMD, DP_TYPE_VALUE},
+    {VLV_GET_CMD, DP_TYPE_VALUE},
+    {ALA_GET_CMD, DP_TYPE_VALUE},
+    {NOT_GET_CMD, DP_TYPE_VALUE},
+    {WRN_GET_CMD, DP_TYPE_VALUE},
+    {ALM_GET_CMD, DP_TYPE_VALUE},
+    {ALW_GET_CMD, DP_TYPE_VALUE},
+    {ALN_GET_CMD, DP_TYPE_VALUE},
+    {WTI_SET_CMD, DP_TYPE_VALUE},
+    {WTI_GET_CMD, DP_TYPE_VALUE},
+    {APT_SET_CMD, DP_TYPE_VALUE},
+    {APT_GET_CMD, DP_TYPE_VALUE},
+    {WAD_SET_CMD, DP_TYPE_VALUE},
+    {WAD_GET_CMD, DP_TYPE_VALUE},
 };
 
 /**
@@ -226,7 +220,7 @@ unsigned char mcu_dp_value_update(unsigned char dpid,unsigned long value)
     send_len = set_wifi_uart_byte(send_len,value >> 8);
     send_len = set_wifi_uart_byte(send_len,value & 0xff);
 
-    wifi_uart_write_frame(DATA_ISSUED_CMD, MCU_TX_VER, send_len);
+    wifi_uart_write_frame(STATE_UPLOAD_CMD, MCU_TX_VER, send_len);
 
     return SUCCESS;
 }
@@ -293,7 +287,29 @@ void wifi_uart_write_frame(unsigned char fr_type, unsigned char fr_ver, unsigned
     wifi_uart_tx_buf[len - 1] = check_sum;
     wifi_uart_write_data((unsigned char *)wifi_uart_tx_buf, len);
 }
+/**
+ * @brief  向wifi串口发送一帧数据
+ * @param[in] {fr_type} 帧类型
+ * @param[in] {fr_ver} 帧版本
+ * @param[in] {len} 数据长度
+ * @return Null
+ */
+void wifi_uart_write_queue(unsigned char fr_type, unsigned char fr_ver, unsigned short len)
+{
+    unsigned char check_sum = 0;
 
+    wifi_uart_tx_buf[HEAD_FIRST] = 0x55;
+    wifi_uart_tx_buf[HEAD_SECOND] = 0xaa;
+    wifi_uart_tx_buf[PROTOCOL_VERSION] = fr_ver;
+    wifi_uart_tx_buf[FRAME_TYPE] = fr_type;
+    wifi_uart_tx_buf[LENGTH_HIGH] = len >> 8;
+    wifi_uart_tx_buf[LENGTH_LOW] = len & 0xff;
+
+    len += PROTOCOL_HEAD;
+    check_sum = get_check_sum((unsigned char *)wifi_uart_tx_buf, len - 1);
+    wifi_uart_tx_buf[len - 1] = check_sum;
+    rt_mq_send(telemetry_queue, (unsigned char *)wifi_uart_tx_buf, len);
+}
 /**
  * @brief  读取队列1字节数据
  * @param  Null
@@ -384,6 +400,7 @@ void wifi_protocol_init(void)
     //#error " 请在main函数中添加wifi_protocol_init()完成wifi协议初始化,并删除该行"
     queue_in = (unsigned char *)wifi_uart_rx_buf;
     queue_out = (unsigned char *)wifi_uart_rx_buf;
+    telemetry_queue = rt_mq_create("telemetry_mq", 64, 5, RT_IPC_FLAG_PRIO);
 
     stop_update_flag = DISABLE;
 }
@@ -548,15 +565,22 @@ void data_handle(unsigned short offset)
     unsigned char cmd_type = wifi_data_process_buf[offset + FRAME_TYPE];
 
     switch(cmd_type) {
-        case DEVICE_REBOOT_CMD:                                //产品信息
+        case DEVICE_REBOOT_CMD:                                //设备重启
             device_reboot();
-        case FACTORY_SET_CMD:                                //产品信息
+        break;
+        case FACTORY_SET_CMD:                                //出厂设置
             device_factory_set();
+        break;
         case PRODUCT_INFO_CMD:                                //产品信息
             product_info_update();
+        break;
         case WIFI_STATE_CMD:                                  //wifi联网状态
             wifi_uart_write_frame(WIFI_STATE_CMD, MCU_TX_VER, 0);
             wifi_status_change(wifi_data_process_buf[offset + DATA_START]);
+            break;
+        case WFC_CONTROL_CMD:                                  //wfc启动
+            wifi_connect_start();
+        break;
         case DATA_ISSUED_CMD:                                 //命令下发
             total_len = (wifi_data_process_buf[offset + LENGTH_HIGH] << 8) | wifi_data_process_buf[offset + LENGTH_LOW];
 
@@ -636,5 +660,7 @@ void data_handle(unsigned short offset)
         case UPDATE_PROGRSS_CMD:                                //网关升级进度
             wifi_progress_update(wifi_data_process_buf[offset + DATA_START]);
         break;
+        default:
+            break;
     }
 }

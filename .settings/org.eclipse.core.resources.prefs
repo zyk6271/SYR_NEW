@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//packages/lkdGui-latest/lkdGui_source/include/lkdGui.h=UTF-8
 encoding//uart/uart.c=GBK
 encoding//uart/uart.h=GBK
 encoding//uart/uart_api.h=GBK

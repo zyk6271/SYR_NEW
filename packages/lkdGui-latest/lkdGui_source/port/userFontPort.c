@@ -3,52 +3,52 @@
   * @author  guoweilkd
   * @version V0.0.0
   * @date    2018/04/18
-  * @brief  lkdGui×ÖÌåÇý¶¯½Ó¿Ú£¬ÓÉÒÆÖ²ÕßÌî³äº¯ÊýµÄ¾ßÌåÄÚÈÝ¡£
+  * @brief  lkdGuiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Ú£ï¿½ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ï¿½ï¿½äº¯ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¡ï¿½
   */
 
 #include "lkdGui.h"
 
-/* ×ÖÌå¿ØÖÆÊµÌå */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ */
 static lkdFont defaultFont;
 
 /**
-  *@brief »ñÈ¡ºº×Ö×ÖÄ£
-  *@param  code1,code2 ºº×Ö±àÂë[H,L] 
-  *@param  pBuff ×ÖÄ£buff
+  *@brief ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£
+  *@param  code1,code2 ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½[H,L]
+  *@param  pBuff ï¿½ï¿½Ä£buff
   *@retval 0
   */
 static uint8_t GetDfontData(uint8_t code1, uint8_t code2,uint8_t *pBuff)
 {
-    /* Ìí¼ÓÓÃ»§´úÂë */
+    /* ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ */
     return 0;
 }
 
 /**
-  *@brief »ñÈ¡ASCII×ÖÄ£
-  *@param  code1, ±àÂë 
-  *@param  pBuff ×ÖÄ£buff
+  *@brief ï¿½ï¿½È¡ASCIIï¿½ï¿½Ä£
+  *@param  code1, ï¿½ï¿½ï¿½ï¿½
+  *@param  pBuff ï¿½ï¿½Ä£buff
   *@retval 0
   */
 static uint8_t GetSfontData(uint8_t code1, uint8_t *pBuff)
 {
-		extern uint8_t GetFontASCII_5_7(uint8_t code1, uint8_t *pBuff);
-		GetFontASCII_5_7(code1, pBuff);
+    extern uint8_t GetFontASCII_5_7(uint8_t code1, uint8_t *pBuff);
+    GetFontASCII_5_7(code1, pBuff);
     return 0;
 }
 
 /**
-  *@brief ×ÖÌå³õÊ¼»¯
+  *@brief ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
   *@param  None
   *@retval None
   */
 void defaultFontInit(void)
 {
-    /* ¸ù¾Ý×ÖÌåÒªÇó×öÏàÓ¦µÄÐÞ¸Ä */
+    /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Þ¸ï¿½ */
 
-    /* ´ËbuffµÄ´óÐ¡ÓÉ×î´ó×ÖÄ£´óÐ¡¾ö¶¨ */
+    /* ï¿½ï¿½buffï¿½Ä´ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ */
 	static uint8_t dataBuff[12*2];
 
-	defaultFont.name = "ºº×Ö×ÖÄ£Îª12*12µÄGB2312,ASCII×ÖÄ£Îª5*7";
+	defaultFont.name = "user";
 	defaultFont.dhigh = 12;
 	defaultFont.dwide = 12;
 	defaultFont.shigh = 5;
@@ -57,8 +57,8 @@ void defaultFontInit(void)
 	defaultFont.getDfont = GetDfontData;
 	defaultFont.getSfont = GetSfontData;
 
-    /* ÉèÖÃÎªÏµÍ³Ä¬ÈÏ×ÖÌå */
-	GuiFontSet(&defaultFont);
-  GuiSetbackcolor(CWHITLE);
-  GuiSetForecolor(CBLACK);
+    /* ï¿½ï¿½ï¿½ï¿½ÎªÏµÍ³Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    GuiFontSet(&defaultFont);
+    GuiSetbackcolor(CWHITLE);
+    GuiSetForecolor(CBLACK);
 }

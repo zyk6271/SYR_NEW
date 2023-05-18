@@ -25,7 +25,7 @@
 #define LCD_BACKLIGHT_TIME      60*1000
 #define LCD_SLEEP_TIME          120*1000
 
-rt_timer_t Screen_Backlight_Timer=RT_NULL;
+rt_timer_t Screen_Backlight_Timer = RT_NULL;
 
 uint8_t Button_Wakeup_Flag;
 uint8_t Delta_Wakeup_Flag;

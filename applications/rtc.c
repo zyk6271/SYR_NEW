@@ -27,9 +27,6 @@ extern uint8_t LCD_Flag;
 
 extern uint8_t screen_reload;
 
-uint32_t RTC_Reminder_Time = 0;
-uint32_t RTC_Automatic_Time = 0;
-
 void RTC_Counter_Increase(void)
 {
     if(Reminder_Enable)
@@ -72,10 +69,10 @@ void RTC_Check_Callback(void *parameter)
                 {
                     RTC_Reminder_Time = 0;
                     Flash_Set(16,0);
-                    LOG_D("Reminder_Enable\r\n");
                     screen_reload = 0;
                     LCD_Restart(0);
                     JumptoReminder();
+                    insert_notify_array(0x07);
                 }
                 else
                 {
@@ -89,7 +86,6 @@ void RTC_Check_Callback(void *parameter)
                     RTC_Automatic_Time = 0;
                     Flash_Set(17,0);
                     screen_reload = 0;
-                    LOG_D("Automatic_Enable\r\n");
                     LCD_Restart(0);
                     JumptoAutomatic();
                 }
@@ -107,7 +103,7 @@ void RTC_Check_Init(void)
 {
     RTC_Check_Sem = rt_sem_create("RTC_Check_Sem", 0, RT_IPC_FLAG_FIFO);
     RTC_Check_Thread = rt_thread_create("RTC_Check", RTC_Check_Callback, RT_NULL, 2048, 10, 10);
-    if(RTC_Check_Thread!=RT_NULL)rt_thread_startup(RTC_Check_Thread);
+    rt_thread_startup(RTC_Check_Thread);
 }
 
 void RTC_AlarmConfig(void)
@@ -169,9 +165,6 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *RtcHandle)
 }
 void RTC_Init(void)
 {
-    RTC_Reminder_Time = Flash_Get(16);
-    RTC_Automatic_Time = Flash_Get(17);
-
     __HAL_RCC_RTC_ENABLE();
     HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
@@ -190,7 +183,6 @@ void RTC_Init(void)
     }
     RTC_AlarmConfig();
     RTC_Check_Init();
-    LOG_D("RTC Init is Success\r\n");
 }
 void RTC_Alarm_IRQHandler(void)
 {

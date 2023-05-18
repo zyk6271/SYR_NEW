@@ -73,7 +73,7 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 1024
+#define FINSH_THREAD_STACK_SIZE 2048
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
@@ -96,6 +96,7 @@
 #define PM_TICKLESS_THRESHOLD_TIME 1
 #define PM_ENABLE_DEBUG
 #define RT_USING_SPI
+#define RT_USING_SPI_BITOPS
 #define RT_USING_SFUD
 #define RT_SFUD_USING_FLASH_INFO_TABLE
 #define RT_SFUD_SPI_MAX_HZ 50000000
@@ -289,21 +290,42 @@
 /* Arduino libraries */
 
 
-/* Sensor libraries */
+/* Projects */
 
-/* end of Sensor libraries */
+/* end of Projects */
 
-/* Display libraries */
+/* Sensors */
 
-/* end of Display libraries */
+/* end of Sensors */
 
-/* Timing libraries */
+/* Display */
 
-/* end of Timing libraries */
+/* end of Display */
 
-/* Project libraries */
+/* Timing */
 
-/* end of Project libraries */
+/* end of Timing */
+
+/* Data Processing */
+
+/* end of Data Processing */
+
+/* Data Storage */
+
+/* Communication */
+
+/* Device Control */
+
+/* end of Device Control */
+
+/* Other */
+
+/* Signal IO */
+
+/* end of Signal IO */
+
+/* Uncategorized */
+
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 

@@ -79,10 +79,8 @@ int wifi_ota_receive(rt_uint8_t *buf, rt_size_t offset, rt_size_t len)
 }
 void wifi_ota_end(rt_uint8_t *buf, rt_size_t offset)
 {
+    Flash_Clear();
     LOG_I("update successfully,system will boot in 1 sec...\r\n");
-    rt_thread_mdelay(1000);
-    LOG_I("Reboot");
-    rt_hw_cpu_reset();
 }
 void wifi_ota_request(uint8_t value)
 {
@@ -97,19 +95,15 @@ void OTA_Timeout_Timer_Callback(void* parameter)
     extern uint16_t ota_status;
     ota_status = Network_Fail;
 }
+void wifi_ota_init(void)
+{
+    OTA_Timeout_Timer = rt_timer_create("OTA_Timeout_Timer", OTA_Timeout_Timer_Callback, RT_NULL, 120000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
+}
 void wifi_ota_timer_refresh(void)
 {
-    if(OTA_Timeout_Timer == RT_NULL)
-    {
-        OTA_Timeout_Timer = rt_timer_create("OTA_Timeout_Timer", OTA_Timeout_Timer_Callback, RT_NULL, 120000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
-    }
     rt_timer_start(OTA_Timeout_Timer);
 }
 void wifi_ota_timer_stop(void)
 {
-    if(OTA_Timeout_Timer == RT_NULL)
-    {
-        OTA_Timeout_Timer = rt_timer_create("OTA_Timeout_Timer", OTA_Timeout_Timer_Callback, RT_NULL, 120000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
-    }
     rt_timer_stop(OTA_Timeout_Timer);
 }

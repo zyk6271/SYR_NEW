@@ -36,8 +36,8 @@ int main(void)
     LCD_Init();
     RTC_Init();
     Button_Init();
-    WiFi_Init();
     Telemetry_Init();
+    WiFi_Init();
     Low_Init();
     while (1)
     {

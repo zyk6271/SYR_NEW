@@ -47,6 +47,30 @@ uint8_t Get_MotoValid(void)
         return 0;
     }
 }
+uint8_t Get_MotoStatus(void)
+{
+    switch(MotoWorkFlag)
+    {
+    case MOTO_STOP:
+        return 10;
+        break;
+    case MOTO_FORWARD:
+        return 21;
+        break;
+    case MOTO_WAITBACK:
+        return 20;
+        break;
+    case MOTO_BACK:
+        return 11;
+        break;
+    case MOTO_RESET:
+        return 10;
+        break;
+    default:
+        return 30;
+        break;
+    }
+}
 void Moto_Run(uint8_t state)
 {
     switch(state)
@@ -99,7 +123,7 @@ void Moto_Run(uint8_t state)
         }
         break;
     case MOTO_RESET:
-        MotoWorkFlag = MOTO_STOP;
+        MotoWorkFlag = MOTO_RESET;
         if(rt_pin_read(MOTO_LEFT)==1)
         {
             rt_pin_write(MOTO_IN1,1);
@@ -125,13 +149,7 @@ uint8_t Moto_Cycle(void)
         Jump_EXIT();
         return RT_ERROR;
     }
-    if(MotoWorkFlag != MOTO_STOP && MotoWorkFlag != MOTO_RESET)
-    {
-        LOG_W("Moto Not Work(Working now)");
-        Jump_EXIT();
-        return RT_ERROR;
-    }
-    if(MotoWorkFlag == MOTO_STOP)
+    if(MotoWorkFlag == MOTO_STOP || MotoWorkFlag == MOTO_RESET)
     {
         rt_pm_sleep_request(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
         ScreenTimerStop();
@@ -142,14 +160,16 @@ uint8_t Moto_Cycle(void)
         rt_timer_control(Moto_Detect_Timer,RT_TIMER_CTRL_SET_TIME,&Setting_Backwashtime_MileSecond);
         LOG_D("Start Backwash with Timer %d\r\n",(Setting_Backwashtime-20));
 
+        event_upload(1);
         Moto_Run(MOTO_FORWARD);
         led_select(2);
         return RT_EOK;
     }
     else
     {
-        LOG_I("Moto is working now\r\n");
-        return RT_EBUSY;
+        LOG_W("Moto Not Work(Working now)");
+        Jump_EXIT();
+        return RT_ERROR;
     }
 }
 void Moto_Cycle_Timer_Callback(void *parameter)
@@ -162,17 +182,21 @@ void Moto_Current_Detect(void)
     rt_timer_start(Moto_Current_Timer);
     LOG_D("Moto_Current delay detect\r\n");
 }
+void Moto_Cycle_Done(void)
+{
+    ScreenTimerRefresh();
+    rt_pm_sleep_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
+}
 void Moto_Current_Timer_Callback(void *parameter)
 {
     if(Get_Moto_Current()>=45)//延迟检测
     {
         LOG_E("Moto Current Overload\r\n");//发生过流
         led_select(3);
-        Moto_Run(MOTO_STOP);
+        Moto_Run(MOTO_RESET);
         ScreenTimerRefresh();
         Jump_STALLING();
-        Moto_Run(MOTO_RESET);
-        rt_pm_sleep_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
+        Moto_Cycle_Done();
     }
     else
     {
@@ -202,8 +226,7 @@ void Moto_Detect_Timer_Callback(void *parameter)
             Jump_NOMOTO();
         }
     }
-    ScreenTimerRefresh();
-    rt_pm_sleep_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
+    Moto_Cycle_Done();
 }
 void MotoLeft_Callback(void *parameter)
 {
@@ -228,9 +251,8 @@ void MotoLeft_Callback(void *parameter)
             SetTDSWarn(0);
             Jump_FINISH();
         }
+        Moto_Cycle_Done();
         LOG_I("Moto Cycle Done,TDS Value is %d\r\n",GetTDS());
-        ScreenTimerRefresh();
-        rt_pm_sleep_release(PM_MOTO_ID,PM_SLEEP_MODE_NONE);
     }
     else if(MotoWorkFlag == MOTO_RESET)
     {

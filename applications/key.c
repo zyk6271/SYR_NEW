@@ -32,8 +32,8 @@ extern uint32_t Counter_Deltapress;
 
 void Light_BackLight(void)
 {
-	rt_pin_mode(LCD_BL, PIN_MODE_OUTPUT);
-	rt_pin_write(LCD_BL,1);
+	rt_pin_mode(LCD_BK_PIN, PIN_MODE_OUTPUT);
+	rt_pin_write(LCD_BK_PIN,1);
 }
 void Key_Sem_init(void)
 {
@@ -53,6 +53,22 @@ void K0_Sem_Release(void *parameter)
     {
         rt_sem_release(K0_Sem);
     }
+}
+uint8_t Get_Up_Click(void)
+{
+    return rt_sem_trytake(K0_Sem);
+}
+uint8_t Get_Down_Click(void)
+{
+    return rt_sem_trytake(K1_Sem);
+}
+uint8_t Get_Enter_Click(void)
+{
+    return rt_sem_trytake(K2_Sem);
+}
+uint8_t Get_Long_Click(void)
+{
+    return rt_sem_trytake(K2_Long_Sem);
 }
 void K1_Sem_Release(void *parameter)
 {

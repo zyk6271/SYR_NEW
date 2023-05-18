@@ -186,7 +186,8 @@ void GuiRowTextWithLine(lkdCoord x, lkdCoord y,uint16_t wide, uint16_t linesize,
 	else{//����
 		tInfo.flag = 1;
 	}
-	GuiHLine(x,y+8,linesize,1);
+
+	GuiHLine(x + tInfo.beginOffset,y+8,x + tInfo.beginOffset + pixLen,1);
 	GuiText(&tInfo, str);
 }
 

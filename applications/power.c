@@ -13,13 +13,13 @@
 #include "power.h"
 #include "lcd_display.h"
 #include "adcwork.h"
+#include "Flashwork.h"
 
 #define DBG_TAG "POWER"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
 uint8_t Now_DC_level = 0;
-uint8_t LowVoltageFlag = 0;
 uint32_t Now_BAT_Voltage = 0;
 uint32_t Past_BAT_Voltage = 0;
 
@@ -37,13 +37,13 @@ void Power_Check_Stop(void)
 {
     rt_timer_stop(Power_timer);
 }
-void PowerSet(uint8_t Flag)
+void PowerSet(uint8_t value)
 {
-    if(Flag != LowVoltageFlag)
+    if(value != LowVoltageFlag)
     {
-        LowVoltageFlag = Flag;
+        LowVoltageFlag = value;
         Flash_Set(19, LowVoltageFlag);
-        wifi_sup_update();
+        device_info_put("sup",value);
     }
 }
 uint8_t Power_State_Get(void)
@@ -65,6 +65,7 @@ void Power_State_Change(uint8_t state)
             rt_pm_sleep_release(PM_DC_ID,PM_SLEEP_MODE_NONE);
         }
         LOG_I("Power_State_Change to State:%d\r\n",Now_DC_level);
+        telemetry_interval_mode_set(state);
     }
 }
 
@@ -83,7 +84,8 @@ void PowerCallback(void *parameter)
                 {
                     PowerSet(0);
                     LOG_D("BatteryOK\r\n");
-                    Refresh_Bat();
+                    ReloadMainWin();
+                    insert_warning_array(0xff);
                 }
                 else if(Now_BAT_Voltage<=3100)//4.8
                 {
@@ -100,6 +102,7 @@ void PowerCallback(void *parameter)
                 PowerSet(1);
                 LOG_D("BatteryLow in Normal\r\n");
                 JumpToBatteryEmpty();
+                insert_warning_array(0x08);
             }
         }
     }
@@ -110,15 +113,15 @@ void PowerCallback(void *parameter)
             Power_State_Change(1);
             if(LowVoltageFlag)
             {
-                Refresh_Bat();
                 PowerSet(0);
+                ReloadMainWin();
             }
+            insert_warning_array(0xff);
         }
     }
 }
 void Power_Init(void)
 {
-    LowVoltageFlag = Flash_Get(19);
     Power_timer = rt_timer_create("Power_timer", PowerCallback, RT_NULL, 2000, RT_TIMER_FLAG_SOFT_TIMER|RT_TIMER_FLAG_PERIODIC);
     rt_timer_start(Power_timer);
 }

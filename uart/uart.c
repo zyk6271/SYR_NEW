@@ -102,4 +102,6 @@ void WiFi_Init(void)
     wifi_protocol_init();
     wifi_uart_init();
     wifi_service_init();
+    wifi_connect_init();
+    wifi_ota_init();
 }

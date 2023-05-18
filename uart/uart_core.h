@@ -107,10 +107,10 @@
 #define         BATCH_ADD_DEV_CMD               0x12                            //批量添加设备
 #define         ADD_DEV_RESULT_CMD              0x13                            //返回添加设备结果
 #define         CTRL_GROUP_DOWNLOAD_CMD         0x14                            //控制群组指令下发
-#define         WIFI_TEST_CMD                   0x15                            //wifi功能测试
+#define         WFC_CONTROL_CMD                 0x15                            //配网
 #define         GET_WIFI_STATUS_CMD             0x16                            //获取wifi状态
 #define         FACTORY_SET_CMD                 0x17                            //恢复出厂设置
-#define         INFORM_DEV_DEV_DEL_CMD          0x18                            //报告移除状态
+#define         DP_UPLOAD_CMD                   0x18                            //DP主动上报
 #define         DEVICE_REBOOT_CMD               0x19                            //重启设备
 #define         WIFI_AP_ENABLE_CMD              0x1a                            //本地允许/关闭添加子设备
 #define         TELEMETRY_CONTROL_CMD           0x1b                            //数据遥测控制
@@ -118,70 +118,65 @@
 #define         UPDATE_START_CMD                0x1d                            //网关启动升级
 #define         UPDATE_TRANS_CMD                0x1e                            //网关升级传输中
 #define         UPDATE_PROGRSS_CMD              0x1f                            //WIFI升级进度
+#define         ALARM_CONTROL_CMD               0x20                            //报警上传控制
+#define         EVENT_CONTROL_CMD               0x21                            //事件上传控制
 //=============================================================================
 //数据帧类型
 //=============================================================================
-#define         RAS_SET_CMD                  0x03
-#define         RAS_GET_CMD                  0x04
-#define         RAS_PUT_CMD                  0x05
-#define         CND_GET_CMD                  0x06
-#define         NET_GET_CMD                  0x07
-#define         BAT_GET_CMD                  0x08
-#define         ALA_GET_CMD                  0x09
-#define         ALA_SET_CMD                  0x0A
-#define         ALR_GET_CMD                  0x0B
-#define         ALR_SET_CMD                  0x0C
-#define         RSE_SET_CMD                  0x0D
-#define         RSE_GET_CMD                  0x0E
-#define         RSE_PUT_CMD                  0x0F
-#define         RSA_SET_CMD                  0x10
-#define         RSA_GET_CMD                  0x11
-#define         RSA_PUT_CMD                  0x12
-#define         RSI_SET_CMD                  0x13
-#define         RSI_GET_CMD                  0x14
-#define         RSI_PUT_CMD                  0x15
-#define         RSD_SET_CMD                  0x16
-#define         RSD_GET_CMD                  0x17
-#define         RSD_PUT_CMD                  0x18
-#define         CNF_SET_CMD                  0x19
-#define         CNF_GET_CMD                  0x1A
-#define         CNF_PUT_CMD                  0x1B
-#define         CNL_SET_CMD                  0x1C
-#define         CNL_GET_CMD                  0x1D
-#define         CNL_PUT_CMD                  0x1E
-#define         SSE_SET_CMD                  0x1F
-#define         SSE_GET_CMD                  0x20
-#define         SSE_PUT_CMD                  0x21
-#define         SSA_SET_CMD                  0x22
-#define         SSA_GET_CMD                  0x23
-#define         SSA_PUT_CMD                  0x24
-#define         SSD_SET_CMD                  0x25
-#define         SSD_GET_CMD                  0x26
-#define         SSD_PUT_CMD                  0x27
-#define         LNG_SET_CMD                  0x28
-#define         LNG_GET_CMD                  0x29
-#define         LNG_PUT_CMD                  0x2A
-#define         SRN_GET_CMD                  0x2B
-#define         SUP_GET_CMD                  0x2C
-#define         SUP_PUT_CMD                  0x2D
-#define         VER_GET_CMD                  0x2E
-#define         COM_SET_CMD                  0x2F
-#define         COM_GET_CMD                  0x30
-#define         COM_PUT_CMD                  0x31
-#define         COA_SET_CMD                  0x32
-#define         COA_GET_CMD                  0x33
-#define         COA_PUT_CMD                  0x34
-#define         COD_SET_CMD                  0x35
-#define         COD_GET_CMD                  0x36
-#define         COD_PUT_CMD                  0x37
-#define         COE_SET_CMD                  0x38
-#define         COE_GET_CMD                  0x39
-#define         COE_PUT_CMD                  0x3A
-#define         CND_PUT_CMD                  0x3B
-#define         EMR_SET_CMD                  0x3C
-#define         EMR_GET_CMD                  0x3D
-#define         RCP_SET_CMD                  0x3E
-#define         RCP_GET_CMD                  0x3F
+#define         RAS_SET_CMD                  0x01
+#define         RAS_GET_CMD                  0x02
+#define         CND_GET_CMD                  0x03
+#define         NET_GET_CMD                  0x04
+#define         BAT_GET_CMD                  0x05
+#define         RSE_SET_CMD                  0x06
+#define         RSE_GET_CMD                  0x07
+#define         RSA_SET_CMD                  0x08
+#define         RSA_GET_CMD                  0x09
+#define         RSI_SET_CMD                  0x0A
+#define         RSI_GET_CMD                  0x0B
+#define         RSD_SET_CMD                  0x0C
+#define         RSD_GET_CMD                  0x0D
+#define         CNF_SET_CMD                  0x0E
+#define         CNF_GET_CMD                  0x0F
+#define         CNL_SET_CMD                  0x10
+#define         CNL_GET_CMD                  0x11
+#define         SSE_SET_CMD                  0x12
+#define         SSE_GET_CMD                  0x13
+#define         SSA_SET_CMD                  0x14
+#define         SSA_GET_CMD                  0x15
+#define         SSD_SET_CMD                  0x16
+#define         SSD_GET_CMD                  0x17
+#define         LNG_SET_CMD                  0x18
+#define         LNG_GET_CMD                  0x19
+#define         SRN_GET_CMD                  0x1A
+#define         SUP_GET_CMD                  0x1B
+#define         VER_GET_CMD                  0x1C
+#define         COM_SET_CMD                  0x1D
+#define         COM_GET_CMD                  0x1E
+#define         COA_SET_CMD                  0x1F
+#define         COA_GET_CMD                  0x20
+#define         COD_SET_CMD                  0x21
+#define         COD_GET_CMD                  0x22
+#define         COE_SET_CMD                  0x23
+#define         COE_GET_CMD                  0x24
+#define         CND_PUT_CMD                  0x25
+#define         EMR_SET_CMD                  0x26
+#define         EMR_GET_CMD                  0x27
+#define         RCP_SET_CMD                  0x28
+#define         RCP_GET_CMD                  0x29
+#define         VLV_GET_CMD                  0x2A
+#define         ALA_GET_CMD                  0x2B
+#define         NOT_GET_CMD                  0x2C
+#define         WRN_GET_CMD                  0x2D
+#define         ALM_GET_CMD                  0x2E
+#define         ALW_GET_CMD                  0x2F
+#define         ALN_GET_CMD                  0x30
+#define         APT_GET_CMD                  0x31
+#define         APT_SET_CMD                  0x32
+#define         WAD_GET_CMD                  0x33
+#define         WAD_SET_CMD                  0x34
+#define         WTI_SET_CMD                  0x35
+#define         WTI_GET_CMD                  0x36
 
 typedef struct {
     unsigned char dp_id;                    //dp序号

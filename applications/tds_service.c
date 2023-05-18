@@ -11,7 +11,7 @@
 #include "tds_service.h"
 
 #define DBG_TAG "TDS_SERV"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 rt_thread_t tds_sevice_t = RT_NULL;

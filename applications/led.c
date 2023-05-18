@@ -84,7 +84,17 @@ void Led_GpioDeInit(void)
     rt_pin_mode(LED_B_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(LED_B_PIN, 1);
 }
-
+uint8_t get_mqtt_valid(void)
+{
+    if(wifi_status == 4)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 void wifi_led(uint8_t type)
 {
     wifi_status = type;
@@ -94,25 +104,18 @@ void wifi_led(uint8_t type)
         agile_led_stop(LED_B);
         break;
     case 1://AP模式
-        if(WIFI_AP_Enable)
-        {
-            agile_led_set_light_mode(LED_B, "1000,1000", -1);
-            agile_led_start(LED_B);
-        }
-        else
-        {
-            agile_led_stop(LED_B);
-        }
+        agile_led_set_light_mode(LED_B, "1000,1000", -1);
+        agile_led_start(LED_B);
         break;
     case 2://连接路由器
         agile_led_set_light_mode(LED_B, "150,200,150,500", -1);
         agile_led_start(LED_B);
         break;
-    case 3://连接微软云
+    case 3://连接路由器成功
         agile_led_set_light_mode(LED_B, "150,150", -1);
         agile_led_start(LED_B);
         break;
-    case 4://连接成功
+    case 4://连接微软云成功
         agile_led_set_light_mode(LED_B, "200,0", -1);
         agile_led_start(LED_B);
         break;

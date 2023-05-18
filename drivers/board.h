@@ -129,7 +129,7 @@ extern "C"
  * STEP 4, modify your stm32xxxx_hal_config.h file to support spi peripherals. define macro related to the peripherals
  *                 such as     #define HAL_SPI_MODULE_ENABLED
  */
-
+#define BSP_USING_SOFT_SPI1
 /*#define BSP_USING_SPI1*/
 #define BSP_USING_SPI2
 /*#define BSP_USING_SPI3*/

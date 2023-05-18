@@ -180,9 +180,21 @@ uint32_t Get_DC_Value(void)
     LOG_D("DC Value is %ld\r\n",value);
     return value;
 }
+uint32_t Get_DC_Fix(void)
+{
+    double dc_value = Get_DC_Value()*3.3/2048;
+    uint32_t fix_dc_value = (0.0005*dc_value*dc_value + 0.9986 * dc_value + 0.096)*100;
+    return fix_dc_value;
+}
 uint32_t Get_Bat_Value(void)
 {
     uint32_t value = Get_BAT_Voltage();
     LOG_D("BAT Value is %ld\r\n",value);
     return value;
+}
+uint32_t Get_Bat_Fix(void)
+{
+    double bat_value = Get_Bat_Value()*3.3/2048;
+    uint32_t fix_bat_value = (0.0005*bat_value*bat_value + 0.9986 * bat_value + 0.096)*100;
+    return fix_bat_value;
 }

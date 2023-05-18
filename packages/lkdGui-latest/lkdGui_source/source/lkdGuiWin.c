@@ -18,6 +18,7 @@ static struct GuiWinManage winManage;
   */
 void GuiWinDraw(lkdWin *pWindow)
 {
+    GuiClearScreen(0);
     if(pWindow->x + pWindow->wide - 1 > GUIXMAX || pWindow->y + pWindow->hight - 1 > GUIYMAX ||\
          pWindow->x < 0 || pWindow->y < 0 || pWindow->wide == 0 || pWindow->hight == 0){
            return;
@@ -27,12 +28,14 @@ void GuiWinDraw(lkdWin *pWindow)
         GuiSetbackcolor(0);
         GuiFillRect(pWindow->x, pWindow->y, pWindow->x + pWindow->wide - 1,\
         11, 1);
-        GuiExchangeColor();
+        GuiSetForecolor(0);
+        GuiSetbackcolor(1);
         GuiRowText(pWindow->x + 4, pWindow->y+2, pWindow->wide - 4,\
             FONT_MID,pWindow->title);
-        GuiExchangeColor();
+        GuiSetForecolor(1);
+        GuiSetbackcolor(0);
     }
-    GuiUpdateDisplayAll();
+    //GuiUpdateDisplayAll();
 }
 
 /**
@@ -48,7 +51,34 @@ int8_t GuiWinAdd(lkdWin *pWindow)
 	}
 	winManage.winStack[winManage.pWin] = pWindow;
 	winManage.pWin ++;
+    pWindow->WindowFunction(pWindow->param);
 	return 0;
+}
+
+/**
+  *@brief  ��Ӵ���
+  *@param  pWindow ����ָ��
+  *@retval 0 �ɹ� -1 ʧ��
+  */
+int8_t GuiWinReload(lkdWin *pWindow)
+{
+    GuiClearScreen(0);
+    GuiWinDraw(pWindow);
+    pWindow->WindowFunction(pWindow->param);
+    return 0;
+}
+/**
+  *@brief  ��Ӵ���
+  *@param  pWindow ����ָ��
+  *@retval 0 �ɹ� -1 ʧ��
+  */
+int8_t GuiWinDel(lkdWin *pWindow)
+{
+    if(GuiGetTopWin() == pWindow)
+    {
+        GuiWinDeleteTop();
+    }
+    return 0;
 }
 /**
   *@brief  ��Ӵ���
@@ -71,7 +101,8 @@ void GuiWinDisplay(void)
 		return;
 	}
 	lkdWin *pThis = winManage.winStack[winManage.pWin - 1];
-	pThis->WindowFunction(pThis->param);
+	pThis->InputFunction(pThis->param);
+	//pThis->WindowFunction(pThis);
 }
 
 /**
@@ -81,11 +112,13 @@ void GuiWinDisplay(void)
   */
 void GuiWinDeleteTop(void)
 {
+    GuiClearScreen(0);
 	if(winManage.pWin <= 1 || winManage.pWin > GUIWINMANAGE_NUM){
 		return;
 	}
 	winManage.pWin --;
 	GuiWinDraw(winManage.winStack[winManage.pWin - 1]);
+	winManage.winStack[winManage.pWin - 1]->WindowFunction(winManage.winStack[winManage.pWin - 1]->param);
 }
 
 /**
