@@ -31,14 +31,13 @@ static void win_wifi_win_callback(void *parameter)
     {
         GuiRowText(0,15,128,FONT_MID,"Wlan Verbindung");
         GuiRowText(0,27,128,FONT_MID,"wird aufgebaut");
-        GuiRowText(0,40,128,FONT_MID,"-->-->-->-->");
     }
     else
     {
         GuiRowText(0,15,128,FONT_MID,"Connecting");
         GuiRowText(0,27,128,FONT_MID,"wifi");
-        GuiRowText(0,40,128,FONT_MID,"-->-->-->-->");
     }
+    GuiRowText(0,40,128,FONT_MID,">--->--->");
     GuiUpdateDisplayAll();
 }
 static void win_wifi_input_callback(void *param)

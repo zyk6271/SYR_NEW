@@ -18,7 +18,7 @@
 
 uint8_t WIFI_AP_Enable;
 uint16_t ota_status;
-uint8_t MCU_VER[10] = {"0.0.24"};
+uint8_t MCU_VER[10] = {"0.0.25"};
 
 void product_version_print(void)
 {

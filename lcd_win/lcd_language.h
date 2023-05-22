@@ -24,6 +24,7 @@ char *SingleSelect = RT_NULL;
 char *SingleRightBack = RT_NULL;
 char *LowSelect = RT_NULL;
 char *YesOrNo = RT_NULL;
+char *CancelOrOK = RT_NULL;
 char *Backwash_Time = RT_NULL;
 char *Version = RT_NULL;
 char *Factory = RT_NULL;

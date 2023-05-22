@@ -92,7 +92,7 @@ void Set_Default(void)
     Flash_Set(21,30);
     Flash_Set(22,300);
     Flash_Set(23,24);
-    Flash_Set(24,120);
+    Flash_Set(24,0);
 }
 void Flash2Mem(void)
 {

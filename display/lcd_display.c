@@ -384,6 +384,7 @@ void SetEnglish(void)
     SingleRightBack="             Back";
     LowSelect="<LOW>            ";
     YesOrNo="No            Yes";
+    CancelOrOK="Cancel         OK";
 
     Backwash_Time="Backwash Time";
     Version="Version";
@@ -455,6 +456,7 @@ void SetGerman(void)
     SingleRightBack="           Zur{ck";
     LowSelect="<Batterien leer> ";
     YesOrNo="Nein           Ja";
+    CancelOrOK="Abbr.          OK";
 
     Backwash_Time="R{cksp{ldauer";
     Version="Firmware-Version";
@@ -1011,17 +1013,17 @@ static void UserMain3WinFun(void *param)
     rt_event_control(&lcd_jump_event,RT_IPC_CMD_RESET,RT_NULL);
     if(!Setting_Language)
     {
-        GuiRowText(27,15,80,0,"R{cksp{lung");
-        GuiRowText(5,27,128,0,"wird durchgef{hrt");
-        GuiRowText(25,40,85,0,"-->-->-->-->");
-        GuiRowText(106,56,30,0,"   ");
+        GuiRowText(0,15,128,FONT_MID,"R{cksp{lung");
+        GuiRowText(0,27,128,FONT_MID,"wird durchgef{hrt");
+        GuiRowText(0,40,128,FONT_MID,">--->--->");
+        GuiRowText(0,56,128,FONT_MID,"   ");
     }
     else
     {
-        GuiRowText(35,15,57,0,"Backwash");
-        GuiRowText(25,27,80,0,"in progress");
-        GuiRowText(25,40,85,0,"-->-->-->-->");
-        GuiRowText(106,56,30,0,"   ");
+        GuiRowText(0,15,128,FONT_MID,"Backwash");
+        GuiRowText(0,27,128,FONT_MID,"in progress");
+        GuiRowText(0,40,128,FONT_MID,">--->--->");
+        GuiRowText(0,56,128,FONT_MID,"   ");
     }
     GuiUpdateDisplayAll();
 }
@@ -1033,7 +1035,7 @@ static void UserMain3InputFun(void *param)
         switch(e)
         {
         case BACK:
-            GuiRowText(25,40,85,0,"<--<--<--<--");
+            GuiRowText(0,40,128,FONT_MID,"<---<---<");
             break;
         case TDS:
             event_upload(0);
@@ -1043,20 +1045,20 @@ static void UserMain3InputFun(void *param)
             GuiClearScreen(0);
             if(!Setting_Language)
             {
-                GuiRowText(0,1,128,0,"Hohe Wasserh|rte");
-                GuiRowText(0,15,128,0,"Der Einsatz einer");
-                GuiRowText(0,30,128,0,"Weichwasseranlage");
-                GuiRowText(0,45,128,0,"wird empfohlen");
-                GuiRowText(106,56,30,0,"OK");
+                GuiRowText(0,1,128,FONT_MID,"Hohe Wasserh|rte");
+                GuiRowText(0,15,128,FONT_MID,"Der Einsatz einer");
+                GuiRowText(0,30,128,FONT_MID,"Weichwasseranlage");
+                GuiRowText(0,45,128,FONT_MID,"wird empfohlen");
+                GuiRowText(0,55,128,FONT_RIGHT,"OK");
             }
             else
             {
-              GuiRowText(0,1,125,0,"Increased water");
-              GuiRowText(0,13,125,0,"hardness");
-              GuiRowText(0,25,127,0,"The use of a water");
-              GuiRowText(0,37,125,0,"soft system");
-              GuiRowText(0,49,125,0,"is recommended");
-              GuiRowText(106,56,30,0,"OK");
+              GuiRowText(0,1,128,FONT_MID,"Increased water");
+              GuiRowText(0,13,128,FONT_MID,"hardness");
+              GuiRowText(0,25,128,FONT_MID,"The use of a water");
+              GuiRowText(0,37,125,FONT_MID,"soft system");
+              GuiRowText(0,49,128,FONT_MID,"is recommended");
+              GuiRowText(0,55,128,FONT_RIGHT,"OK");
             }
             Counter_Error++;
             Flash_Set(11,Counter_Error);
@@ -1071,16 +1073,16 @@ static void UserMain3InputFun(void *param)
             GuiClearScreen(0);
             if(!Setting_Language)
             {
-                GuiRowText(0,10,128,0,"Ventil blockiert");
-                GuiRowText(0,25,128,0,"Bitte Service");
-                GuiRowText(0,40,128,0,"kontaktieren ");
-                GuiRowText(106,56,30,0,"Ja");
+                GuiRowText(0,10,128,FONT_MID,"Ventil blockiert");
+                GuiRowText(0,25,128,FONT_MID,"Bitte Service");
+                GuiRowText(0,40,128,FONT_MID,"kontaktieren ");
+                GuiRowText(0,55,128,FONT_RIGHT,"Ja");
             }
             else
             {
-                GuiRowText(50,15,127,0,"Error");
-                GuiRowText(15,30,127,0,"Motor Stalling");
-                GuiRowText(106,56,30,0,"OK");
+                GuiRowText(0,15,128,FONT_MID,"Error");
+                GuiRowText(0,30,128,FONT_MID,"Motor Stalling");
+                GuiRowText(0,55,128,FONT_RIGHT,"OK");
             }
             Counter_Error++;
             Flash_Set(11,Counter_Error);
@@ -1095,13 +1097,13 @@ static void UserMain3InputFun(void *param)
             GuiClearScreen(0);
             if(!Setting_Language)
             {
-                GuiRowText(25,15,80,0,"R{cksp{lung");
-                GuiRowText(18,27,105,0,"abgeschlossen");
+                GuiRowText(0,15,128,FONT_MID,"R{cksp{lung");
+                GuiRowText(0,27,128,FONT_MID,"abgeschlossen");
             }
             else
             {
-                GuiRowText(35,15,57,0,"Backwash");
-                GuiRowText(40,27,70,0,"Finish");
+                GuiRowText(0,15,128,FONT_MID,"Backwash");
+                GuiRowText(0,27,128,FONT_MID,"Finish");
             }
             DoneJump();
             moto_done = 1;
@@ -1112,16 +1114,16 @@ static void UserMain3InputFun(void *param)
             GuiClearScreen(0);
             if(!Setting_Language)
             {
-                GuiRowText(0,10,128,0,"Ventil blockiert");
-                GuiRowText(0,25,128,0,"Bitte Service");
-                GuiRowText(0,40,128,0,"kontaktieren ");
-                GuiRowText(106,56,30,0,"Ja");
+                GuiRowText(0,10,128,FONT_MID,"Ventil blockiert");
+                GuiRowText(0,25,128,FONT_MID,"Bitte Service");
+                GuiRowText(0,40,128,FONT_MID,"kontaktieren ");
+                GuiRowText(0,55,128,FONT_RIGHT,"Ja");
             }
             else
             {
-                GuiRowText(50,15,127,0,"Error");
-                GuiRowText(40,30,127,0,"No Motor");
-                GuiRowText(106,56,30,0,"OK");
+                GuiRowText(0,15,128,FONT_MID,"Error");
+                GuiRowText(0,30,128,FONT_MID,"No Motor");
+                GuiRowText(0,55,128,FONT_RIGHT,"OK");
             }
             Counter_Error++;
             Flash_Set(11,Counter_Error);
@@ -1791,11 +1793,11 @@ static void UserMain6WinFun(void *param)
     Deltapress_Enable_Temp=Deltapress_Enable;
     if(!Setting_Language)
     {
-        GuiRowText(15,15,110,0,"R{cksp{lung ist");
+        GuiRowText(0,15,128,FONT_MID,"R{cksp{lung ist");
     }
     else
     {
-        GuiRowText(5,15,128,0,"Delta Pressure is");
+        GuiRowText(0,15,128,FONT_MID,"Delta Pressure is");
     }
     tButton[0].y = 23;
     tButton[0].high = 15;
@@ -3517,10 +3519,11 @@ static void UserMain17InputFun(void *param)
     }
 }
 extern uint8_t MCU_VER[10];
+uint8_t VersionStr[20];
 static void UserMain18WinFun(void *param)
 {
-    GuiRowText(19,30,80,0,"SYR BFC:");
-    GuiRowText(76,30,80,0,MCU_VER);
+    rt_sprintf(VersionStr, "SYR BFC:%s",MCU_VER);
+    GuiRowText(0,30,128,FONT_MID,VersionStr);
 
     tButton[0].x = 0;
     tButton[0].y = 50;
@@ -3785,7 +3788,7 @@ uint8_t CurrentTdsString[10]={0};
 static void UserMain23WinFun(void *param)
 {
     rt_sprintf(CurrentTdsString,"%05dus/cm",0);
-    GuiRowText(30,25,110,0,CurrentTdsString);
+    GuiRowText(0,25,128,FONT_MID,CurrentTdsString);
 
     tButton[3].x = 0;
     tButton[3].y = 50;
@@ -3804,7 +3807,7 @@ static void UserMain23InputFun(void *param)
     TDS_GpioInit();
     TdsValue = TDS_Work();
     rt_sprintf(CurrentTdsString,"%05dus/cm",TdsValue);
-    GuiRowText(30,25,110,0,CurrentTdsString);
+    GuiRowText(0,25,128,FONT_MID,CurrentTdsString);
     GuiUpdateDisplayAll();
     rt_thread_mdelay(1000);
     if(Get_Up_Click() == RT_EOK)
@@ -3828,19 +3831,19 @@ static void UserMain25WinFun(void *param)
 {
     if(!Setting_Language)
     {
-        GuiRowText(4,15,124,0,"R{cksp{lung jetzt");
-        GuiRowText(30,30,80,0,"durchf{hren?");
+        GuiRowText(0,15,128,FONT_MID,"R{cksp{lung jetzt");
+        GuiRowText(0,30,128,FONT_MID,"durchf{hren?");
     }
     else
     {
-        GuiRowText(16,15,110,0,"Backwash Filter");
-        GuiRowText(53,30,57,0,"Now");
+        GuiRowText(0,15,128,FONT_MID,"Backwash Filter");
+        GuiRowText(0,30,128,FONT_MID,"Now?");
     }
     tButton[3].x = 0;
     tButton[3].y = 50;
     tButton[3].wide = 128;
     tButton[3].high = 15;
-    tButton[3].name = YesOrNo;
+    tButton[3].name = CancelOrOK;
     tButton[3].linesize = 0;
     tButton[3].flag = 1;/* 按下状态 */
     GuiButton(&tButton[3]);
@@ -3870,13 +3873,13 @@ static void UserMain26WinFun(void *param)
 {
     if(!Setting_Language)
     {
-        GuiRowText(15,28,124,0,"Bitte Batterien");
-        GuiRowText(35,42,80,0,"erneuern");
+        GuiRowText(0,28,128,FONT_MID,"Bitte Batterien");
+        GuiRowText(0,42,128,FONT_MID,"erneuern");
     }
     else
     {
-        GuiRowText(25,28,110,0,"Low Voltage");
-        GuiRowText(20,42,110,0,"Renew Battery");
+        GuiRowText(0,28,128,FONT_MID,"Low Voltage");
+        GuiRowText(0,42,128,FONT_MID,"Renew Battery");
     }
 
     tButton[0].x = 0;
@@ -3911,8 +3914,8 @@ static void UserMain26InputFun(void *param)
 }
 static void UserMain27WinFun(void *param)
 {
-    GuiRowText(13,20,115,0,"Abnormal Voltage");
-    GuiRowText(20,35,110,0,"Renew Battery");
+    GuiRowText(0,20,128,FONT_MID,"Abnormal Voltage");
+    GuiRowText(0,35,128,FONT_MID,"Renew Battery");
 
     tButton[0].x = 0;
     tButton[0].y = 50;
@@ -4234,12 +4237,12 @@ static void UserMain30WinFun(void *param)
     if(!Setting_Language)
     {
         rt_sprintf(RemainString,"%d Std.",Automatic_Week*7*24+Automatic_Day*24-RTC_Automatic_Time);
-        GuiRowText(40,28,115,0,RemainString);
+        GuiRowText(0,28,128,FONT_MID,RemainString);
     }
     else
     {
         rt_sprintf(RemainString,"%d Hours",Automatic_Week*7*24+Automatic_Day*24-RTC_Automatic_Time);
-        GuiRowText(32,28,115,0,RemainString);
+        GuiRowText(0,28,128,FONT_MID,RemainString);
     }
 
     tButton[0].x = 0;
@@ -4359,7 +4362,7 @@ static void UserMain31InputFun(void *param)
         {
             case OTA_Searching:
                 ScreenTimerStop();
-                GuiRowText(25,28,115,0,"Searching...");
+                GuiRowText(0,28,128,FONT_MID,"Searching...");
                 if(wifi_status == 4)
                 {
                     wifi_ota_request(1);
@@ -4374,47 +4377,47 @@ static void UserMain31InputFun(void *param)
             case Murata_Downloading:
                 wifi_progress = 0;
                 now_progress = 0;
-                GuiRowText(5,21,128,0,"WIFI Updating...");
+                GuiRowText(0,21,128,FONT_MID,"WIFI Updating...");
                 tButton[0].name = SingleSelect;
             break;
             case Murata_Download_Done:
-                GuiRowText(30,28,115,0,"Waiting...");
+                GuiRowText(0,28,128,FONT_MID,"Waiting...");
                 tButton[0].name = SingleSelect;
             break;
             case Murata_Download_Error:
-                GuiRowText(10,28,128,0,"WIFI Update Err");
+                GuiRowText(0,28,128,FONT_MID,"WIFI Update Err");
                 tButton[0].name = SingleRightBack;
                 wifi_ota_timer_stop();
             break;
             case Murata_No_Upadate:
                 tButton[0].name = SingleSelect;
-                GuiRowText(15,28,128,0,"WIFI No Update");
+                GuiRowText(0,28,128,FONT_MID,"WIFI No Update");
                 wifi_ota_request(2);
             break;
             case ST_Downloading:
                 tButton[0].name = SingleSelect;
                 st_progress = 0;
                 now_progress = 0;
-                GuiRowText(0,21,128,0,"Device Updating...");
+                GuiRowText(0,21,128,FONT_MID,"Device Updating...");
             break;
             case ST_Download_Done:
                 tButton[0].name = SingleRightBack;
-                GuiRowText(0,28,128,0,"Device Update Done");
+                GuiRowText(0,28,128,FONT_MID,"Device Update Done");
                 wifi_ota_timer_stop();
             break;
             case ST_Download_Error:
                 tButton[0].name = SingleRightBack;
-                GuiRowText(5,28,128,0,"Device Update Err");
+                GuiRowText(0,28,128,FONT_MID,"Device Update Err");
                 wifi_ota_timer_stop();
             break;
             case ST_No_Upadate:
                 tButton[0].name = SingleRightBack;
-                GuiRowText(10,28,128,0,"Device No Update.");
+                GuiRowText(0,28,128,FONT_MID,"Device No Update.");
                 wifi_ota_timer_stop();
             break;
             case Network_Fail:
                 tButton[0].name = SingleRightBack;
-                GuiRowText(25,28,128,0,"Network Fail");
+                GuiRowText(0,28,128,FONT_MID,"Network Fail");
                 wifi_ota_timer_stop();
             break;
         }
