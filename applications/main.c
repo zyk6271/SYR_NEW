@@ -28,6 +28,8 @@ int main(void)
 {
     product_version_print();
     Flash_Init();
+    //Flash_Clear();
+
     Power_Init();
     ADC_Init();
     Led_Init();

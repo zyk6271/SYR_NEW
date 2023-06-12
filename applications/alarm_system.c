@@ -26,6 +26,10 @@ uint8_t notify_value = 0xff;
 uint8_t notify_array[8] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 
 void insert_error_array(uint8_t data) {
+    if(error_value == data)
+    {
+        return;
+    }
     for (int i = 6; i >= 0; i--) {
         error_array[i + 1] = error_array[i];
     }
@@ -54,6 +58,10 @@ void put_error_array(void)
 }
 
 void insert_warning_array(uint8_t data) {
+    if(warning_value == data)
+    {
+        return;
+    }
     for (int i = 6; i >= 0; i--) {
         warning_array[i + 1] = warning_array[i];
     }
@@ -82,6 +90,10 @@ void put_warning_array(void)
 }
 
 void insert_notify_array(uint8_t data) {
+    if(notify_value == data)
+    {
+        return;
+    }
     for (int i = 6; i >= 0; i--) {
         notify_array[i + 1] = notify_array[i];
     }

@@ -1040,7 +1040,6 @@ static void UserMain3InputFun(void *param)
         case TDS:
             event_upload(0);
             insert_notify_array(0x06);
-            insert_error_array(0xff);
             screen_reload=0;
             GuiClearScreen(0);
             if(!Setting_Language)
@@ -1067,7 +1066,6 @@ static void UserMain3InputFun(void *param)
             break;
         case STALLING:
             event_upload(0);
-            insert_notify_array(0xff);
             insert_error_array(0xA);
             screen_reload=0;
             GuiClearScreen(0);
@@ -1110,6 +1108,7 @@ static void UserMain3InputFun(void *param)
             break;
         case NOMOTO:
             event_upload(0);
+            insert_error_array(0xA);
             screen_reload=0;
             GuiClearScreen(0);
             if(!Setting_Language)
@@ -3854,6 +3853,7 @@ static void UserMain25InputFun(void *param)
 {
     if(Get_Up_Click() == RT_EOK)
     {
+        insert_notify_array(0xff);
         GuiWinDeleteTop();
     }
     if(Get_Down_Click() == RT_EOK)
@@ -3862,6 +3862,7 @@ static void UserMain25InputFun(void *param)
     }
     if(Get_Enter_Click() == RT_EOK)
     {
+        insert_notify_array(0xff);
         JumptoAutomatic();
     }
     if(Get_Long_Click() == RT_EOK)

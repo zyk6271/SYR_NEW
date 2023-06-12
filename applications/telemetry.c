@@ -110,6 +110,7 @@ void telemetry_upload(void)
     wifi_uart_write_frame(TELEMETRY_CONTROL_CMD, MCU_TX_VER, length);
     rt_free(out);
 }
+MSH_CMD_EXPORT(telemetry_upload,telemetry_upload);
 void telemetry_thread_callback(void *parameter)
 {
     while(1)
@@ -144,9 +145,9 @@ void Telemetry_Init(void)
     telemetry_thread = rt_thread_create("telemetry_t", telemetry_thread_callback, RT_NULL, 2048, 10, 10);
     rt_thread_startup(telemetry_thread);
 
-    rt_lptimer_init(&rcp_timer, "rcp_timer", rcp_timer_callback, RT_NULL, Report_Interval*60*1000,\
+    rt_lptimer_init(&rcp_timer, "rcp_timer", rcp_timer_callback, RT_NULL, Report_Interval * 60 * 1000,\
             RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 
-    wti_timer = rt_timer_create("wti_timer",wti_timer_callback,RT_NULL,Telemetry_Interval*1000,\
+    wti_timer = rt_timer_create("wti_timer",wti_timer_callback,RT_NULL,Telemetry_Interval * 1000,\
             RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 }
